@@ -21,10 +21,19 @@ webhookRouter.post('/send-webhook', async (req: Request, res: Response) => {
       });
     }
 
-    console.log(`📨 Received webhook request for logement: ${logementData.nom}`);
-    console.log(`   - Test mode: ${isTestMode ? 'YES' : 'NO'}`);
-    console.log(`   - ConciergerieID: ${conciergerieID}`);
-    console.log(`   - UserID: ${userID}`);
+    console.log(`\n${'='.repeat(60)}`);
+    console.log(`📨 WEBHOOK REQUEST RECEIVED`);
+    console.log(`${'='.repeat(60)}`);
+    console.log(`   🏠 Logement: ${logementData.nom}`);
+    console.log(`   🔧 isTestMode (raw): ${JSON.stringify(isTestMode)}`);
+    console.log(`   🔧 isTestMode (type): ${typeof isTestMode}`);
+    console.log(`   🔧 isTestMode (boolean): ${Boolean(isTestMode)}`);
+    console.log(`   🔧 isTestMode === true: ${isTestMode === true}`);
+    console.log(`   🔧 isTestMode === false: ${isTestMode === false}`);
+    console.log(`   🔧 Test mode: ${isTestMode ? 'YES (version-test)' : 'NO (version-live)'}`);
+    console.log(`   🏢 ConciergerieID: ${conciergerieID}`);
+    console.log(`   👤 UserID: ${userID}`);
+    console.log(`${'='.repeat(60)}\n`);
 
     // Send webhook asynchronously (non-blocking)
     // The response is sent immediately, webhook continues in background

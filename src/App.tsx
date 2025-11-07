@@ -6,18 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ParcoursModele } from "@/types/modele";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
-import { dispatchWebhook, dispatchModeleWebhook, dispatchDeleteModeleWebhook } from "@/utils/webhook";
+import { dispatchWebhook, dispatchModeleWebhook, dispatchDeleteModeleWebhook, getConciergerieID, isTestMode } from "@/utils/webhook";
 import {
   loadModelesFromBubble,
   loadAndMergeModeles,
   saveModelesToLocalStorage,
   loadModelesFromLocalStorage
 } from "@/utils/loadModeles";
-import { RefreshCw } from "lucide-react";
-
-// Configuration de la conciergerie (à remplacer par la vraie valeur de l'utilisateur connecté)
-const CONCIERGERIE_ID = "1730741276842x778024514623373300";
-const IS_TEST_MODE = true; // Mode test par défaut
 
 function App() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -54,9 +49,9 @@ function App() {
 
         // Charger et fusionner avec les modèles Bubble
         const mergedModeles = await loadAndMergeModeles(
-          CONCIERGERIE_ID,
+          getConciergerieID(),
           localModeles,
-          IS_TEST_MODE
+          isTestMode()
         );
 
         // Mettre à jour l'état
@@ -168,7 +163,7 @@ function App() {
     try {
       console.log("🔄 Rechargement manuel des modèles...");
 
-      const bubbleModeles = await loadModelesFromBubble(CONCIERGERIE_ID, IS_TEST_MODE);
+      const bubbleModeles = await loadModelesFromBubble(getConciergerieID(), isTestMode());
 
       setCustomModeles(bubbleModeles);
       saveModelesToLocalStorage(bubbleModeles);

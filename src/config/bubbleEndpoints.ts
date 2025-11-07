@@ -8,7 +8,7 @@
  *
  * 📝 Convention de nommage:
  * - test: https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/...
- * - production: https://checkeasy-57905.bubbleapps.io/api/1.1/wf/...
+ * - production: https://checkeasy-57905.bubbleapps.io/version-live/api/1.1/wf/...
  *
  * 🔧 Utilisation:
  * ```typescript
@@ -29,7 +29,7 @@ export const BUBBLE_ENDPOINTS = {
    */
   loadModeles: {
     test: 'https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/apireturnmodeleforapp',
-    production: 'https://checkeasy-57905.bubbleapps.io/api/1.1/wf/apireturnmodeleforapp',
+    production: 'https://checkeasy-57905.bubbleapps.io/version-live/api/1.1/wf/apireturnmodeleforapp',
   },
 };
 

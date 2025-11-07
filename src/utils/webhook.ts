@@ -38,18 +38,37 @@ export const dispatchWebhook = async (logementData: {
     // Use existing logement ID or generate a new one
     const logementId = logementData.logementId || `logement_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
+    // Get parameters from URL
+    const testMode = isTestMode();
+    const conciergerieID = getConciergerieID();
+    const userID = getUserID();
+
     // Prepare payload for backend
     const payload = {
-      conciergerieID: getConciergerieID(),
-      userID: getUserID(),
-      isTestMode: isTestMode(),
+      conciergerieID,
+      userID,
+      isTestMode: testMode,
       logementData: {
         ...logementData,
         logementId,
       },
     };
 
-    console.log('📤 Sending webhook request to backend server...');
+    console.log('\n' + '='.repeat(60));
+    console.log('📤 SENDING WEBHOOK TO BACKEND');
+    console.log('='.repeat(60));
+    console.log(`   🏠 Logement: ${logementData.nom}`);
+    console.log(`   🔍 Paramètre version-test (URL): "${new URLSearchParams(window.location.search).get('version-test')}"`);
+    console.log(`   🔧 testMode (isTestMode()): ${testMode}`);
+    console.log(`   🔧 testMode (type): ${typeof testMode}`);
+    console.log(`   🔧 testMode === true: ${testMode === true}`);
+    console.log(`   🔧 testMode === false: ${testMode === false}`);
+    console.log(`   🔧 Mode: ${testMode ? 'TEST (version-test)' : 'PRODUCTION (version-live)'}`);
+    console.log(`   🏢 ConciergerieID: ${conciergerieID}`);
+    console.log(`   👤 UserID: ${userID}`);
+    console.log(`   📍 URL actuelle: ${window.location.href}`);
+    console.log(`   📦 Payload.isTestMode: ${payload.isTestMode}`);
+    console.log('='.repeat(60) + '\n');
 
     // Send to backend server instead of directly to Bubble.io
     const response = await fetch(`${BACKEND_URL}/api/send-webhook`, {

@@ -115,12 +115,21 @@ async function downloadAndConvertToBase64(imageUrl: string, index: number): Prom
  * Lance une extraction Airbnb avec les nouveaux paramètres
  */
 async function startExtraction(airbnbUrl: string): Promise<string> {
+  // Validation de l'URL
+  if (!airbnbUrl || typeof airbnbUrl !== 'string' || airbnbUrl.trim() === '') {
+    throw new Error('URL Airbnb invalide ou vide');
+  }
+
+  if (!airbnbUrl.includes('airbnb')) {
+    throw new Error('L\'URL doit être une URL Airbnb valide');
+  }
+
   const url = `${SCRAPING_CONFIG.scrapingServiceUrl}${SCRAPING_CONFIG.endpoints.extract}`;
-  
+
   console.log(`🌐 Lancement extraction Airbnb...`);
   console.log(`   URL: ${airbnbUrl}`);
   console.log(`   Endpoint: ${url}`);
-  
+
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -131,13 +140,17 @@ async function startExtraction(airbnbUrl: string): Promise<string> {
       use_ai_classification: false
     })
   });
-  
+
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`❌ Erreur HTTP du service de scraping:`);
+    console.error(`   Status: ${response.status}`);
+    console.error(`   Message: ${errorText}`);
     throw new Error(`Erreur HTTP ${response.status}: ${response.statusText}`);
   }
-  
+
   const data = await response.json() as ExtractionStartResponse;
-  
+
   console.log(`✅ Extraction lancée: ${data.extraction_id}`);
   console.log(`⏳ Attente de 2 secondes avant de commencer le polling...`);
 
@@ -196,7 +209,22 @@ async function pollStatusUntilComplete(extractionId: string): Promise<StatusResp
       }
 
       if (statusData.status === 'error') {
-        throw new Error(`Erreur lors de l'extraction: ${statusData.error || statusData.message}`);
+        const errorMessage = statusData.error || statusData.message || 'Erreur inconnue';
+        console.error(`\n❌ ERREUR DU SERVICE PYTHON:`);
+        console.error(`   Message: ${errorMessage}`);
+        console.error(`   Extraction ID: ${extractionId}`);
+        console.error(`   Données complètes:`, JSON.stringify(statusData, null, 2));
+
+        // Message d'erreur plus explicite pour l'utilisateur
+        if (errorMessage.includes('NoneType') && errorMessage.includes('lower')) {
+          throw new Error(
+            `Le service de scraping a rencontré une erreur lors de l'analyse de l'annonce Airbnb. ` +
+            `Cela peut arriver si l'annonce ne contient pas toutes les informations attendues (nom de pièce manquant, etc.). ` +
+            `Veuillez vérifier que l'URL Airbnb est valide et contient des informations complètes sur les pièces.`
+          );
+        }
+
+        throw new Error(`Erreur lors de l'extraction: ${errorMessage}`);
       }
 
       // Attendre 3 secondes avant la prochaine tentative

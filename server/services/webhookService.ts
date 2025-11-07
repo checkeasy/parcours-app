@@ -36,13 +36,13 @@ const WEBHOOK_CONFIG = {
 
   // Création d'un modèle personnalisé
   createModele: {
-    production: 'https://checkeasy-57905.bubbleapps.io/api/1.1/wf/createmodeleparcour',
+    production: 'https://checkeasy-57905.bubbleapps.io/version-live/api/1.1/wf/createmodeleparcour',
     test: 'https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/createmodeleparcour',
   },
 
   // Suppression d'un modèle personnalisé
   deleteModele: {
-    production: 'https://checkeasy-57905.bubbleapps.io/api/1.1/wf/apideletemodele',
+    production: 'https://checkeasy-57905.bubbleapps.io/version-live/api/1.1/wf/apideletemodele',
     test: 'https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/apideletemodele',
   },
 
@@ -550,6 +550,11 @@ export async function sendWebhookToBubble(payload: WebhookPayload): Promise<void
     const createPieceEndpoint = isTestMode
       ? WEBHOOK_CONFIG.createPiece.test
       : WEBHOOK_CONFIG.createPiece.production;
+
+    console.log(`\n🎯 ENDPOINTS SÉLECTIONNÉS:`);
+    console.log(`   📍 Logement: ${createLogementEndpoint}`);
+    console.log(`   📍 Pièces: ${createPieceEndpoint}`);
+    console.log(`   🔧 Mode: ${isTestMode ? 'TEST (version-test)' : 'PRODUCTION (version-live)'}\n`);
 
     // Get the parcours name
     const nomParcours = typeof logementData.modele === 'string'
