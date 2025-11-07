@@ -20,6 +20,7 @@ import { AirbnbResultDialog } from "./AirbnbResultDialog";
 import { ParcoursModele } from "@/types/modele";
 import { dispatchWebhook } from "@/utils/webhook";
 import { AddressAutocomplete } from "@/components/ui/address-autocomplete";
+import { AddressAutocompleteV2 } from "@/components/ui/address-autocomplete-v2";
 import { useGoogleMaps } from "@/hooks/useGoogleMaps";
 
 interface PieceQuantity {
@@ -231,27 +232,35 @@ export function AddLogementDialog({
           className={isFullScreenMode ? "w-screen h-screen max-w-none max-h-none m-0 rounded-none p-3 sm:p-4 md:p-6 gap-1 sm:gap-2" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
           hideCloseButton={isFullScreenMode}
         >
+          {/* DialogHeader commun pour toutes les étapes (pour accessibilité) */}
+          <DialogHeader className={step === 1 ? (isFullScreenMode ? "pb-0" : "") : "sr-only"}>
+            {step === 1 && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-3 top-3 sm:right-4 sm:top-4 h-8 w-8 sm:h-8 sm:w-8 z-50"
+                onClick={handleClose}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+            <div className={step === 1 ? "space-y-1 sm:space-y-2" : ""}>
+              <DialogTitle className={step === 1 ? (isFullScreenMode ? "text-base sm:text-lg md:text-xl pr-8" : "text-lg sm:text-xl md:text-2xl pr-8") : ""}>
+                {step === 1 && "Étape 1/5 - Créer un nouveau logement"}
+                {step === 2 && "Étape 2/5 - Choisir le type de parcours"}
+                {step === 3 && "Étape 3/5 - Sélection du modèle"}
+              </DialogTitle>
+              <DialogDescription className={step === 1 ? "text-xs sm:text-sm text-muted-foreground" : ""}>
+                {step === 1 && "Renseignez les informations de base de votre logement"}
+                {step === 2 && "Choisissez le type de parcours pour votre logement"}
+                {step === 3 && "Choisissez un modèle de parcours pour votre logement"}
+              </DialogDescription>
+            </div>
+          </DialogHeader>
+
           {/* Étape 1 : Informations du logement */}
           {step === 1 && (
             <>
-              <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-3 top-3 sm:right-4 sm:top-4 h-8 w-8 sm:h-8 sm:w-8 z-50"
-                  onClick={handleClose}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-                <div className="space-y-1 sm:space-y-2">
-                  <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl pr-8" : "text-lg sm:text-xl md:text-2xl pr-8"}>
-                    Étape 1/5 - Créer un nouveau logement
-                  </DialogTitle>
-                  <DialogDescription className="text-xs sm:text-sm text-muted-foreground">
-                    Renseignez les informations de base de votre logement
-                  </DialogDescription>
-                </div>
-              </DialogHeader>
 
               <div className={isFullScreenMode ? "space-y-2 sm:space-y-3 overflow-y-auto max-h-[calc(100vh-180px)] sm:max-h-[calc(100vh-200px)] px-1" : "space-y-3 sm:space-y-4 overflow-y-auto max-h-[55vh] sm:max-h-[50vh] px-1"}>
                 <div className="space-y-2">
@@ -272,9 +281,12 @@ export function AddLogementDialog({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="adresse">Adresse postale (facultatif)</Label>
+                  <Label htmlFor="adresse">
+                    Adresse postale (facultatif)
+                    {isGoogleMapsLoaded && <span className="text-xs text-green-600 ml-2">✓ Google Maps</span>}
+                  </Label>
                   {isGoogleMapsLoaded ? (
-                    <AddressAutocomplete
+                    <AddressAutocompleteV2
                       id="adresse"
                       placeholder="Ex: 15 Rue de la Paix, 75002 Paris"
                       value={adresse}
@@ -325,7 +337,7 @@ export function AddLogementDialog({
           {/* Étape 2 : Type de parcours */}
           {step === 2 && (
             <>
-              <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
+              <div className="relative">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -342,15 +354,15 @@ export function AddLogementDialog({
                 >
                   <X className="h-4 w-4" />
                 </Button>
-                <div className="pl-8 sm:pl-10 pr-8">
-                  <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
+                <div className="pl-8 sm:pl-10 pr-8 pb-3 sm:pb-4">
+                  <h2 className={isFullScreenMode ? "text-base sm:text-lg md:text-xl font-semibold" : "text-lg sm:text-xl md:text-2xl font-semibold"}>
                     Étape 2/5 - On commence par quel parcours ?
-                  </DialogTitle>
-                  <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
+                  </h2>
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
                     Vous pourrez ajouter l'autre ensuite en 1 clic.
-                  </DialogDescription>
+                  </p>
                 </div>
-              </DialogHeader>
+              </div>
 
               <div className={isFullScreenMode ? "grid grid-cols-1 gap-3 sm:gap-4" : "grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"}>
                 <Card
@@ -394,7 +406,7 @@ export function AddLogementDialog({
             </>
           )}
 
-          {/* Étape 3 gérée par SelectModeleDialog */}
+          {/* Étape 3 gérée par SelectModeleDialog - pas de contenu ici */}
         </DialogContent>
       </Dialog>
 

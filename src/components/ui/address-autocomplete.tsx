@@ -12,13 +12,15 @@ export const AddressAutocomplete = React.forwardRef<HTMLInputElement, AddressAut
     const containerRef = React.useRef<HTMLDivElement>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
     const autocompleteRef = React.useRef<google.maps.places.Autocomplete | null>(null);
-    const [internalValue, setInternalValue] = React.useState(value);
+    const isSelectingFromAutocomplete = React.useRef(false);
 
     React.useImperativeHandle(ref, () => inputRef.current!);
 
-    // Synchroniser la valeur interne avec la prop value
+    // Synchroniser la valeur du champ avec la prop value uniquement si ce n'est pas une sélection Google Maps
     React.useEffect(() => {
-      setInternalValue(value);
+      if (inputRef.current && !isSelectingFromAutocomplete.current) {
+        inputRef.current.value = value;
+      }
     }, [value]);
 
     React.useEffect(() => {
@@ -49,9 +51,23 @@ export const AddressAutocomplete = React.forwardRef<HTMLInputElement, AddressAut
 
           if (place && place.formatted_address) {
             console.log("✅ Adresse formatée:", place.formatted_address);
-            setInternalValue(place.formatted_address);
+
+            // Marquer qu'on est en train de sélectionner depuis l'autocomplétion
+            isSelectingFromAutocomplete.current = true;
+
+            // Mettre à jour la valeur du champ directement
+            if (inputRef.current) {
+              inputRef.current.value = place.formatted_address;
+            }
+
+            // Notifier le parent du changement
             onChange(place.formatted_address);
             onPlaceSelected?.(place);
+
+            // Réinitialiser le flag après un court délai
+            setTimeout(() => {
+              isSelectingFromAutocomplete.current = false;
+            }, 100);
           } else {
             console.warn("⚠️ Aucune adresse formatée trouvée dans le résultat");
           }
@@ -67,7 +83,32 @@ export const AddressAutocomplete = React.forwardRef<HTMLInputElement, AddressAut
           }
         };
 
+        // Empêcher le blur quand on clique sur les suggestions
+        const handleMouseDownOnPac = (e: MouseEvent) => {
+          const target = e.target as HTMLElement;
+          // Vérifier si le clic est sur une suggestion Google Maps
+          if (target.closest('.pac-container')) {
+            console.log("🖱️ Clic sur suggestion détecté - empêcher le blur");
+            // Empêcher le blur du champ input
+            e.preventDefault();
+          }
+        };
+
+        // Gérer le focus pour éviter que le champ perde le focus
+        const handleBlur = (e: FocusEvent) => {
+          const relatedTarget = e.relatedTarget as HTMLElement;
+          if (relatedTarget?.closest('.pac-container')) {
+            console.log("🔍 Blur vers suggestion - refocus");
+            e.preventDefault();
+            inputRef.current?.focus();
+          }
+        };
+
         inputRef.current.addEventListener("keydown", handleKeyDown);
+        inputRef.current.addEventListener("blur", handleBlur);
+
+        // Ajouter l'écouteur sur le document pour capturer les clics sur les suggestions
+        document.addEventListener("mousedown", handleMouseDownOnPac, true);
 
         // Nettoyage
         return () => {
@@ -76,7 +117,9 @@ export const AddressAutocomplete = React.forwardRef<HTMLInputElement, AddressAut
           }
           if (inputRef.current) {
             inputRef.current.removeEventListener("keydown", handleKeyDown);
+            inputRef.current.removeEventListener("blur", handleBlur);
           }
+          document.removeEventListener("mousedown", handleMouseDownOnPac, true);
         };
       } catch (error) {
         console.error("❌ Erreur lors de l'initialisation de l'autocomplétion:", error);
@@ -85,7 +128,6 @@ export const AddressAutocomplete = React.forwardRef<HTMLInputElement, AddressAut
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const newValue = e.target.value;
-      setInternalValue(newValue);
       onChange(newValue);
     };
 
@@ -99,7 +141,7 @@ export const AddressAutocomplete = React.forwardRef<HTMLInputElement, AddressAut
             "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
             className
           )}
-          value={internalValue}
+          defaultValue={value}
           onChange={handleInputChange}
           placeholder={placeholder}
           autoComplete="off"

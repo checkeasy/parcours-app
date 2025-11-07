@@ -9,6 +9,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { X, Upload } from "lucide-react";
 
@@ -77,13 +78,18 @@ export function TacheDialog({
       <DialogContent className="max-w-md">
         <DialogHeader className="border-b pb-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>{tache ? "Modifier la tâche" : "Nouvelle To Do pour"}</span>
-              <span className="font-medium text-foreground">{pieceNom}</span>
+            <div>
+              <DialogTitle className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>{tache ? "Modifier la tâche" : "Nouvelle To Do pour"}</span>
+                <span className="font-medium text-foreground">{pieceNom}</span>
+              </DialogTitle>
+              <DialogDescription className="sr-only">
+                {tache ? "Modifier une tâche existante" : `Ajouter une nouvelle tâche pour ${pieceNom}`}
+              </DialogDescription>
             </div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-6 w-6"
               onClick={() => onOpenChange(false)}
             >

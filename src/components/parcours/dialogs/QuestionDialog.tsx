@@ -10,6 +10,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { X, Maximize2 } from "lucide-react";
 import { QuestionModele } from "@/types/modele";
@@ -64,20 +65,25 @@ export function QuestionDialog({
       <DialogContent className="max-w-md w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
         <DialogHeader className="border-b pb-3 sm:pb-4">
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-xs sm:text-sm font-normal">
-              Question pour <span className="font-medium">Parcours personnalisé</span>
-            </DialogTitle>
+            <div>
+              <DialogTitle className="text-xs sm:text-sm font-normal">
+                Question pour <span className="font-medium">Parcours personnalisé</span>
+              </DialogTitle>
+              <DialogDescription className="sr-only">
+                Configurez une question pour votre parcours personnalisé
+              </DialogDescription>
+            </div>
             <div className="flex items-center gap-1">
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-6 w-6 hidden sm:flex"
               >
                 <Maximize2 className="h-4 w-4" />
               </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-6 w-6"
                 onClick={() => onOpenChange(false)}
               >

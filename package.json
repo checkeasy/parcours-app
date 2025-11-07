@@ -12,7 +12,11 @@
     "preview": "vite preview",
     "server": "tsx watch server/index.ts",
     "server:prod": "tsx server/index.ts",
-    "start": "concurrently \"npm run server\" \"npm run dev\" --names \"BACKEND,FRONTEND\" --prefix-colors \"cyan,magenta\""
+    "start": "concurrently \"npm run server\" \"npm run dev\" --names \"BACKEND,FRONTEND\" --prefix-colors \"cyan,magenta\"",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
