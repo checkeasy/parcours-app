@@ -112,3 +112,40 @@ export const dispatchModeleWebhook = async (modeleData: ParcoursModele) => {
   }
 };
 
+// Function to dispatch delete modele webhook via backend server
+export const dispatchDeleteModeleWebhook = async (modeleId: string) => {
+  try {
+    // Prepare payload for backend
+    const payload = {
+      conciergerieID: getConciergerieID(),
+      userID: getUserID(),
+      isTestMode: isTestMode(),
+      modeleId,
+    };
+
+    console.log('🗑️ Sending delete modele webhook request to backend server...');
+    console.log('   Modele ID:', modeleId);
+
+    // Send to backend server
+    const response = await fetch(`${BACKEND_URL}/api/delete-modele-webhook`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Backend request failed: ${response.status} ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    console.log('✅ Delete modele webhook request accepted by backend:', result);
+
+    return { success: true, modeleId: result.modeleId };
+  } catch (error) {
+    console.error('❌ Failed to send delete modele webhook request to backend:', error);
+    return { success: false, error };
+  }
+};
+

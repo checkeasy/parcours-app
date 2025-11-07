@@ -67,9 +67,13 @@ export default function SelectPiecesDialog({
       const tasks = tasksSource[pieceName] || [];
       return tasks.length;
     } else {
-      // Pour les modèles personnalisés, compter les tâches réellement définies
+      // Pour les modèles personnalisés, compter les tâches sélectionnées dans le modèle
       const pieceData = selectedModele.pieces.find(p => p.nom === pieceName);
-      return pieceData ? pieceData.tachesDisponibles.length : 0;
+      console.log(`🔍 DEBUG - Pièce: ${pieceName}`);
+      console.log(`   - pieceData:`, pieceData);
+      console.log(`   - tachesDisponibles:`, pieceData?.tachesDisponibles.length);
+      console.log(`   - tachesSelectionnees:`, pieceData?.tachesSelectionnees.length);
+      return pieceData ? pieceData.tachesSelectionnees.length : 0;
     }
   };
 
@@ -106,7 +110,7 @@ export default function SelectPiecesDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={isFullScreenMode ? "w-screen h-screen max-w-none max-h-none m-0 rounded-none overflow-auto p-3 sm:p-4 md:p-6 gap-2 sm:gap-3" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
+        className={isFullScreenMode ? "w-screen h-screen max-w-none max-h-none m-0 rounded-none overflow-auto p-3 sm:p-4 md:p-6 gap-1 sm:gap-2" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
         hideCloseButton={isFullScreenMode}
       >
         <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
@@ -114,7 +118,7 @@ export default function SelectPiecesDialog({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8"
+              className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8 z-50"
               onClick={onBack}
             >
               <ArrowLeft className="h-4 w-4" />
@@ -123,7 +127,7 @@ export default function SelectPiecesDialog({
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-3 top-3 sm:right-4 sm:top-4 h-8 w-8"
+            className="absolute right-3 top-3 sm:right-4 sm:top-4 h-8 w-8 z-50"
             onClick={() => onOpenChange(false)}
           >
             <X className="h-4 w-4" />

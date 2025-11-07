@@ -10,6 +10,12 @@ export const webhookConfig = {
     production: 'https://checkeasy-57905.bubbleapps.io/version-live/api/1.1/wf/createpiece/',
     test: 'https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/createpiece',
   },
+
+  // Suppression d'un modèle personnalisé (parcours modèle)
+  deleteModele: {
+    production: 'https://checkeasy-57905.bubbleapps.io/api/1.1/wf/apideletemodele',
+    test: 'https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/apideletemodele',
+  },
 } as const;
 
 export type WebhookConfig = typeof webhookConfig;

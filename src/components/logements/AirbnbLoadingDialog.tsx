@@ -236,12 +236,12 @@ export function AirbnbLoadingDialog({
         className={isFullScreenMode ? "w-screen h-screen max-w-none max-h-none m-0 rounded-none overflow-auto" : "max-w-md mx-4 overflow-hidden"}
         hideCloseButton={isFullScreenMode}
       >
-        <DialogHeader>
+        <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
           {onBack && (
             <Button
               variant="ghost"
               size="icon"
-              className="absolute left-4 top-4 h-8 w-8"
+              className="absolute left-4 top-4 h-8 w-8 z-50"
               onClick={onBack}
             >
               <ArrowLeft className="h-4 w-4" />
@@ -251,7 +251,7 @@ export function AirbnbLoadingDialog({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-4 top-4 h-8 w-8"
+              className="absolute right-4 top-4 h-8 w-8 z-50"
               onClick={onClose}
             >
               <X className="h-4 w-4" />

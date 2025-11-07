@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ParcoursModele } from "@/types/modele";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
-import { dispatchWebhook, dispatchModeleWebhook } from "@/utils/webhook";
+import { dispatchWebhook, dispatchModeleWebhook, dispatchDeleteModeleWebhook } from "@/utils/webhook";
 import {
   loadModelesFromBubble,
   loadAndMergeModeles,
@@ -87,8 +87,8 @@ function App() {
     const logementId = `logement_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     setLogements([...logements, { ...data, id: Date.now(), logementId }]);
     toast({
-      title: "Logement créé !",
-      description: `Le logement "${data.nom}" a été créé avec succès.`,
+      title: "Parcours créé !",
+      description: `Le parcours "${data.nom}" a été créé avec succès. Il peut prendre jusqu'à 2 minutes pour apparaître avec les photos.`,
     });
 
     // En mode plein écran, rafraîchir la page après l'envoi du webhook
@@ -111,35 +111,46 @@ function App() {
     console.log("Modèle personnalisé sauvegardé:", modele);
 
     let updatedModeles: ParcoursModele[];
+    const isUpdate = !!editingModele;
 
-    if (editingModele) {
+    if (isUpdate) {
       // Mise à jour d'un modèle existant
       updatedModeles = customModeles.map(m => m.id === modele.id ? modele : m);
       setCustomModeles(updatedModeles);
-      toast({
-        title: "Modèle mis à jour !",
-        description: `Le modèle "${modele.nom}" a été mis à jour avec succès.`,
-      });
     } else {
       // Création d'un nouveau modèle
       updatedModeles = [...customModeles, modele];
       setCustomModeles(updatedModeles);
+    }
 
-      // Send webhook to Bubble.io
+    // Send webhook to Bubble.io (for both create and update)
+    try {
+      console.log(`📤 Sending ${isUpdate ? 'update' : 'create'} webhook for modele: ${modele.nom}`);
       const webhookResult = await dispatchModeleWebhook(modele);
 
       if (webhookResult.success) {
         toast({
-          title: "Modèle créé !",
-          description: `Le modèle "${modele.nom}" a été créé avec succès et envoyé à Bubble.`,
+          title: isUpdate ? "Modèle mis à jour !" : "Modèle créé !",
+          description: isUpdate
+            ? `Le modèle "${modele.nom}" a été mis à jour avec succès et envoyé à Bubble.`
+            : `Le modèle "${modele.nom}" a été créé avec succès et envoyé à Bubble.`,
         });
       } else {
         toast({
-          title: "Modèle créé localement",
-          description: `Le modèle "${modele.nom}" a été créé mais l'envoi à Bubble a échoué.`,
+          title: isUpdate ? "Modèle mis à jour localement" : "Modèle créé localement",
+          description: isUpdate
+            ? `Le modèle "${modele.nom}" a été mis à jour mais l'envoi à Bubble a échoué.`
+            : `Le modèle "${modele.nom}" a été créé mais l'envoi à Bubble a échoué.`,
           variant: "destructive",
         });
       }
+    } catch (error) {
+      console.error('❌ Error sending modele webhook:', error);
+      toast({
+        title: isUpdate ? "Modèle mis à jour localement" : "Modèle créé localement",
+        description: `Le modèle "${modele.nom}" a été ${isUpdate ? 'mis à jour' : 'créé'} mais l'envoi à Bubble a échoué.`,
+        variant: "destructive",
+      });
     }
 
     // Sauvegarder dans le localStorage
@@ -178,13 +189,32 @@ function App() {
     }
   };
 
-  const handleDeleteCustom = (modeleId: string) => {
+  const handleDeleteCustom = async (modeleId: string) => {
     const modele = customModeles.find(m => m.id === modeleId);
+
+    // Remove from local state
     setCustomModeles(customModeles.filter(m => m.id !== modeleId));
+
+    // Show success toast
     toast({
       title: "Modèle supprimé",
       description: `Le modèle "${modele?.nom}" a été supprimé.`,
     });
+
+    // Send delete webhook to Bubble.io
+    try {
+      console.log(`🗑️ Sending delete webhook for modele: ${modele?.nom} (ID: ${modeleId})`);
+      const result = await dispatchDeleteModeleWebhook(modeleId);
+
+      if (result.success) {
+        console.log('✅ Delete webhook sent successfully');
+      } else {
+        console.error('⚠️ Delete webhook failed, but modele was removed locally');
+      }
+    } catch (error) {
+      console.error('❌ Error sending delete webhook:', error);
+      // Don't show error to user since the modele was already removed locally
+    }
   };
 
   const handleEditCustom = (modele: ParcoursModele) => {

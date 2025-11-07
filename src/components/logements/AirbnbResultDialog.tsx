@@ -44,14 +44,27 @@ export function AirbnbResultDialog({
 }: AirbnbResultDialogProps) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [expandedPieces, setExpandedPieces] = useState<Set<string>>(new Set());
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   // Réinitialiser l'état quand le dialog s'ouvre
   useEffect(() => {
     if (open) {
       setViewMode("grid");
       setExpandedPieces(new Set());
+      setShowConfirmation(false);
     }
   }, [open]);
+
+  // Gérer la fermeture automatique après confirmation
+  useEffect(() => {
+    if (showConfirmation) {
+      const timer = setTimeout(() => {
+        onConfirm(pieces);
+      }, 3000); // 3 secondes
+
+      return () => clearTimeout(timer);
+    }
+  }, [showConfirmation, pieces, onConfirm]);
 
   const activePiecesCount = pieces.length;
 
@@ -65,17 +78,43 @@ export function AirbnbResultDialog({
     setExpandedPieces(newExpanded);
   };
 
+  const handleTerminer = () => {
+    setShowConfirmation(true);
+  };
+
   return (
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent
         className={isFullScreenMode ? "w-screen h-screen max-w-none max-h-none m-0 rounded-none overflow-auto flex flex-col" : "max-w-[95vw] sm:max-w-[900px] max-h-[90vh] overflow-hidden flex flex-col"}
         hideCloseButton={isFullScreenMode}
       >
-        <DialogHeader>
+        {showConfirmation ? (
+          // Page de confirmation
+          <div className="flex flex-col items-center justify-center h-full py-12">
+            <div className="text-center space-y-6 max-w-md">
+              <div className="flex justify-center">
+                <div className="h-20 w-20 rounded-full bg-success/10 flex items-center justify-center">
+                  <CheckCircle2 className="h-10 w-10 text-success" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-2xl font-semibold">Logement validé !</h2>
+                <p className="text-muted-foreground">
+                  Le logement va s'afficher dans quelques secondes...
+                </p>
+              </div>
+              <div className="flex justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
           <Button
             variant="ghost"
             size="icon"
-            className="absolute left-4 top-4 h-8 w-8"
+            className="absolute left-4 top-4 h-8 w-8 z-50"
             onClick={onBack}
           >
             <ArrowLeft className="h-4 w-4" />
@@ -84,7 +123,7 @@ export function AirbnbResultDialog({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-4 top-4 h-8 w-8"
+              className="absolute right-4 top-4 h-8 w-8 z-50"
               onClick={onClose}
             >
               <X className="h-4 w-4" />
@@ -236,12 +275,14 @@ export function AirbnbResultDialog({
           </div>
         </div>
 
-        {/* Footer avec bouton terminer */}
-        <div className="flex justify-end pt-4 border-t">
-          <Button onClick={() => onConfirm(pieces)} size="lg" className="min-w-[150px]">
-            Terminer
-          </Button>
-        </div>
+            {/* Footer avec bouton terminer */}
+            <div className="flex justify-end pt-4 border-t">
+              <Button onClick={handleTerminer} size="lg" className="min-w-[150px]">
+                Terminer
+              </Button>
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

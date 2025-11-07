@@ -14,6 +14,13 @@ interface ModeleWebhookPayload {
   modeleData: any;
 }
 
+interface DeleteModeleWebhookPayload {
+  conciergerieID: string;
+  userID: string;
+  isTestMode: boolean;
+  modeleId: string;
+}
+
 const WEBHOOK_CONFIG = {
   // Étape 1 : Création du logement et du parcours (sans les pièces)
   createLogement: {
@@ -31,6 +38,12 @@ const WEBHOOK_CONFIG = {
   createModele: {
     production: 'https://checkeasy-57905.bubbleapps.io/api/1.1/wf/createmodeleparcour',
     test: 'https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/createmodeleparcour',
+  },
+
+  // Suppression d'un modèle personnalisé
+  deleteModele: {
+    production: 'https://checkeasy-57905.bubbleapps.io/api/1.1/wf/apideletemodele',
+    test: 'https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/apideletemodele',
   },
 
   // Service de scraping Airbnb (centralisé ici pour cohérence)
@@ -618,75 +631,84 @@ export async function sendWebhookToBubble(payload: WebhookPayload): Promise<void
     // ÉTAPE 2 : Créer chaque pièce individuellement
     // ========================================
     const pieces = logementData.pieces || [];
-    const totalPieces = pieces.length;
 
-    console.log(`\n📤 ÉTAPE 2/2 : Création des pièces (${totalPieces} pièces)...`);
+    // Calculer le nombre total d'instances de pièces (en tenant compte des quantités)
+    const totalPieceInstances = pieces.reduce((sum: number, piece: any) => sum + piece.quantite, 0);
+
+    console.log(`\n📤 ÉTAPE 2/2 : Création des pièces (${totalPieceInstances} instances de pièces)...`);
     console.log(`   Endpoint: ${createPieceEndpoint}`);
 
     let successCount = 0;
     let errorCount = 0;
+    let instanceNumber = 0;
 
+    // Itérer sur chaque type de pièce
     for (let i = 0; i < pieces.length; i++) {
       const piece = pieces[i];
-      const pieceNumber = i + 1;
 
-      try {
-        console.log(`\n   📦 Pièce ${pieceNumber}/${totalPieces}: ${piece.nom} (quantité: ${piece.quantite})`);
+      // Créer chaque instance de cette pièce (selon la quantité)
+      for (let j = 0; j < piece.quantite; j++) {
+        instanceNumber++;
+        const instanceLabel = piece.quantite > 1 ? `${piece.nom} ${j + 1}` : piece.nom;
 
-        // Get tasks for this piece
-        const tasks = getTasksForPiece(piece.nom, logementData.modele);
-        const photosRaw = logementData.piecesPhotos[piece.nom] || [];
+        try {
+          console.log(`\n   📦 Pièce ${instanceNumber}/${totalPieceInstances}: ${instanceLabel}`);
 
-        // Transform photos into objects with type
-        const photos = photosRaw.map((photo: string) => {
-          if (photo.startsWith('data:image')) {
-            return {
-              data: photo,
-              type: 'base64'
-            };
-          } else {
-            return {
-              url: photo,
-              type: 'url'
-            };
+          // Get tasks for this piece
+          const tasks = getTasksForPiece(piece.nom, logementData.modele);
+          const photosRaw = logementData.piecesPhotos[piece.nom] || [];
+
+          // Transform photos into objects with type
+          const photos = photosRaw.map((photo: string) => {
+            if (photo.startsWith('data:image')) {
+              return {
+                data: photo,
+                type: 'base64'
+              };
+            } else {
+              return {
+                url: photo,
+                type: 'url'
+              };
+            }
+          });
+
+          // Debug log to check modele type
+          const modeleType = typeof logementData.modele === 'string' ? logementData.modele : 'custom';
+          console.log(`      - Modèle: ${modeleType}`);
+          console.log(`      - Tâches: ${tasks.length}`);
+          console.log(`      - Photos: ${photos.length}`);
+
+          const piecePayload = {
+            logementID: logementID,
+            parcourID: parcourID,
+            nom: instanceLabel, // Utiliser le nom avec numéro si quantité > 1
+            quantite: 1, // Toujours 1 car on crée chaque instance séparément
+            tasks: tasks,
+            photos: photos,
+          };
+
+          const pieceResponse = await fetch(createPieceEndpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(piecePayload),
+          });
+
+          if (!pieceResponse.ok) {
+            const errorText = await pieceResponse.text();
+            throw new Error(`${pieceResponse.status} ${pieceResponse.statusText} - ${errorText}`);
           }
-        });
 
-        // Debug log to check modele type
-        const modeleType = typeof logementData.modele === 'string' ? logementData.modele : 'custom';
-        console.log(`      - Modèle: ${modeleType}`);
-        console.log(`      - Tâches: ${tasks.length}`);
-        console.log(`      - Photos: ${photos.length}`);
+          console.log(`      ✅ Pièce créée avec succès`);
+          successCount++;
 
-        const piecePayload = {
-          logementID: logementID,
-          parcourID: parcourID,
-          nom: piece.nom,
-          quantite: piece.quantite,
-          tasks: tasks,
-          photos: photos,
-        };
-
-        const pieceResponse = await fetch(createPieceEndpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(piecePayload),
-        });
-
-        if (!pieceResponse.ok) {
-          const errorText = await pieceResponse.text();
-          throw new Error(`${pieceResponse.status} ${pieceResponse.statusText} - ${errorText}`);
+        } catch (error) {
+          console.error(`      ❌ Erreur lors de la création de la pièce "${instanceLabel}":`, error);
+          errorCount++;
+          // Continue avec les autres pièces même en cas d'erreur
         }
-
-        console.log(`      ✅ Pièce créée avec succès`);
-        successCount++;
-
-      } catch (error) {
-        console.error(`      ❌ Erreur lors de la création de la pièce "${piece.nom}":`, error);
-        errorCount++;
-        // Continue avec les autres pièces même en cas d'erreur
       }
     }
 
@@ -697,14 +719,14 @@ export async function sendWebhookToBubble(payload: WebhookPayload): Promise<void
     console.log(`✅ WEBHOOK TERMINÉ pour logement: ${logementData.nom}`);
     console.log(`   - Logement créé: ✅`);
     console.log(`   - Parcours créé: ✅`);
-    console.log(`   - Pièces créées: ${successCount}/${totalPieces}`);
+    console.log(`   - Pièces créées: ${successCount}/${totalPieceInstances}`);
     if (errorCount > 0) {
       console.log(`   - Erreurs: ${errorCount} pièce(s) en échec`);
     }
     console.log(`${'='.repeat(60)}\n`);
 
-    if (errorCount === totalPieces && totalPieces > 0) {
-      throw new Error(`Toutes les pièces ont échoué (${errorCount}/${totalPieces})`);
+    if (errorCount === totalPieceInstances && totalPieceInstances > 0) {
+      throw new Error(`Toutes les pièces ont échoué (${errorCount}/${totalPieceInstances})`);
     }
 
   } catch (error) {
@@ -716,7 +738,8 @@ export async function sendWebhookToBubble(payload: WebhookPayload): Promise<void
 
 /**
  * Send modele webhook to Bubble.io
- * Creates a custom model (modèle personnalisé) on Bubble
+ * Creates or updates a custom model (modèle personnalisé) on Bubble
+ * Bubble.io will detect if it's an update based on the existing modele ID
  */
 export async function sendModeleWebhookToBubble({
   conciergerieID,
@@ -727,8 +750,13 @@ export async function sendModeleWebhookToBubble({
   try {
     const endpoint = isTestMode ? WEBHOOK_CONFIG.createModele.test : WEBHOOK_CONFIG.createModele.production;
 
+    // Detect if it's likely an update (ID starts with 'check_') or a new creation (ID starts with 'custom-')
+    const isLikelyUpdate = modeleData.id.startsWith('check_');
+
     console.log(`📤 Sending modele webhook to ${isTestMode ? 'TEST' : 'PRODUCTION'} endpoint...`);
+    console.log(`   Action: ${isLikelyUpdate ? 'UPDATE' : 'CREATE'} (Bubble will determine based on ID)`);
     console.log(`   Endpoint: ${endpoint}`);
+    console.log(`   Modele ID: ${modeleData.id}`);
     console.log(`   Modele: ${modeleData.nom}`);
     console.log(`   Type: ${modeleData.type}`);
     console.log(`   État des lieux: ${modeleData.etatLieuxMoment || 'non défini'}`);
@@ -771,6 +799,58 @@ export async function sendModeleWebhookToBubble({
 
   } catch (error) {
     console.error(`\n❌ ÉCHEC du webhook pour modèle: ${modeleData.nom}`);
+    console.error(error);
+    throw error;
+  }
+}
+
+/**
+ * Send delete modele webhook to Bubble.io
+ * Notifies Bubble when a custom model (modèle personnalisé) is deleted
+ */
+export async function sendDeleteModeleWebhookToBubble({
+  conciergerieID,
+  userID,
+  isTestMode,
+  modeleId,
+}: DeleteModeleWebhookPayload) {
+  try {
+    const endpoint = isTestMode ? WEBHOOK_CONFIG.deleteModele.test : WEBHOOK_CONFIG.deleteModele.production;
+
+    console.log(`🗑️ Sending delete modele webhook to ${isTestMode ? 'TEST' : 'PRODUCTION'} endpoint...`);
+    console.log(`   Endpoint: ${endpoint}`);
+    console.log(`   Modele ID: ${modeleId}`);
+    console.log(`   ConciergerieID: ${conciergerieID}`);
+    console.log(`   UserID: ${userID}`);
+
+    // Prepare payload
+    const payload = {
+      conciergerieID,
+      userID,
+      modeleId,
+    };
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Delete webhook failed: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    const result = await response.json();
+    console.log(`✅ Delete modele webhook sent successfully`);
+    console.log(`   Response:`, result);
+
+    return result;
+
+  } catch (error) {
+    console.error(`\n❌ ÉCHEC du webhook de suppression pour modèle ID: ${modeleId}`);
     console.error(error);
     throw error;
   }

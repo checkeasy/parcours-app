@@ -72,7 +72,15 @@ export function AddLogementDialog({
   const [airbnbTotalPhotos, setAirbnbTotalPhotos] = useState(0);
 
   // Charger l'API Google Maps
-  const { isLoaded: isGoogleMapsLoaded } = useGoogleMaps();
+  const { isLoaded: isGoogleMapsLoaded, loadError } = useGoogleMaps();
+
+  // Log pour déboguer
+  useEffect(() => {
+    console.log("📍 AddLogementDialog - Google Maps chargé:", isGoogleMapsLoaded);
+    if (loadError) {
+      console.error("📍 AddLogementDialog - Erreur:", loadError);
+    }
+  }, [isGoogleMapsLoaded, loadError]);
 
   const handleReset = () => {
     setStep(1);
@@ -220,23 +228,21 @@ export function AddLogementDialog({
         }
       }}>
         <DialogContent
-          className={isFullScreenMode ? "w-screen h-screen max-w-none max-h-none m-0 rounded-none p-3 sm:p-4 md:p-6 gap-2 sm:gap-3" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
+          className={isFullScreenMode ? "w-screen h-screen max-w-none max-h-none m-0 rounded-none p-3 sm:p-4 md:p-6 gap-1 sm:gap-2" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
           hideCloseButton={isFullScreenMode}
         >
           {/* Étape 1 : Informations du logement */}
           {step === 1 && (
             <>
               <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
-                {!isFullScreenMode && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-3 top-3 sm:right-4 sm:top-4 h-8 w-8 sm:h-8 sm:w-8"
-                    onClick={handleClose}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-3 top-3 sm:right-4 sm:top-4 h-8 w-8 sm:h-8 sm:w-8 z-50"
+                  onClick={handleClose}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
                 <div className="space-y-1 sm:space-y-2">
                   <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl pr-8" : "text-lg sm:text-xl md:text-2xl pr-8"}>
                     Étape 1/5 - Créer un nouveau logement
@@ -323,7 +329,7 @@ export function AddLogementDialog({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8 sm:h-8 sm:w-8"
+                  className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8 sm:h-8 sm:w-8 z-50"
                   onClick={() => setStep(1)}
                 >
                   <ArrowLeft className="h-4 w-4" />
@@ -331,7 +337,7 @@ export function AddLogementDialog({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-3 top-3 sm:right-4 sm:top-4 h-8 w-8 sm:h-8 sm:w-8"
+                  className="absolute right-3 top-3 sm:right-4 sm:top-4 h-8 w-8 sm:h-8 sm:w-8 z-50"
                   onClick={handleClose}
                 >
                   <X className="h-4 w-4" />
@@ -346,7 +352,7 @@ export function AddLogementDialog({
                 </div>
               </DialogHeader>
 
-              <div className={isFullScreenMode ? "grid grid-cols-1 gap-3 sm:gap-4" : "grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 py-3 sm:py-4"}>
+              <div className={isFullScreenMode ? "grid grid-cols-1 gap-3 sm:gap-4" : "grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"}>
                 <Card
                   className="p-4 sm:p-6 cursor-pointer hover:border-primary hover:shadow-lg transition-all group border-2 active:scale-[0.98] sm:hover:scale-[1.02]"
                   onClick={() => handleStep2Next("menage")}

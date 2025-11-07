@@ -699,7 +699,7 @@ export function CustomModeleBuilder({
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
-          className={isFullScreenMode ? "w-screen h-screen max-w-none max-h-none m-0 rounded-none overflow-auto p-3 sm:p-4 md:p-6 gap-2 sm:gap-3" : "max-w-4xl w-[calc(100vw-2rem)] max-w-[95vw] max-h-[92vh] sm:max-h-[90vh] overflow-y-auto"}
+          className={isFullScreenMode ? "w-screen h-screen max-w-none max-h-none m-0 rounded-none overflow-auto p-3 sm:p-4 md:p-6 gap-1 sm:gap-2" : "max-w-4xl w-[calc(100vw-2rem)] max-w-[95vw] max-h-[92vh] sm:max-h-[90vh] overflow-y-auto"}
           hideCloseButton={isFullScreenMode}
         >
           <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
@@ -708,11 +708,7 @@ export function CustomModeleBuilder({
               size="icon"
               className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8"
               onClick={() => {
-                if (isFullScreenMode) {
-                  window.location.reload();
-                } else {
-                  onBack ? onBack() : onOpenChange(false);
-                }
+                onBack ? onBack() : onOpenChange(false);
               }}
             >
               <ArrowLeft className="h-4 w-4" />

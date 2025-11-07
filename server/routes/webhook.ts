@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { sendWebhookToBubble, sendModeleWebhookToBubble } from '../services/webhookService';
+import { sendWebhookToBubble, sendModeleWebhookToBubble, sendDeleteModeleWebhookToBubble } from '../services/webhookService';
 
 export const webhookRouter = express.Router();
 
@@ -108,6 +108,55 @@ webhookRouter.post('/send-modele-webhook', async (req: Request, res: Response) =
 
   } catch (error) {
     console.error('❌ Error processing modele webhook request:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
+  }
+});
+
+// Endpoint to send delete modele webhook
+webhookRouter.post('/delete-modele-webhook', async (req: Request, res: Response) => {
+  try {
+    const {
+      conciergerieID,
+      userID,
+      isTestMode,
+      modeleId,
+    } = req.body;
+
+    // Validate required fields
+    if (!modeleId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required field: modeleId',
+      });
+    }
+
+    console.log(`📨 Received delete modele webhook request for ID: ${modeleId}`);
+    console.log(`   - Test mode: ${isTestMode ? 'YES' : 'NO'}`);
+    console.log(`   - ConciergerieID: ${conciergerieID}`);
+    console.log(`   - UserID: ${userID}`);
+
+    // Send webhook asynchronously (non-blocking)
+    sendDeleteModeleWebhookToBubble({
+      conciergerieID,
+      userID,
+      isTestMode,
+      modeleId,
+    }).catch((error) => {
+      console.error('❌ Delete modele webhook failed:', error);
+    });
+
+    // Respond immediately to the frontend
+    res.json({
+      success: true,
+      message: 'Delete modele webhook request accepted and processing in background',
+      modeleId,
+    });
+
+  } catch (error) {
+    console.error('❌ Error processing delete modele webhook request:', error);
     res.status(500).json({
       success: false,
       error: 'Internal server error',
