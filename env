@@ -10,5 +10,5 @@ BUBBLE_API_KEY=your_bubble_api_key_here
 
 # Google Maps API
 # Obtenir une clé API: https://console.cloud.google.com/google/maps-apis
-VITE_GOOGLE_MAPS_API_KEY=AIzaSyCVgVebW0FvlS5Ly1BGJfDO8Csv1G63jz0
+VITE_GOOGLE_MAPS_API_KEY=AIzaSyB4jU_gmu7xz1VRF4cBncN9tjjYwOlRz6M
 

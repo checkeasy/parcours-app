@@ -25,7 +25,8 @@ export const AddressAutocomplete = React.forwardRef<HTMLInputElement, AddressAut
       if (!inputRef.current) return;
 
       try {
-        // Initialiser l'autocomplétion Google Places (ancienne API mais toujours supportée)
+        // Utiliser l'ancienne API Autocomplete (toujours supportée jusqu'en 2025)
+        // Note: Migration vers PlaceAutocompleteElement recommandée mais nécessite des changements majeurs
         autocompleteRef.current = new google.maps.places.Autocomplete(inputRef.current, {
           types: ["address"],
           componentRestrictions: { country: ["fr", "be", "ch", "lu", "mc"] }, // Pays francophones
