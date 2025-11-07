@@ -1,0 +1,136 @@
+{
+  "exemples": [
+    {
+      "description": "Exemple 1 : Logement avec modèle prédéfini Check Easy",
+      "data": {
+        "conciergerieID": "conciergerie_123456",
+        "logementID": "logement_789012",
+        "userID": "user_345678",
+        "nom": "Appartement Paris Centre",
+        "adresse": "15 Rue de la Paix, 75002 Paris",
+        "airbnbLink": "https://www.airbnb.fr/rooms/12345678",
+        "parcoursType": "menage",
+        "modele": {
+          "type": "predefined",
+          "value": "menage"
+        },
+        "pieces": [
+          {
+            "nom": "Cuisine",
+            "quantite": 1
+          },
+          {
+            "nom": "Chambre",
+            "quantite": 2
+          },
+          {
+            "nom": "Salle de bain avec toilettes",
+            "quantite": 1
+          },
+          {
+            "nom": "Salon / Séjour",
+            "quantite": 1
+          }
+        ],
+        "piecesPhotos": {
+          "Cuisine": [
+            "https://example.com/photos/cuisine-1.jpg",
+            "https://example.com/photos/cuisine-2.jpg"
+          ],
+          "Chambre": [
+            "https://example.com/photos/chambre-1.jpg",
+            "https://example.com/photos/chambre-2.jpg",
+            "https://example.com/photos/chambre-3.jpg"
+          ],
+          "Salle de bain avec toilettes": [
+            "https://example.com/photos/sdb-1.jpg"
+          ],
+          "Salon / Séjour": [
+            "https://example.com/photos/salon-1.jpg",
+            "https://example.com/photos/salon-2.jpg"
+          ]
+        }
+      }
+    },
+    {
+      "description": "Exemple 2 : Logement avec modèle personnalisé complet",
+      "data": {
+        "conciergerieID": "conciergerie_123456",
+        "logementID": "logement_345678",
+        "userID": "user_901234",
+        "nom": "Villa Côte d'Azur",
+        "adresse": "25 Avenue des Palmiers, 06400 Cannes",
+        "airbnbLink": "https://www.airbnb.fr/rooms/87654321",
+        "parcoursType": "menage",
+        "modele": {
+          "type": "custom",
+          "value": {
+            "id": "custom-modele-1234",
+            "nom": "Ménage Premium Villa",
+            "type": "menage",
+            "etatLieuxMoment": "arrivee-sortie",
+            "pieces": [
+              {
+                "id": "piece-cuisine-1",
+                "nom": "Cuisine",
+                "tachesDisponibles": [
+                  {
+                    "id": "t-cuisine-1",
+                    "emoji": "🍽️",
+                    "titre": "Vaisselle propre",
+                    "description": "Vérifier que toute la vaisselle est propre et rangée",
+                    "photoObligatoire": true
+                  },
+                  {
+                    "id": "t-cuisine-2",
+                    "emoji": "🧽",
+                    "titre": "Plan de travail",
+                    "description": "Nettoyer et désinfecter les plans de travail",
+                    "photoObligatoire": true
+                  },
+                  {
+                    "id": "t-cuisine-3",
+                    "emoji": "🗑️",
+                    "titre": "Poubelle vidée",
+                    "description": "Vider et nettoyer la poubelle",
+                    "photoObligatoire": false
+                  },
+                  {
+                    "id": "t-cuisine-4",
+                    "emoji": "❄️",
+                    "titre": "Réfrigérateur",
+                    "description": "Vérifier la propreté du réfrigérateur",
+                    "photoObligatoire": true
+                  }
+                ],
+                "tachesSelectionnees": [
+                  "t-cuisine-1",
+                  "t-cuisine-2",
+                  "t-cuisine-4"
+                ]
+              },
+              {
+                "id": "piece-chambre-1",
+                "nom": "Chambre",
+                "tachesDisponibles": [
+                  {
+                    "id": "t-chambre-1",
+                    "emoji": "🛏️",
+                    "titre": "Lit fait",
+                    "description": "Faire le lit avec des draps propres",
+                    "photoObligatoire": true
+                  },
+                  {
+                    "id": "t-chambre-2",
+                    "emoji": "🧹",
+                    "titre": "Sol aspiré",
+                    "description": "Aspirer ou laver le sol",
+                    "photoObligatoire": true
+                  },
+                  {
+                    "id": "t-chambre-3",
+                    "emoji": "🪟",
+                    "titre": "Fenêtres",
+                    "description": "Nettoyer les vitres",
+                    "photoObligatoire": false
+                  }

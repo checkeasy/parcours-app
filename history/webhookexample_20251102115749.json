@@ -1,0 +1,31 @@
+{
+"conciergerieID": "1234567890",
+"logementID": "0987654321",
+"userID": "user1234567890",
+"parcourType": "menage",//ou voyage
+"type": "checkOutOnly" //ou checkInAndCheckOut présent sur le front dans le tabList lors d ela création d'un modele
+"pieces": [
+  {
+    "tasks": [
+      {
+        "id": "t-cuisine-1",
+        "titre": "Vaisselle propre",
+        "description": "Vérifier que toute la vaisselle est propre et rangée",
+        "photoObligatoire": true
+      },
+      {
+        "id": "t-cuisine-2",
+        "titre": "Plan de travail",
+        "description": "Nettoyer et désinfecter les plans
+      },
+    "nom": "Cuisine",
+    "quantite": 1
+  },
+  {
+    "nom": "Chambre",
+    "quantite": 2
+  }
+]
+
+
+}
