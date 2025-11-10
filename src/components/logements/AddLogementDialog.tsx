@@ -112,6 +112,9 @@ export function AddLogementDialog({
       if (initialLogementData.adresse) {
         setAdresse(initialLogementData.adresse);
       }
+      // Passer directement à l'étape 2 si on a un logement existant
+      setStep(2);
+      console.log("🚀 Passage automatique à l'étape 2 (sélection du type de parcours)");
     }
   }, [initialLogementData, open]);
 
@@ -277,8 +280,8 @@ export function AddLogementDialog({
           hideCloseButton={isFullScreenMode}
         >
           {/* DialogHeader commun pour toutes les étapes (pour accessibilité) */}
-          <DialogHeader className={step === 1 ? (isFullScreenMode ? "pb-0" : "") : "sr-only"}>
-            {step === 1 && (
+          <DialogHeader className={step === 1 && !hasExistingLogement ? (isFullScreenMode ? "pb-0" : "") : "sr-only"}>
+            {step === 1 && !hasExistingLogement && (
               <Button
                 variant="ghost"
                 size="icon"
@@ -288,22 +291,22 @@ export function AddLogementDialog({
                 <X className="h-4 w-4" />
               </Button>
             )}
-            <div className={step === 1 ? "space-y-1 sm:space-y-2" : ""}>
-              <DialogTitle className={step === 1 ? (isFullScreenMode ? "text-base sm:text-lg md:text-xl pr-8" : "text-lg sm:text-xl md:text-2xl pr-8") : ""}>
-                {step === 1 && `Étape ${getDisplayedStepNumber(1)}/${getTotalSteps()} - Créer un nouveau logement`}
+            <div className={step === 1 && !hasExistingLogement ? "space-y-1 sm:space-y-2" : ""}>
+              <DialogTitle className={step === 1 && !hasExistingLogement ? (isFullScreenMode ? "text-base sm:text-lg md:text-xl pr-8" : "text-lg sm:text-xl md:text-2xl pr-8") : ""}>
+                {step === 1 && !hasExistingLogement && `Étape ${getDisplayedStepNumber(1)}/${getTotalSteps()} - Créer un nouveau logement`}
                 {step === 2 && `Étape ${getDisplayedStepNumber(2)}/${getTotalSteps()} - Choisir le type de parcours`}
                 {step === 3 && `Étape ${getDisplayedStepNumber(3)}/${getTotalSteps()} - Sélection du modèle`}
               </DialogTitle>
-              <DialogDescription className={step === 1 ? "text-xs sm:text-sm text-muted-foreground" : ""}>
-                {step === 1 && "Renseignez les informations de base de votre logement"}
+              <DialogDescription className={step === 1 && !hasExistingLogement ? "text-xs sm:text-sm text-muted-foreground" : ""}>
+                {step === 1 && !hasExistingLogement && "Renseignez les informations de base de votre logement"}
                 {step === 2 && "Choisissez le type de parcours pour votre logement"}
                 {step === 3 && "Choisissez un modèle de parcours pour votre logement"}
               </DialogDescription>
             </div>
           </DialogHeader>
 
-          {/* Étape 1 : Informations du logement */}
-          {step === 1 && (
+          {/* Étape 1 : Informations du logement - Ne pas afficher si on a un logement existant */}
+          {step === 1 && !hasExistingLogement && (
             <>
 
               <div className={isFullScreenMode ? "space-y-2 sm:space-y-3 overflow-y-auto max-h-[calc(100vh-180px)] sm:max-h-[calc(100vh-200px)] px-1" : "space-y-3 sm:space-y-4 overflow-y-auto max-h-[55vh] sm:max-h-[50vh] px-1"}>
