@@ -1,4 +1,5 @@
 import { ParcoursModele, PieceQuantity } from "@/types/modele";
+import { getBubbleEndpoint } from "@/config/bubbleEndpoints";
 
 // Backend server URL - automatically detects environment
 const BACKEND_URL = import.meta.env.PROD
@@ -23,6 +24,12 @@ export const getUserID = () => {
   return urlParams.get('userID') || 'user_demo';
 };
 
+// Function to get logementID from URL
+export const getLogementID = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('logementid');
+};
+
 // Function to dispatch webhook via backend server
 export const dispatchWebhook = async (logementData: {
   nom: string;
@@ -42,12 +49,18 @@ export const dispatchWebhook = async (logementData: {
     const testMode = isTestMode();
     const conciergerieID = getConciergerieID();
     const userID = getUserID();
+    const urlLogementId = getLogementID(); // Get logementid from URL if present
+
+    // Determine parcourmode based on presence of logementid in URL
+    const parcourmode = !!urlLogementId; // true if logementid is present, false otherwise
 
     // Prepare payload for backend
     const payload = {
       conciergerieID,
       userID,
       isTestMode: testMode,
+      parcourmode, // Add parcourmode to payload
+      logementid: urlLogementId || null, // Add logementid from URL (null if not present)
       logementData: {
         ...logementData,
         logementId,
@@ -66,8 +79,12 @@ export const dispatchWebhook = async (logementData: {
     console.log(`   🔧 Mode: ${testMode ? 'TEST (version-test)' : 'PRODUCTION (version-live)'}`);
     console.log(`   🏢 ConciergerieID: ${conciergerieID}`);
     console.log(`   👤 UserID: ${userID}`);
+    console.log(`   🔗 Logement ID (URL): ${urlLogementId || 'NON PRÉSENT'}`);
+    console.log(`   📋 Parcour Mode: ${parcourmode ? 'AVEC LOGEMENT (true)' : 'AUTONOME (false)'}`);
     console.log(`   📍 URL actuelle: ${window.location.href}`);
     console.log(`   📦 Payload.isTestMode: ${payload.isTestMode}`);
+    console.log(`   📦 Payload.parcourmode: ${payload.parcourmode}`);
+    console.log(`   📦 Payload.logementid: ${payload.logementid || 'null'}`);
     console.log('='.repeat(60) + '\n');
 
     // Send to backend server instead of directly to Bubble.io
@@ -165,6 +182,61 @@ export const dispatchDeleteModeleWebhook = async (modeleId: string) => {
   } catch (error) {
     console.error('❌ Failed to send delete modele webhook request to backend:', error);
     return { success: false, error };
+  }
+};
+
+/**
+ * Charge les informations d'un logement depuis Bubble.io
+ *
+ * @param logementId - ID du logement à charger
+ * @param isTestMode - Mode test ou production (défaut: true)
+ * @returns Promise<any> - Données du logement
+ */
+export const loadLogementFromBubble = async (
+  logementId: string,
+  testMode: boolean = true
+): Promise<any> => {
+  try {
+    const endpoint = getBubbleEndpoint('getLogement', testMode);
+    const url = `${endpoint}?logementid=${encodeURIComponent(logementId)}`;
+
+    console.log('\n' + '='.repeat(60));
+    console.log('📥 CHARGEMENT DU LOGEMENT DEPUIS BUBBLE.IO');
+    console.log('='.repeat(60));
+    console.log(`   🏠 Logement ID: ${logementId}`);
+    console.log(`   🔧 Mode: ${testMode ? 'TEST (version-test)' : 'PRODUCTION (version-live)'}`);
+    console.log(`   🌐 Endpoint: ${endpoint}`);
+    console.log(`   📍 URL complète: ${url}`);
+    console.log('='.repeat(60));
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    console.log('\n' + '='.repeat(60));
+    console.log('✅ RÉPONSE DE BUBBLE.IO');
+    console.log('='.repeat(60));
+    console.log('📦 Données reçues:');
+    console.log(JSON.stringify(data, null, 2));
+    console.log('='.repeat(60) + '\n');
+
+    return data;
+  } catch (error) {
+    console.error('\n' + '='.repeat(60));
+    console.error('❌ ERREUR LORS DU CHARGEMENT DU LOGEMENT');
+    console.error('='.repeat(60));
+    console.error(error);
+    console.error('='.repeat(60) + '\n');
+    throw error;
   }
 };
 

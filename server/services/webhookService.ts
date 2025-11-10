@@ -4,6 +4,8 @@ interface WebhookPayload {
   conciergerieID: string;
   userID: string;
   isTestMode: boolean;
+  parcourmode?: boolean;
+  logementid?: string | null;
   logementData: any;
 }
 
@@ -534,13 +536,15 @@ function getTasksForPiece(pieceName: string, modele: any): any[] {
 
 // Main function to send webhook to Bubble.io (2-step workflow)
 export async function sendWebhookToBubble(payload: WebhookPayload): Promise<void> {
-  const { conciergerieID, userID, isTestMode, logementData } = payload;
+  const { conciergerieID, userID, isTestMode, parcourmode, logementid, logementData } = payload;
 
   try {
     console.log(`📨 Received webhook request for logement: ${logementData.nom}`);
     console.log(`   - Test mode: ${isTestMode ? 'YES' : 'NO'}`);
     console.log(`   - ConciergerieID: ${conciergerieID}`);
     console.log(`   - UserID: ${userID}`);
+    console.log(`   - Parcour Mode: ${parcourmode ? 'AVEC LOGEMENT (true)' : 'AUTONOME (false)'}`);
+    console.log(`   - Logement ID (URL): ${logementid || 'null'}`);
 
     // Select endpoints based on test mode
     const createLogementEndpoint = isTestMode
@@ -588,6 +592,8 @@ export async function sendWebhookToBubble(payload: WebhookPayload): Promise<void
     console.log(`   Logement: ${logementData.nom}`);
     console.log(`   État des lieux: ${etatLieuxMoment}`);
     console.log(`   Questions checklist: ${transformedQuestions.length}`);
+    console.log(`   Parcour Mode: ${parcourmode ? 'AVEC LOGEMENT (true)' : 'AUTONOME (false)'}`);
+    console.log(`   Logement ID (URL): ${logementid || 'null'}`);
 
     const logementPayload = {
       conciergerieID: conciergerieID || 'conciergerie_demo',
@@ -602,6 +608,8 @@ export async function sendWebhookToBubble(payload: WebhookPayload): Promise<void
       modele: typeof logementData.modele === 'string'
         ? { type: 'predefined', value: logementData.modele }
         : { type: 'custom', value: logementData.modele },
+      parcourmode: parcourmode !== undefined ? parcourmode : false, // Add parcourmode (default to false if not provided)
+      logementid: logementid || null, // Add logementid from URL (null if not present)
       // PAS de pièces dans cette requête
     };
 

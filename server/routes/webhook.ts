@@ -10,6 +10,8 @@ webhookRouter.post('/send-webhook', async (req: Request, res: Response) => {
       conciergerieID,
       userID,
       isTestMode,
+      parcourmode,
+      logementid,
       logementData,
     } = req.body;
 
@@ -33,6 +35,8 @@ webhookRouter.post('/send-webhook', async (req: Request, res: Response) => {
     console.log(`   🔧 Test mode: ${isTestMode ? 'YES (version-test)' : 'NO (version-live)'}`);
     console.log(`   🏢 ConciergerieID: ${conciergerieID}`);
     console.log(`   👤 UserID: ${userID}`);
+    console.log(`   📋 Parcour Mode: ${parcourmode ? 'AVEC LOGEMENT (true)' : 'AUTONOME (false)'}`);
+    console.log(`   🔗 Logement ID (URL): ${logementid || 'null'}`);
     console.log(`${'='.repeat(60)}\n`);
 
     // Send webhook asynchronously (non-blocking)
@@ -41,6 +45,8 @@ webhookRouter.post('/send-webhook', async (req: Request, res: Response) => {
       conciergerieID,
       userID,
       isTestMode,
+      parcourmode,
+      logementid,
       logementData,
     }).catch((error) => {
       console.error('❌ Webhook failed:', error);

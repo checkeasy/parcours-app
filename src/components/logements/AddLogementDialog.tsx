@@ -21,6 +21,7 @@ import { ParcoursModele } from "@/types/modele";
 import { dispatchWebhook } from "@/utils/webhook";
 import { AddressAutocomplete } from "@/components/ui/address-autocomplete";
 import { AddressAutocompleteV2 } from "@/components/ui/address-autocomplete-v2";
+import { CustomAddressAutocomplete } from "@/components/ui/custom-address-autocomplete";
 import { useGoogleMaps } from "@/hooks/useGoogleMaps";
 
 interface PieceQuantity {
@@ -46,6 +47,10 @@ interface AddLogementDialogProps {
   shouldReopenModeleDialog?: boolean;
   onModeleDialogReopened?: () => void;
   isFullScreenMode?: boolean;
+  initialLogementData?: {
+    nom?: string;
+    adresse?: string;
+  } | null;
 }
 
 export function AddLogementDialog({
@@ -59,8 +64,15 @@ export function AddLogementDialog({
   shouldReopenModeleDialog = false,
   onModeleDialogReopened,
   isFullScreenMode = false,
+  initialLogementData = null,
 }: AddLogementDialogProps) {
-  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5 | 6>(1);
+  // Détecter si on a un logement existant (logementid dans l'URL)
+  const hasExistingLogement = !!initialLogementData;
+
+  // Commencer à l'étape 2 si on a un logement existant, sinon à l'étape 1
+  const initialStep = hasExistingLogement ? 2 : 1;
+
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5 | 6>(initialStep as 1 | 2 | 3 | 4 | 5 | 6);
   const [nom, setNom] = useState("");
   const [adresse, setAdresse] = useState("");
   const [airbnbLink, setAirbnbLink] = useState("");
@@ -75,6 +87,34 @@ export function AddLogementDialog({
   // Charger l'API Google Maps
   const { isLoaded: isGoogleMapsLoaded, loadError } = useGoogleMaps();
 
+  // Fonctions helper pour calculer la numérotation des étapes affichées
+  const getDisplayedStepNumber = (currentStep: number): number => {
+    if (hasExistingLogement) {
+      // Si on a un logement existant, on saute l'étape 1
+      // Donc l'étape 2 devient "Étape 1", l'étape 3 devient "Étape 2", etc.
+      return currentStep - 1;
+    }
+    return currentStep;
+  };
+
+  const getTotalSteps = (): number => {
+    // Si on a un logement existant, on a 4 étapes au lieu de 5
+    return hasExistingLogement ? 4 : 5;
+  };
+
+  // Pré-remplir le formulaire avec les données initiales si présentes
+  useEffect(() => {
+    if (initialLogementData && open) {
+      console.log("📝 Pré-remplissage du formulaire avec les données du logement:", initialLogementData);
+      if (initialLogementData.nom) {
+        setNom(initialLogementData.nom);
+      }
+      if (initialLogementData.adresse) {
+        setAdresse(initialLogementData.adresse);
+      }
+    }
+  }, [initialLogementData, open]);
+
   // Log pour déboguer
   useEffect(() => {
     console.log("📍 AddLogementDialog - Google Maps chargé:", isGoogleMapsLoaded);
@@ -84,9 +124,13 @@ export function AddLogementDialog({
   }, [isGoogleMapsLoaded, loadError]);
 
   const handleReset = () => {
-    setStep(1);
-    setNom("");
-    setAdresse("");
+    // Réinitialiser à l'étape initiale (1 ou 2 selon si on a un logement existant)
+    setStep(initialStep as 1 | 2 | 3 | 4 | 5 | 6);
+    // Ne pas réinitialiser nom et adresse si on a un logement existant
+    if (!hasExistingLogement) {
+      setNom("");
+      setAdresse("");
+    }
     setAirbnbLink("");
     setParcoursType(null);
     setSelectedModele(null);
@@ -246,9 +290,9 @@ export function AddLogementDialog({
             )}
             <div className={step === 1 ? "space-y-1 sm:space-y-2" : ""}>
               <DialogTitle className={step === 1 ? (isFullScreenMode ? "text-base sm:text-lg md:text-xl pr-8" : "text-lg sm:text-xl md:text-2xl pr-8") : ""}>
-                {step === 1 && "Étape 1/5 - Créer un nouveau logement"}
-                {step === 2 && "Étape 2/5 - Choisir le type de parcours"}
-                {step === 3 && "Étape 3/5 - Sélection du modèle"}
+                {step === 1 && `Étape ${getDisplayedStepNumber(1)}/${getTotalSteps()} - Créer un nouveau logement`}
+                {step === 2 && `Étape ${getDisplayedStepNumber(2)}/${getTotalSteps()} - Choisir le type de parcours`}
+                {step === 3 && `Étape ${getDisplayedStepNumber(3)}/${getTotalSteps()} - Sélection du modèle`}
               </DialogTitle>
               <DialogDescription className={step === 1 ? "text-xs sm:text-sm text-muted-foreground" : ""}>
                 {step === 1 && "Renseignez les informations de base de votre logement"}
@@ -265,13 +309,11 @@ export function AddLogementDialog({
               <div className={isFullScreenMode ? "space-y-2 sm:space-y-3 overflow-y-auto max-h-[calc(100vh-180px)] sm:max-h-[calc(100vh-200px)] px-1" : "space-y-3 sm:space-y-4 overflow-y-auto max-h-[55vh] sm:max-h-[50vh] px-1"}>
                 <div className="space-y-2">
                   <Label htmlFor="nom">
-                    Nom du logement {!airbnbLink.trim() && <span className="text-destructive">*</span>}
+                    Nom du logement <span className="text-destructive">*</span>
                   </Label>
-                  {!airbnbLink.trim() && (
-                    <p className="text-xs text-muted-foreground">
-                      Obligatoire si aucun lien Airbnb n'est fourni
-                    </p>
-                  )}
+                  <p className="text-xs text-muted-foreground">
+                    Obligatoire
+                  </p>
                   <Input
                     id="nom"
                     placeholder="Ex: Appartement Paris Centre"
@@ -286,7 +328,7 @@ export function AddLogementDialog({
                     {isGoogleMapsLoaded && <span className="text-xs text-green-600 ml-2">✓ Google Maps</span>}
                   </Label>
                   {isGoogleMapsLoaded ? (
-                    <AddressAutocompleteV2
+                    <CustomAddressAutocomplete
                       id="adresse"
                       placeholder="Ex: 15 Rue de la Paix, 75002 Paris"
                       value={adresse}
@@ -325,7 +367,7 @@ export function AddLogementDialog({
               <div className="flex justify-end pt-3 sm:pt-4 border-t">
                 <Button
                   onClick={handleStep1Next}
-                  disabled={!nom.trim() && !airbnbLink.trim()}
+                  disabled={!nom.trim()}
                   className="w-full sm:w-auto"
                 >
                   Suivant
@@ -338,14 +380,17 @@ export function AddLogementDialog({
           {step === 2 && (
             <>
               <div className="relative">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8 sm:h-8 sm:w-8 z-50"
-                  onClick={() => setStep(1)}
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                </Button>
+                {/* Afficher le bouton Retour seulement si on n'a pas de logement existant */}
+                {!hasExistingLogement && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8 sm:h-8 sm:w-8 z-50"
+                    onClick={() => setStep(1)}
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="icon"
@@ -356,7 +401,7 @@ export function AddLogementDialog({
                 </Button>
                 <div className="pl-8 sm:pl-10 pr-8 pb-3 sm:pb-4">
                   <h2 className={isFullScreenMode ? "text-base sm:text-lg md:text-xl font-semibold" : "text-lg sm:text-xl md:text-2xl font-semibold"}>
-                    Étape 2/5 - On commence par quel parcours ?
+                    Étape {getDisplayedStepNumber(2)}/{getTotalSteps()} - On commence par quel parcours ?
                   </h2>
                   <p className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
                     Vous pourrez ajouter l'autre ensuite en 1 clic.

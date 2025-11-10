@@ -64,3 +64,5 @@ playwright/.cache/
 .temp
 .tmp
 
+# VS Code Local History
+.history/

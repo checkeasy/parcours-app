@@ -6,13 +6,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ParcoursModele } from "@/types/modele";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
-import { dispatchWebhook, dispatchModeleWebhook, dispatchDeleteModeleWebhook, getConciergerieID, isTestMode } from "@/utils/webhook";
+import { dispatchWebhook, dispatchModeleWebhook, dispatchDeleteModeleWebhook, getConciergerieID, isTestMode, getLogementID, loadLogementFromBubble } from "@/utils/webhook";
 import {
   loadModelesFromBubble,
   loadAndMergeModeles,
   saveModelesToLocalStorage,
   loadModelesFromLocalStorage
 } from "@/utils/loadModeles";
+import { RefreshCw } from "lucide-react";
 
 function App() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -28,6 +29,9 @@ function App() {
   // Détecter le mode plein écran depuis l'URL
   const [isFullScreenMode, setIsFullScreenMode] = useState(false);
 
+  // Stocker les données du logement chargé depuis l'URL
+  const [initialLogementData, setInitialLogementData] = useState<any>(null);
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const viewMode = params.get('viewmode');
@@ -36,6 +40,47 @@ function App() {
       setDialogOpen(true); // Ouvrir automatiquement la modal
     }
   }, []);
+
+  // Charger le logement depuis l'URL si le paramètre logementid est présent
+  useEffect(() => {
+    const logementId = getLogementID();
+    if (logementId) {
+      const loadLogement = async () => {
+        try {
+          console.log("🔍 Paramètre logementid détecté dans l'URL");
+          const response = await loadLogementFromBubble(logementId, isTestMode());
+
+          // Extraire les données du logement de la réponse
+          if (response?.status === 'success' && response?.response?.logement) {
+            const logementData = response.response.logement;
+
+            // Préparer les données pour le formulaire
+            setInitialLogementData({
+              nom: logementData.Nom || '',
+              // Note: L'adresse n'est pas dans la réponse actuelle, on la laisse vide
+              adresse: '',
+            });
+
+            // Ouvrir automatiquement le dialog
+            setDialogOpen(true);
+
+            toast({
+              title: "Logement chargé",
+              description: `Les données du logement "${logementData.Nom}" ont été chargées.`,
+            });
+          }
+        } catch (error) {
+          console.error("❌ Erreur lors du chargement du logement:", error);
+          toast({
+            title: "Erreur de chargement",
+            description: "Impossible de charger les données du logement.",
+            variant: "destructive",
+          });
+        }
+      };
+      loadLogement();
+    }
+  }, []); // Exécuter une seule fois au démarrage
 
   // Charger les modèles au démarrage de l'application
   useEffect(() => {
@@ -354,6 +399,7 @@ function App() {
         shouldReopenModeleDialog={shouldReopenModeleDialog}
         onModeleDialogReopened={handleModeleDialogReopened}
         isFullScreenMode={isFullScreenMode}
+        initialLogementData={initialLogementData}
       />
 
       <CustomModeleBuilder
