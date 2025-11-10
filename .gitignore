@@ -11,7 +11,7 @@ lerna-debug.log*
 node_modules
 
 # Build outputs
-# dist - Ne pas ignorer car Railway a besoin du build frontend
+dist
 dist-ssr
 *.local
 
