@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { AddLogementDialog } from "@/components/logements/AddLogementDialog";
 import { CustomModeleBuilder } from "@/components/parcours/modele/CustomModeleBuilder";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import {
 import { RefreshCw } from "lucide-react";
 
 function App() {
+  const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [customModeles, setCustomModeles] = useState<ParcoursModele[]>([]);
   const [logements, setLogements] = useState<any[]>([]);
@@ -109,8 +111,8 @@ function App() {
       } catch (error) {
         console.error("❌ Erreur lors du chargement des modèles:", error);
         toast({
-          title: "Erreur de chargement",
-          description: "Impossible de charger les modèles depuis Bubble.io. Utilisation des modèles locaux.",
+          title: t('toast.error'),
+          description: t('toast.modelesLoadError'),
           variant: "destructive",
         });
       } finally {
@@ -127,8 +129,8 @@ function App() {
     const logementId = `logement_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     setLogements([...logements, { ...data, id: Date.now(), logementId }]);
     toast({
-      title: "Parcours créé !",
-      description: `Le parcours "${data.nom}" a été créé avec succès. Il peut prendre jusqu'à 2 minutes pour apparaître avec les photos.`,
+      title: t('toast.logementCreated'),
+      description: `${t('logement.createNew')} "${data.nom}" ${t('toast.logementCreated').toLowerCase()}.`,
     });
 
     // En mode plein écran, rafraîchir la page après l'envoi du webhook
@@ -233,7 +235,11 @@ function App() {
     const modele = customModeles.find(m => m.id === modeleId);
 
     // Remove from local state
-    setCustomModeles(customModeles.filter(m => m.id !== modeleId));
+    const updatedModeles = customModeles.filter(m => m.id !== modeleId);
+    setCustomModeles(updatedModeles);
+
+    // Save to localStorage
+    saveModelesToLocalStorage(updatedModeles);
 
     // Show success toast
     toast({
@@ -308,23 +314,23 @@ function App() {
         <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6 md:space-y-8">
           <div className="text-center space-y-2 sm:space-y-4">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">
-              Démo AddLogementDialog
+              {t('app.title')}
             </h1>
             <p className="text-base sm:text-lg text-slate-600 px-4">
-              Modal complète pour ajouter un logement avec parcours de ménage ou voyageur
+              {t('app.description')}
             </p>
           </div>
 
           <Card className="border-2">
             <CardHeader>
-              <CardTitle className="text-lg sm:text-xl">Tester la modal</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">{t('logement.createNew')}</CardTitle>
               <CardDescription className="text-sm">
-                Cliquez sur le bouton ci-dessous pour ouvrir la modal d'ajout de logement
+                {t('logement.basicInfo')}
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Button onClick={() => setDialogOpen(true)} size="lg" className="w-full sm:w-auto">
-                Ajouter un logement
+                {t('logement.createNew')}
               </Button>
               <Button
                 onClick={handleReloadModeles}
@@ -334,8 +340,8 @@ function App() {
                 className="w-full sm:w-auto"
               >
                 <RefreshCw className={`mr-2 h-4 w-4 ${isLoadingModeles ? 'animate-spin' : ''}`} />
-                <span className="hidden sm:inline">{isLoadingModeles ? 'Chargement...' : 'Recharger les modèles'}</span>
-                <span className="sm:hidden">{isLoadingModeles ? 'Chargement...' : 'Recharger'}</span>
+                <span className="hidden sm:inline">{isLoadingModeles ? t('common.loading') : t('modele.create')}</span>
+                <span className="sm:hidden">{isLoadingModeles ? t('common.loading') : t('modele.create')}</span>
               </Button>
             </CardContent>
           </Card>
@@ -343,7 +349,7 @@ function App() {
           {logements.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg sm:text-xl">Logements créés ({logements.length})</CardTitle>
+                <CardTitle className="text-lg sm:text-xl">{t('logement.createNew')} ({logements.length})</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 sm:space-y-4">
@@ -356,7 +362,7 @@ function App() {
                         <h3 className="font-semibold text-base sm:text-lg">{logement.nom}</h3>
                         <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-xs sm:text-sm text-slate-500">
-                            {logement.parcoursType === "menage" ? "🧹 Ménage" : "✈️ Voyageur"}
+                            {logement.parcoursType === "menage" ? `🧹 ${t('parcours.menage')}` : `✈️ ${t('parcours.voyageur')}`}
                           </span>
                           <Button
                             size="sm"

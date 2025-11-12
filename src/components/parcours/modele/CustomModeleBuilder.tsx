@@ -27,6 +27,514 @@ import { toast } from "@/hooks/use-toast";
 import { QuestionDialog } from "@/components/parcours/dialogs/QuestionDialog";
 import { TacheDialog } from "@/components/parcours/dialogs/TacheDialog";
 import { EmojiPicker } from "@/components/ui/emoji-picker";
+import { useTranslation } from "react-i18next";
+
+// Task definitions for predefined models
+export const TACHES_MENAGE: Record<string, any[]> = {
+  "Cuisine": [
+    {
+      id: "m-cuisine-1",
+      emoji: "🗑️",
+      titre: "Vider les poubelles",
+      description: "Remplacer sac ; nettoyer couvercle & bac.",
+      photoObligatoire: true
+    },
+    {
+      id: "m-cuisine-2",
+      emoji: "🧽",
+      titre: "Nettoyer plan de travail",
+      description: "Désinfecter surfaces ; ranger ustensiles.",
+      photoObligatoire: true
+    },
+    {
+      id: "m-cuisine-3",
+      emoji: "🍽️",
+      titre: "Nettoyer évier",
+      description: "Dégraisser ; faire briller robinetterie.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-cuisine-4",
+      emoji: "🔥",
+      titre: "Nettoyer plaques de cuisson",
+      description: "Dégraisser ; enlever résidus brûlés.",
+      photoObligatoire: true
+    },
+    {
+      id: "m-cuisine-5",
+      emoji: "❄️",
+      titre: "Nettoyer extérieur frigo",
+      description: "Essuyer portes ; nettoyer poignées.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-cuisine-6",
+      emoji: "🧹",
+      titre: "Balayer et laver le sol",
+      description: "Aspirer miettes ; passer serpillière.",
+      photoObligatoire: true
+    }
+  ],
+  "Chambre": [
+    {
+      id: "m-chambre-1",
+      emoji: "🛏️",
+      titre: "Refaire le lit",
+      description: "Draps propres ; oreillers gonflés.",
+      photoObligatoire: true
+    },
+    {
+      id: "m-chambre-2",
+      emoji: "🧹",
+      titre: "Aspirer le sol",
+      description: "Sous le lit ; coins de la pièce.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-chambre-3",
+      emoji: "🪟",
+      titre: "Dépoussiérer surfaces",
+      description: "Tables de nuit ; étagères ; rebords.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-chambre-4",
+      emoji: "🗑️",
+      titre: "Vider les poubelles",
+      description: "Remplacer sac si nécessaire.",
+      photoObligatoire: false
+    }
+  ],
+  "Salle de bain avec toilettes": [
+    {
+      id: "m-sdb-1",
+      emoji: "🚽",
+      titre: "Nettoyer les toilettes",
+      description: "Cuvette ; abattant ; extérieur.",
+      photoObligatoire: true
+    },
+    {
+      id: "m-sdb-2",
+      emoji: "🚿",
+      titre: "Nettoyer douche/baignoire",
+      description: "Parois ; robinetterie ; évacuation.",
+      photoObligatoire: true
+    },
+    {
+      id: "m-sdb-3",
+      emoji: "🪞",
+      titre: "Nettoyer lavabo et miroir",
+      description: "Désinfecter ; faire briller.",
+      photoObligatoire: true
+    },
+    {
+      id: "m-sdb-4",
+      emoji: "🧹",
+      titre: "Laver le sol",
+      description: "Aspirer puis serpillière.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-sdb-5",
+      emoji: "🗑️",
+      titre: "Vider les poubelles",
+      description: "Remplacer sac ; nettoyer bac.",
+      photoObligatoire: false
+    }
+  ],
+  "Salon": [
+    {
+      id: "m-salon-1",
+      emoji: "🛋️",
+      titre: "Aspirer canapé",
+      description: "Coussins ; recoins ; sous les coussins.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-salon-2",
+      emoji: "🧹",
+      titre: "Aspirer le sol",
+      description: "Sous les meubles ; coins.",
+      photoObligatoire: true
+    },
+    {
+      id: "m-salon-3",
+      emoji: "🪟",
+      titre: "Dépoussiérer surfaces",
+      description: "Tables ; étagères ; TV.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-salon-4",
+      emoji: "🗑️",
+      titre: "Vider les poubelles",
+      description: "Remplacer sac si nécessaire.",
+      photoObligatoire: false
+    }
+  ],
+  "Salle de bain (sans toilettes)": [
+    {
+      id: "m-sdb-nt-1",
+      emoji: "🚿",
+      titre: "Nettoyer douche/baignoire",
+      description: "Parois ; robinetterie ; évacuation.",
+      photoObligatoire: true
+    },
+    {
+      id: "m-sdb-nt-2",
+      emoji: "🪞",
+      titre: "Nettoyer lavabo et miroir",
+      description: "Désinfecter ; faire briller.",
+      photoObligatoire: true
+    },
+    {
+      id: "m-sdb-nt-3",
+      emoji: "🧹",
+      titre: "Laver le sol",
+      description: "Aspirer puis serpillière.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-sdb-nt-4",
+      emoji: "🗑️",
+      titre: "Vider les poubelles",
+      description: "Remplacer sac ; nettoyer bac.",
+      photoObligatoire: false
+    }
+  ],
+  "Toilettes séparés": [
+    {
+      id: "m-wc-1",
+      emoji: "🚽",
+      titre: "Nettoyer les toilettes",
+      description: "Cuvette ; abattant ; extérieur.",
+      photoObligatoire: true
+    },
+    {
+      id: "m-wc-2",
+      emoji: "🪞",
+      titre: "Nettoyer lavabo (si présent)",
+      description: "Désinfecter ; faire briller.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-wc-3",
+      emoji: "🧹",
+      titre: "Laver le sol",
+      description: "Aspirer puis serpillière.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-wc-4",
+      emoji: "🗑️",
+      titre: "Vider les poubelles",
+      description: "Remplacer sac ; nettoyer bac.",
+      photoObligatoire: false
+    }
+  ],
+  "Entrée": [
+    {
+      id: "m-entree-1",
+      emoji: "🧹",
+      titre: "Aspirer/balayer le sol",
+      description: "Tapis ; coins ; sous les meubles.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-entree-2",
+      emoji: "🪟",
+      titre: "Dépoussiérer surfaces",
+      description: "Console ; miroir ; porte-manteau.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-entree-3",
+      emoji: "🗑️",
+      titre: "Vider les poubelles",
+      description: "Si présentes.",
+      photoObligatoire: false
+    }
+  ],
+  "Bureau": [
+    {
+      id: "m-bureau-1",
+      emoji: "🪟",
+      titre: "Dépoussiérer bureau",
+      description: "Surface ; écran ; clavier.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-bureau-2",
+      emoji: "🧹",
+      titre: "Aspirer le sol",
+      description: "Sous le bureau ; coins.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-bureau-3",
+      emoji: "🗑️",
+      titre: "Vider les poubelles",
+      description: "Remplacer sac si nécessaire.",
+      photoObligatoire: false
+    }
+  ],
+  "Balcon/Terrasse": [
+    {
+      id: "m-balcon-1",
+      emoji: "🧹",
+      titre: "Balayer le sol",
+      description: "Enlever feuilles ; poussière.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-balcon-2",
+      emoji: "🪑",
+      titre: "Nettoyer mobilier",
+      description: "Essuyer table ; chaises.",
+      photoObligatoire: false
+    }
+  ]
+};
+
+export const TACHES_VOYAGEUR: Record<string, any[]> = {
+  "Cuisine": [
+    {
+      id: "v-cuisine-1",
+      emoji: "🍽️",
+      titre: "Vérifier vaisselle",
+      description: "Assiettes ; verres ; couverts propres.",
+      photoObligatoire: true
+    },
+    {
+      id: "v-cuisine-2",
+      emoji: "❄️",
+      titre: "Vérifier frigo",
+      description: "Propre ; fonctionne ; température OK.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-cuisine-3",
+      emoji: "🔥",
+      titre: "Vérifier plaques de cuisson",
+      description: "Propres ; fonctionnent.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-cuisine-4",
+      emoji: "☕",
+      titre: "Vérifier équipements",
+      description: "Cafetière ; bouilloire ; micro-ondes.",
+      photoObligatoire: false
+    }
+  ],
+  "Chambre": [
+    {
+      id: "v-chambre-1",
+      emoji: "🛏️",
+      titre: "Vérifier literie",
+      description: "Draps propres ; oreillers ; couvertures.",
+      photoObligatoire: true
+    },
+    {
+      id: "v-chambre-2",
+      emoji: "🚪",
+      titre: "Vérifier rangements",
+      description: "Armoire vide ; cintres disponibles.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-chambre-3",
+      emoji: "💡",
+      titre: "Vérifier éclairage",
+      description: "Lampes fonctionnent ; ampoules OK.",
+      photoObligatoire: false
+    }
+  ],
+  "Salle de bain avec toilettes": [
+    {
+      id: "v-sdb-1",
+      emoji: "🧴",
+      titre: "Vérifier produits",
+      description: "Savon ; shampoing ; papier toilette.",
+      photoObligatoire: true
+    },
+    {
+      id: "v-sdb-2",
+      emoji: "🚿",
+      titre: "Vérifier douche/baignoire",
+      description: "Propre ; eau chaude fonctionne.",
+      photoObligatoire: true
+    },
+    {
+      id: "v-sdb-3",
+      emoji: "🧻",
+      titre: "Vérifier serviettes",
+      description: "Propres ; en nombre suffisant.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-sdb-4",
+      emoji: "🚽",
+      titre: "Vérifier toilettes",
+      description: "Propres ; fonctionnent bien.",
+      photoObligatoire: true
+    }
+  ],
+  "Salon": [
+    {
+      id: "v-salon-1",
+      emoji: "📺",
+      titre: "Vérifier TV/WiFi",
+      description: "TV fonctionne ; WiFi actif.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-salon-2",
+      emoji: "🛋️",
+      titre: "Vérifier mobilier",
+      description: "Canapé propre ; coussins en place.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-salon-3",
+      emoji: "🌡️",
+      titre: "Vérifier chauffage/clim",
+      description: "Fonctionne ; télécommande présente.",
+      photoObligatoire: false
+    }
+  ],
+  "Salle de bain (sans toilettes)": [
+    {
+      id: "v-sdb-nt-1",
+      emoji: "🧴",
+      titre: "Vérifier produits",
+      description: "Savon ; shampoing.",
+      photoObligatoire: true
+    },
+    {
+      id: "v-sdb-nt-2",
+      emoji: "🚿",
+      titre: "Vérifier douche/baignoire",
+      description: "Propre ; eau chaude fonctionne.",
+      photoObligatoire: true
+    },
+    {
+      id: "v-sdb-nt-3",
+      emoji: "🧻",
+      titre: "Vérifier serviettes",
+      description: "Propres ; en nombre suffisant.",
+      photoObligatoire: false
+    }
+  ],
+  "Toilettes séparés": [
+    {
+      id: "v-wc-1",
+      emoji: "🚽",
+      titre: "Vérifier toilettes",
+      description: "Propres ; fonctionnent bien.",
+      photoObligatoire: true
+    },
+    {
+      id: "v-wc-2",
+      emoji: "🧻",
+      titre: "Vérifier papier toilette",
+      description: "Stock suffisant.",
+      photoObligatoire: false
+    }
+  ],
+  "Entrée": [
+    {
+      id: "v-entree-1",
+      emoji: "🔑",
+      titre: "Vérifier accès",
+      description: "Clés ; code ; badge disponibles.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-entree-2",
+      emoji: "📋",
+      titre: "Vérifier livret d'accueil",
+      description: "Présent ; à jour.",
+      photoObligatoire: false
+    }
+  ],
+  "Bureau": [
+    {
+      id: "v-bureau-1",
+      emoji: "💻",
+      titre: "Vérifier espace de travail",
+      description: "Bureau propre ; chaise confortable.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-bureau-2",
+      emoji: "🔌",
+      titre: "Vérifier prises électriques",
+      description: "Fonctionnent ; accessibles.",
+      photoObligatoire: false
+    }
+  ],
+  "Balcon/Terrasse": [
+    {
+      id: "v-balcon-1",
+      emoji: "🪑",
+      titre: "Vérifier mobilier extérieur",
+      description: "Propre ; en bon état.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-balcon-2",
+      emoji: "🌿",
+      titre: "Vérifier propreté",
+      description: "Sol propre ; plantes entretenues.",
+      photoObligatoire: false
+    }
+  ]
+};
+
+// Helper function to load tasks from translations
+const loadTasksFromTranslations = (t: any, parcoursType: "menage" | "voyageur", roomName: string): TacheModele[] => {
+  const tasks = t(`defaultTasks.${parcoursType}.${roomName}`, { returnObjects: true });
+  if (!Array.isArray(tasks)) return [];
+
+  // Map emoji based on room and task index
+  const emojiMap: Record<string, string[]> = {
+    "Cuisine": ["🗑️", "🍽️", "🧽", "📡", "❄️", "🧊", "🔥", "🍳", "💨", "☕", "🧼", "🧴", "🧹"],
+    "Salle de bain (sans toilettes)": ["💈", "🚿", "🧱", "🪞", "🚪", "🧺", "🗑️", "🛁"],
+    "Salle de bain avec toilettes": ["🚽", "🧻", "💈", "🚿", "🧱", "🪞", "🚪", "🧺", "🗑️", "🛁"],
+    "Toilettes séparés": ["🚽", "🧻"],
+    "Chambre": ["🛏️", "🧹", "🛌", "🪵", "🧹", "💡", "🚪", "🪟"],
+    "Salon / Séjour": ["🧹", "🛋️", "🧺", "📺", "📐"],
+    "Salle à manger": ["🪑", "🍽️", "🚪", "🧹"],
+    "Entrée / Couloir / Escaliers": ["🚪", "🪞", "🪜"],
+    "Buanderie / Laverie": ["🧺", "🌪️", "🧼", "🧴"],
+    "Espaces extérieurs": ["🪑", "☂️", "🚬", "🍖", "🛁", "🏊", "🌱"]
+  };
+
+  const photoRequiredMap: Record<string, boolean[]> = {
+    "Cuisine": [true, false, false, true, true, true, true, true, false, true, true, false, false],
+    "Salle de bain (sans toilettes)": [true, true, false, false, false, false, false, false],
+    "Salle de bain avec toilettes)": [true, false, true, false, false, false, false, false, false, false],
+    "Toilettes séparés": [true, false],
+    "Chambre": [true, false, false, false, false, false, true, false],
+    "Salon / Séjour": [false, false, false, true, false],
+    "Salle à manger": [true, false, false, false],
+    "Entrée / Couloir / Escaliers": [false, false, false],
+    "Buanderie / Laverie": [false, false, false, false],
+    "Espaces extérieurs": [false, false, false, true, false, false, false]
+  };
+
+  const emojis = emojiMap[roomName] || [];
+  const photoRequired = photoRequiredMap[roomName] || [];
+
+  return tasks.map((task: any, index: number) => ({
+    id: `${parcoursType}-${roomName}-${index}`,
+    emoji: emojis[index] || "📋",
+    titre: task.titre,
+    description: task.description,
+    photoObligatoire: photoRequired[index] || false
+  }));
+};
 
 interface CustomModeleBuilderProps {
   open: boolean;
@@ -62,131 +570,6 @@ const PIECES_VOYAGEUR = [
   "Salon / Séjour",
   "Espaces extérieurs"
 ];
-
-// Tâches par défaut pour MÉNAGE
-export const TACHES_MENAGE: Record<string, TacheModele[]> = {
-  "Cuisine": [
-    { id: "m-cuisine-1", emoji: "🗑️", titre: "Vider les poubelles", description: "Remplacer sac ; nettoyer couvercle & bac.", photoObligatoire: true },
-    { id: "m-cuisine-2", emoji: "🍽️", titre: "Laver la vaisselle", description: "Nettoyer, sécher, ranger toute la vaisselle.", photoObligatoire: false },
-    { id: "m-cuisine-3", emoji: "🧽", titre: "Essuyer toutes surfaces", description: "Plans, crédence, porte-placard, table bar.", photoObligatoire: false },
-    { id: "m-cuisine-4", emoji: "📡", titre: "Nettoyer micro-ondes", description: "Intérieur doit être propre", photoObligatoire: true },
-    { id: "m-cuisine-5", emoji: "❄️", titre: "Nettoyer réfrigérateur", description: "Vider et laver les étagères.", photoObligatoire: true },
-    { id: "m-cuisine-6", emoji: "🧊", titre: "Nettoyer congélateur", description: "Vider et laver.", photoObligatoire: true },
-    { id: "m-cuisine-7", emoji: "🔥", titre: "Nettoyer four", description: "Nettoyer l'intérieur du four et la vitre.", photoObligatoire: true },
-    { id: "m-cuisine-8", emoji: "🍳", titre: "Nettoyer plaques/cuisson", description: "Gaz : brûleurs dégraissés. Induction : sans trace.", photoObligatoire: true },
-    { id: "m-cuisine-9", emoji: "💨", titre: "Dégraisser hotte & filtre", description: "Filtre nettoyé ou signalé à changer.", photoObligatoire: false },
-    { id: "m-cuisine-10", emoji: "☕", titre: "Nettoyer petits électros", description: "Cafetière, bouilloire, grille-pain sans miettes.", photoObligatoire: true },
-    { id: "m-cuisine-11", emoji: "🧼", titre: "Vider lave-vaisselle", description: "Ranger la vaisselle, laisser 2 pastilles.", photoObligatoire: true },
-    { id: "m-cuisine-12", emoji: "🧴", titre: "Contrôler éponge & liquide", description: "Éponge saine ; et produit vaisselle", photoObligatoire: false },
-    { id: "m-cuisine-13", emoji: "🧹", titre: "Balayer & serpillière", description: "Sol sans miettes, taches, traces de gras.", photoObligatoire: false },
-  ],
-  "Salle de bain (sans toilettes)": [
-    { id: "m-sdb-1", emoji: "💈", titre: "Retirer cheveux/poils (siphon)", description: "Siphon de douche propre.", photoObligatoire: true },
-    { id: "m-sdb-2", emoji: "🚿", titre: "Détartrer parois & robinetterie", description: "Sans calcaire ni moisissure.", photoObligatoire: true },
-    { id: "m-sdb-3", emoji: "🧱", titre: "Nettoyer carrelage & joints", description: "Joints blancs, carreaux sans savon.", photoObligatoire: false },
-    { id: "m-sdb-4", emoji: "🪞", titre: "Nettoyer miroir & vasque", description: "Sans trace d'eau ni dentifrice.", photoObligatoire: false },
-    { id: "m-sdb-5", emoji: "🚪", titre: "Nettoyer meuble sous-vasque", description: "Intérieur vidé, façade essuyée.", photoObligatoire: false },
-    { id: "m-sdb-6", emoji: "🧺", titre: "Vérifier linge de toilette", description: "Serviettes propres, pliées, quantité suffisante.", photoObligatoire: false },
-    { id: "m-sdb-7", emoji: "🗑️", titre: "Vider poubelle SDB", description: "Sac neuf, sans odeur.", photoObligatoire: false },
-    { id: "m-sdb-8", emoji: "🛁", titre: "Changer le tapis de bain", description: "Prendre un tapis propre", photoObligatoire: false },
-  ],
-  "Salle de bain avec toilettes": [
-    { id: "m-sdbwc-1", emoji: "🚽", titre: "Nettoyer cuvette & lunette", description: "Détartrage, désinfection, dessous de lunette inclus.", photoObligatoire: true },
-    { id: "m-sdbwc-2", emoji: "🧻", titre: "Recharger papier toilette", description: "≥ 1 rouleau plein disponible.", photoObligatoire: false },
-    { id: "m-sdbwc-3", emoji: "💈", titre: "Retirer cheveux/poils (siphon)", description: "Siphon de douche propre.", photoObligatoire: true },
-    { id: "m-sdbwc-4", emoji: "🚿", titre: "Détartrer parois & robinetterie", description: "Sans calcaire ni moisissure.", photoObligatoire: false },
-    { id: "m-sdbwc-5", emoji: "🧱", titre: "Nettoyer carrelage & joints", description: "Joints blancs, carreaux sans savon.", photoObligatoire: false },
-    { id: "m-sdbwc-6", emoji: "🪞", titre: "Nettoyer miroir & vasque", description: "Sans trace d'eau ni dentifrice.", photoObligatoire: false },
-    { id: "m-sdbwc-7", emoji: "🚪", titre: "Nettoyer meuble sous-vasque", description: "Intérieur vidé, façade essuyée.", photoObligatoire: false },
-    { id: "m-sdbwc-8", emoji: "🧺", titre: "Vérifier linge de toilette", description: "Serviettes propres, pliées, quantité suffisante.", photoObligatoire: false },
-    { id: "m-sdbwc-9", emoji: "🗑️", titre: "Vider poubelle SDB", description: "Sac neuf, sans odeur.", photoObligatoire: false },
-    { id: "m-sdbwc-10", emoji: "🛁", titre: "Changer le tapis de bain", description: "Prendre un tapis propre", photoObligatoire: false },
-  ],
-  "Toilettes séparés": [
-    { id: "m-wc-1", emoji: "🚽", titre: "Nettoyer cuvette & lunette", description: "Détartrage, désinfection, dessous de lunette inclus.", photoObligatoire: true },
-    { id: "m-wc-2", emoji: "🧻", titre: "Recharger papier toilette", description: "≥ 1 rouleau plein disponible.", photoObligatoire: false },
-  ],
-  "Chambre": [
-    { id: "m-chambre-1", emoji: "🛏️", titre: "Changer draps & taies", description: "Parure propre, tirée au carré.", photoObligatoire: true },
-    { id: "m-chambre-2", emoji: "🧹", titre: "Aspirer matelas", description: "Cheveux / poussière retirés.", photoObligatoire: false },
-    { id: "m-chambre-3", emoji: "🛌", titre: "Contrôler oreillers & couette", description: "Sans taches ni odeur.", photoObligatoire: false },
-    { id: "m-chambre-4", emoji: "🪵", titre: "Signaler latte cassée", description: "Lever sommier et vérifier.", photoObligatoire: false },
-    { id: "m-chambre-5", emoji: "🧹", titre: "Aspirer sous lit & meubles", description: "Aucune boule de poussière.", photoObligatoire: false },
-    { id: "m-chambre-6", emoji: "💡", titre: "Nettoyer tables de chevet", description: "Dépoussiérer, essuyer lampes.", photoObligatoire: false },
-    { id: "m-chambre-7", emoji: "🚪", titre: "Vérifier placards & tiroirs", description: "Vides, propres.", photoObligatoire: true },
-    { id: "m-chambre-8", emoji: "🪟", titre: "Ranger rideaux / volets", description: "Fonctionnement OK, pas de tache.", photoObligatoire: false },
-  ],
-  "Salon / Séjour": [
-    { id: "m-salon-1", emoji: "🧹", titre: "Dépoussiérer surfaces", description: "Tables, étagères, TV, moulures.", photoObligatoire: false },
-    { id: "m-salon-2", emoji: "🛋️", titre: "Aspirer canapé & fauteuils", description: "Retirer poils, miettes, coussins tapotés.", photoObligatoire: false },
-    { id: "m-salon-3", emoji: "🧺", titre: "Aspirer & secouer tapis", description: "Pas de miette, pas d'odeur.", photoObligatoire: false },
-    { id: "m-salon-4", emoji: "📺", titre: "Remettre télécommande TV", description: "Placer dans un endroit visible", photoObligatoire: true },
-    { id: "m-salon-5", emoji: "📐", titre: "Aligner mobilier & déco", description: "Table basse centrée, coussins placés.", photoObligatoire: false },
-  ],
-  "Salle à manger": [
-    { id: "m-sam-1", emoji: "🪑", titre: "Essuyer table & chaises", description: "Plateau sans trace, chaises dépoussiérées.", photoObligatoire: true },
-    { id: "m-sam-2", emoji: "🍽️", titre: "Vérifier sets de table / déco", description: "Propre, rangé.", photoObligatoire: false },
-    { id: "m-sam-3", emoji: "🚪", titre: "Nettoyer buffet / vaisselier", description: "Poignées sans empreintes.", photoObligatoire: false },
-    { id: "m-sam-4", emoji: "🧹", titre: "Passer aspirateur sous table", description: "Aucun débris.", photoObligatoire: false },
-  ],
-  "Entrée / Couloir / Escaliers": [
-    { id: "m-entree-1", emoji: "🚪", titre: "Nettoyer/secouer paillasson", description: "Sans sable ni gravier.", photoObligatoire: false },
-    { id: "m-entree-2", emoji: "🪞", titre: "Nettoyer miroir & interphone", description: "Sans trace de doigts.", photoObligatoire: false },
-    { id: "m-entree-3", emoji: "🪜", titre: "Dépoussiérer rampe escalier", description: "Rampe & barreaux sans poussière.", photoObligatoire: false },
-  ],
-  "Buanderie / Laverie": [
-    { id: "m-buand-1", emoji: "🧺", titre: "Nettoyer tambour lave-linge", description: "Joint & hublot essuyés.", photoObligatoire: false },
-    { id: "m-buand-2", emoji: "🌪️", titre: "Vider filtre sèche-linge", description: "Peluches retirées.", photoObligatoire: false },
-    { id: "m-buand-3", emoji: "🧼", titre: "Nettoyer plan de pliage", description: "Sans tache de lessive.", photoObligatoire: false },
-    { id: "m-buand-4", emoji: "🧴", titre: "Contrôler stock lessive", description: "≥ 2 doses.", photoObligatoire: false },
-  ],
-  "Espaces extérieurs": [
-    { id: "m-ext-1", emoji: "🪑", titre: "Nettoyer mobilier jardin", description: "Table & chaises essuyées.", photoObligatoire: false },
-    { id: "m-ext-2", emoji: "☂️", titre: "Ranger coussins & parasol", description: "Coussins secs, parasol fermé.", photoObligatoire: false },
-    { id: "m-ext-3", emoji: "🚬", titre: "Vider cendriers & mégots", description: "Aucun mégot au sol.", photoObligatoire: false },
-    { id: "m-ext-4", emoji: "🍖", titre: "Nettoyer barbecue", description: "Grille brossée, cendres vidées.", photoObligatoire: true },
-    { id: "m-ext-5", emoji: "🛁", titre: "Vérifier SPA", description: "Eau claire, couvercle remis.", photoObligatoire: false },
-    { id: "m-ext-6", emoji: "🏊", titre: "Vérifier piscine", description: "Eau propre, skimmer vidé, couverture sécurisée.", photoObligatoire: false },
-    { id: "m-ext-7", emoji: "🌱", titre: "Arroser / vérifier plantes", description: "Feuilles mortes retirées.", photoObligatoire: false },
-  ],
-};
-
-// Tâches par défaut pour VOYAGEUR
-export const TACHES_VOYAGEUR: Record<string, TacheModele[]> = {
-  "Cuisine": [
-    { id: "v-cuisine-1", emoji: "🗑️", titre: "Vider les poubelles", description: "Sortir tous les sacs, remettre un sac propre, fermer le couvercle.", photoObligatoire: true },
-    { id: "v-cuisine-2", emoji: "🍽️", titre: "Ranger la vaisselle", description: "Laver ou lancer le lave-vaisselle puis ranger toute la vaisselle propre.", photoObligatoire: false },
-    { id: "v-cuisine-3", emoji: "❄️", titre: "Vider le réfrigérateur", description: "Retirer tous les aliments entamés, jeter ou emporter.", photoObligatoire: true },
-  ],
-  "Salle de bain (sans toilettes)": [
-    { id: "v-sdb-1", emoji: "🧺", titre: "Rassembler serviettes", description: "Déposer toutes les serviettes utilisées dans le panier ou sur le sol prévu.", photoObligatoire: true },
-    { id: "v-sdb-2", emoji: "🗑️", titre: "Vider la poubelle", description: "Jeter mouchoirs ou produits usagés, remettre un sac propre si fourni.", photoObligatoire: false },
-    { id: "v-sdb-3", emoji: "🧴", titre: "Vérifier effets personnels", description: "Aucun produit ou accessoire oublié dans la douche ou sur la vasque.", photoObligatoire: false },
-  ],
-  "Salle de bain avec toilettes": [
-    { id: "v-sdbwc-1", emoji: "🚽", titre: "Tirer chasse & abaisser lunette", description: "Laisser la cuvette propre et fermée.", photoObligatoire: true },
-    { id: "v-sdbwc-2", emoji: "🗑️", titre: "Vider la poubelle", description: "Sac retiré ou contenu jeté dans la grande poubelle.", photoObligatoire: false },
-    { id: "v-sdbwc-3", emoji: "🧺", titre: "Regrouper serviettes", description: "Mettre linge humide au même endroit (panier ou sol prévu).", photoObligatoire: false },
-  ],
-  "Toilettes séparés": [
-    { id: "v-wc-1", emoji: "🚽", titre: "Tirer chasse & fermer abattant", description: "Laisser cuvette et abattant propres.", photoObligatoire: false },
-    { id: "v-wc-2", emoji: "🗑️", titre: "Vider la poubelle", description: "Retirer le sac ou son contenu.", photoObligatoire: false },
-  ],
-  "Chambre": [
-    { id: "v-chambre-1", emoji: "🛏️", titre: "Défaire le linge de lit", description: "Retirer draps & taies, les placer où indiqué (panier, sac…).", photoObligatoire: true },
-    { id: "v-chambre-2", emoji: "🚪", titre: "Vérifier placards/tiroirs", description: "Rien d'oublié ni de déchets à l'intérieur.", photoObligatoire: true },
-  ],
-  "Salon / Séjour": [
-    { id: "v-salon-1", emoji: "🛋️", titre: "Ranger canapé & coussins", description: "Coussins tapotés, plaid plié, canapé dégagé.", photoObligatoire: true },
-    { id: "v-salon-2", emoji: "📺", titre: "Éteindre TV & appareils", description: "Télécommande posée à sa place, TV et console éteintes.", photoObligatoire: false },
-  ],
-  "Espaces extérieurs": [
-    { id: "v-ext-1", emoji: "🪑", titre: "Ranger mobilier", description: "Chaises repoussées, coussins rentrés ou empilés.", photoObligatoire: true },
-    { id: "v-ext-2", emoji: "🚬", titre: "Vider cendriers", description: "Jeter mégots, nettoyer cendrier si besoin.", photoObligatoire: false },
-    { id: "v-ext-3", emoji: "☂️", titre: "Fermer parasol / BBQ", description: "Parasol fermé ; BBQ éteint & couvercle remis.", photoObligatoire: false },
-    { id: "v-ext-4", emoji: "🚪", titre: "Vérifier portail / portillon", description: "Fermé ou verrouillé selon consigne.", photoObligatoire: false },
-  ],
-};
 
 // Questions par défaut pour la checklist MÉNAGE
 const DEFAULT_QUESTIONS_MENAGE: QuestionModele[] = [
@@ -279,6 +662,7 @@ export function CustomModeleBuilder({
   editingModele,
   isFullScreenMode = false,
 }: CustomModeleBuilderProps) {
+  const { t } = useTranslation();
   const [modeleName, setModeleName] = useState("");
   const [modeleType, setModeleType] = useState<"menage" | "voyageur">(initialParcoursType || "menage");
   const [etatLieuxMoment, setEtatLieuxMoment] = useState<"sortie" | "arrivee-sortie">("arrivee-sortie");
@@ -316,24 +700,23 @@ export function CustomModeleBuilder({
       const customTasksMap = new Map<string, TacheModele[]>();
       
       const defaultPieces = editingModele.type === "menage" ? PIECES_MENAGE : PIECES_VOYAGEUR;
-      const defaultTasks = editingModele.type === "menage" ? TACHES_MENAGE : TACHES_VOYAGEUR;
-      
+
       editingModele.pieces.forEach((piece: PieceModele) => {
         piecesMap.set(piece.nom, piece.tachesSelectionnees);
-        
+
         // Identifier les pièces personnalisées (qui ne sont pas dans les pièces par défaut)
         if (!defaultPieces.includes(piece.nom)) {
           customPiecesArray.push(piece.nom);
         }
-        
+
         // Identifier les tâches personnalisées pour cette pièce
-        const defaultTasksForPiece = defaultTasks[piece.nom] || [];
+        const defaultTasksForPiece = loadTasksFromTranslations(t, editingModele.type, piece.nom);
         const defaultTaskIds = new Set(defaultTasksForPiece.map(t => t.id));
-        
+
         const customTasksForPiece = piece.tachesDisponibles.filter(
           (task: TacheModele) => !defaultTaskIds.has(task.id)
         );
-        
+
         if (customTasksForPiece.length > 0) {
           customTasksMap.set(piece.nom, customTasksForPiece);
         }
@@ -405,8 +788,8 @@ export function CustomModeleBuilder({
   const handleAddCustomPiece = () => {
     if (!newPieceName.trim()) {
       toast({
-        title: "Erreur",
-        description: "Le nom de la pièce est obligatoire",
+        title: t('customModeleBuilder.errorTitle'),
+        description: t('customModeleBuilder.roomNameRequired'),
         variant: "destructive",
       });
       return;
@@ -416,23 +799,23 @@ export function CustomModeleBuilder({
     const allPieces = getAllPieces();
     if (allPieces.includes(newPieceName.trim())) {
       toast({
-        title: "Erreur",
-        description: "Cette pièce existe déjà",
+        title: t('customModeleBuilder.errorTitle'),
+        description: t('customModeleBuilder.roomAlreadyExists'),
         variant: "destructive",
       });
       return;
     }
 
     setCustomPieces([...customPieces, newPieceName.trim()]);
-    
+
     // Sélectionner automatiquement la nouvelle pièce
     const newSelectedPieces = new Map(selectedPieces);
     newSelectedPieces.set(newPieceName.trim(), []);
     setSelectedPieces(newSelectedPieces);
 
     toast({
-      title: "Pièce ajoutée",
-      description: `"${newPieceName.trim()}" a été ajoutée avec succès`,
+      title: t('customModeleBuilder.roomAdded'),
+      description: t('customModeleBuilder.roomAddedDesc', { roomName: newPieceName.trim() }),
     });
 
     setNewPieceDialogOpen(false);
@@ -458,8 +841,8 @@ export function CustomModeleBuilder({
     setEditedDefaultTasks(newEditedTasks);
 
     toast({
-      title: "Pièce supprimée",
-      description: `"${piece}" a été supprimée`,
+      title: t('customModeleBuilder.roomDeleted'),
+      description: t('customModeleBuilder.roomDeletedDesc', { roomName: piece }),
     });
   };
 
@@ -499,10 +882,10 @@ export function CustomModeleBuilder({
 
     setNewTask({ emoji: "", titre: "", description: "", photoObligatoire: false });
     setNewTaskDialogOpen(false);
-    
+
     toast({
-      title: "Tâche créée",
-      description: `"${task.titre}" a été ajoutée à ${currentPiece}`,
+      title: t('customModeleBuilder.taskCreated'),
+      description: t('customModeleBuilder.taskCreatedDesc', { taskTitle: task.titre, roomName: currentPiece }),
     });
   };
 
@@ -519,23 +902,22 @@ export function CustomModeleBuilder({
     setSelectedPieces(newSelectedPieces);
 
     toast({
-      title: "Tâche supprimée",
-      description: "La tâche personnalisée a été supprimée",
+      title: t('customModeleBuilder.taskDeleted'),
+      description: t('customModeleBuilder.taskDeletedDesc'),
     });
   };
 
   const getAllTasksForPiece = (piece: string): TacheModele[] => {
-    const tasksSource = activeParcoursType === "menage" ? TACHES_MENAGE : TACHES_VOYAGEUR;
-    let defaultTasks = tasksSource[piece] || [];
-    
+    let defaultTasks = loadTasksFromTranslations(t, activeParcoursType, piece);
+
     // Remplacer les tâches par défaut qui ont été modifiées
     const pieceEdited = editedDefaultTasks.get(piece);
     if (pieceEdited) {
-      defaultTasks = defaultTasks.map(task => 
+      defaultTasks = defaultTasks.map(task =>
         pieceEdited.has(task.id) ? pieceEdited.get(task.id)! : task
       );
     }
-    
+
     const custom = customTasks.get(piece) || [];
     return [...defaultTasks, ...custom];
   };
@@ -549,11 +931,11 @@ export function CustomModeleBuilder({
     if (!editingTask) return;
 
     const { piece, task: originalTask } = editingTask;
-    
+
     // Check if it's a custom task
     const pieceTasks = customTasks.get(piece) || [];
     const customTaskIndex = pieceTasks.findIndex(t => t.id === originalTask.id);
-    
+
     if (customTaskIndex !== -1) {
       // Update custom task - KEEP ORIGINAL ID
       const newCustomTasks = new Map(customTasks);
@@ -571,10 +953,10 @@ export function CustomModeleBuilder({
 
     setEditTaskDialogOpen(false);
     setEditingTask(null);
-    
+
     toast({
-      title: "Tâche modifiée",
-      description: `"${updatedTask.titre}" a été mise à jour`,
+      title: t('customModeleBuilder.taskModified'),
+      description: t('customModeleBuilder.taskModifiedDesc', { taskTitle: updatedTask.titre }),
     });
   };
 
@@ -602,8 +984,8 @@ export function CustomModeleBuilder({
   const handleSupprimerQuestion = (questionId: string) => {
     setCustomQuestions(customQuestions.filter(q => q.id !== questionId));
     toast({
-      title: "Question supprimée",
-      description: "La question a été retirée de la checklist",
+      title: t('customModeleBuilder.questionDeleted'),
+      description: t('customModeleBuilder.questionDeletedDesc'),
     });
   };
 
@@ -615,8 +997,8 @@ export function CustomModeleBuilder({
     };
     setCustomQuestions([...customQuestions, newQuestion]);
     toast({
-      title: "Question dupliquée",
-      description: "La question a été dupliquée avec succès",
+      title: t('customModeleBuilder.questionDuplicated'),
+      description: t('customModeleBuilder.questionDuplicatedDesc'),
     });
   };
 
@@ -625,15 +1007,15 @@ export function CustomModeleBuilder({
       // Check if it's a custom question
       const isCustom = customQuestions.some(q => q.id === currentQuestion.id);
       if (isCustom) {
-        setCustomQuestions(customQuestions.map(q => 
-          q.id === currentQuestion.id 
+        setCustomQuestions(customQuestions.map(q =>
+          q.id === currentQuestion.id
             ? { ...questionData, id: currentQuestion.id }
             : q
         ));
       }
       toast({
-        title: "Question modifiée",
-        description: "La question a été mise à jour",
+        title: t('customModeleBuilder.questionModified'),
+        description: t('customModeleBuilder.questionModifiedDesc'),
       });
     } else {
       // Ajouter
@@ -643,8 +1025,8 @@ export function CustomModeleBuilder({
       };
       setCustomQuestions([...customQuestions, newQuestion]);
       toast({
-        title: "Question ajoutée",
-        description: "La question a été ajoutée à la checklist",
+        title: t('customModeleBuilder.questionAdded'),
+        description: t('customModeleBuilder.questionAddedDesc'),
       });
     }
   };
@@ -652,8 +1034,8 @@ export function CustomModeleBuilder({
   const handleSave = () => {
     if (!modeleName.trim()) {
       toast({
-        title: "Nom requis",
-        description: "Veuillez donner un nom à votre modèle",
+        title: t('customModeleBuilder.nameRequired'),
+        description: t('customModeleBuilder.nameRequiredDesc'),
         variant: "destructive",
       });
       return;
@@ -680,12 +1062,12 @@ export function CustomModeleBuilder({
 
     onSave(modele);
     onOpenChange(false);
-    
+
     toast({
-      title: editingModele ? "Modèle modifié" : "Modèle créé",
-      description: editingModele 
-        ? `Le modèle "${modeleName}" a été modifié avec succès`
-        : `Le modèle "${modeleName}" a été créé avec succès`,
+      title: editingModele ? t('customModeleBuilder.modelModified') : t('customModeleBuilder.modelCreated'),
+      description: editingModele
+        ? t('customModeleBuilder.modelModifiedDesc', { modelName: modeleName })
+        : t('customModeleBuilder.modelCreatedDesc', { modelName: modeleName }),
     });
   };
 
@@ -725,11 +1107,11 @@ export function CustomModeleBuilder({
             )}
             <div className={isFullScreenMode ? "text-center pl-8 sm:pl-10 pr-8" : "text-center px-8 sm:px-12"}>
               <DialogTitle className={isFullScreenMode ? "text-sm sm:text-base md:text-lg" : "text-base sm:text-lg md:text-xl"}>
-                {editingModele ? "Modifier" : "Créer"} son propre modèle de parcours {initialParcoursType === "menage" ? "ménage" : "voyageur"}
+                {editingModele ? t('customModeleBuilder.editTitle') : t('customModeleBuilder.createTitle')} {initialParcoursType === "menage" ? t('parcours.menage') : t('parcours.voyageur')}
               </DialogTitle>
               <DialogDescription className="flex items-center justify-center gap-2 text-xs mt-1">
                 <Calendar className="h-3 w-3" />
-                Dernière mise à jour : {updatedAt}
+                {t('customModeleBuilder.lastUpdate')} {updatedAt}
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -738,13 +1120,13 @@ export function CustomModeleBuilder({
             {/* Configuration de base */}
             <Card>
               <CardHeader className={isFullScreenMode ? "p-3 sm:p-4 md:p-6" : "p-4 sm:p-6"}>
-                <CardTitle className="text-sm sm:text-base">Configuration du modèle</CardTitle>
+                <CardTitle className="text-sm sm:text-base">{t('customModeleBuilder.modelConfig')}</CardTitle>
               </CardHeader>
               <CardContent className={isFullScreenMode ? "space-y-2 sm:space-y-3 md:space-y-4 p-3 sm:p-4 md:p-6" : "space-y-3 sm:space-y-4 p-4 sm:p-6"}>
                 <div className="space-y-2">
-                  <Label>Nom du modèle *</Label>
+                  <Label>{t('customModeleBuilder.modelName')}</Label>
                   <Input
-                    placeholder="Ex: Ménage complet appartement T3"
+                    placeholder={t('customModeleBuilder.modelNamePlaceholder')}
                     value={modeleName}
                     onChange={(e) => setModeleName(e.target.value)}
                   />
@@ -752,7 +1134,7 @@ export function CustomModeleBuilder({
 
                 {!initialParcoursType && (
                   <div className="space-y-2">
-                    <Label className="text-sm">Type de parcours *</Label>
+                    <Label className="text-sm">{t('customModeleBuilder.parcoursType')}</Label>
                     <Tabs value={modeleType} onValueChange={(v) => {
                       const newType = v as "menage" | "voyageur";
                       setModeleType(newType);
@@ -762,10 +1144,10 @@ export function CustomModeleBuilder({
                     }}>
                       <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="menage" className="gap-1 sm:gap-2 text-xs sm:text-sm">
-                          🧹 <span className="hidden xs:inline">Ménage</span>
+                          🧹 <span className="hidden xs:inline">{t('parcours.menage')}</span>
                         </TabsTrigger>
                         <TabsTrigger value="voyageur" className="gap-1 sm:gap-2 text-xs sm:text-sm">
-                          ✈️ <span className="hidden xs:inline">Voyageur</span>
+                          ✈️ <span className="hidden xs:inline">{t('parcours.voyageur')}</span>
                         </TabsTrigger>
                       </TabsList>
                     </Tabs>
@@ -773,19 +1155,19 @@ export function CustomModeleBuilder({
                 )}
 
                 <div className="space-y-2">
-                  <Label className="text-sm">État des lieux</Label>
+                  <Label className="text-sm">{t('customModeleBuilder.inventoryMoment')}</Label>
                   <Tabs value={etatLieuxMoment} onValueChange={(v) => setEtatLieuxMoment(v as "sortie" | "arrivee-sortie")}>
                     <TabsList className="grid w-full grid-cols-2">
                       <TabsTrigger value="sortie" className="gap-1 sm:gap-2 text-xs sm:text-sm">
-                        📷 <span className="hidden sm:inline">À la sortie uniquement</span><span className="sm:hidden">Sortie</span>
+                        📷 <span className="hidden sm:inline">{t('customModeleBuilder.exitOnly')}</span><span className="sm:hidden">{t('customModeleBuilder.exitOnlyShort')}</span>
                       </TabsTrigger>
                       <TabsTrigger value="arrivee-sortie" className="gap-1 sm:gap-2 text-xs sm:text-sm">
-                        📷 <span className="hidden sm:inline">À l'arrivée et à la sortie</span><span className="sm:hidden">Arrivée/Sortie</span>
+                        📷 <span className="hidden sm:inline">{t('customModeleBuilder.arrivalExit')}</span><span className="sm:hidden">{t('customModeleBuilder.arrivalExitShort')}</span>
                       </TabsTrigger>
                     </TabsList>
                   </Tabs>
                   <p className="text-xs text-muted-foreground">
-                    Notre IA utilise uniquement les photos de sortie pour détecter les différences avec l'état initial.
+                    {t('customModeleBuilder.inventoryInfo')}
                   </p>
                 </div>
               </CardContent>
@@ -794,12 +1176,12 @@ export function CustomModeleBuilder({
             {/* Sélection des pièces et tâches */}
             <Card>
               <CardHeader className={isFullScreenMode ? "p-3 sm:p-4 md:p-6" : "p-4 sm:p-6"}>
-                <CardTitle className="text-sm sm:text-base">Pièces et tâches</CardTitle>
+                <CardTitle className="text-sm sm:text-base">{t('customModeleBuilder.roomsAndTasks')}</CardTitle>
               </CardHeader>
               <CardContent className={isFullScreenMode ? "space-y-2 sm:space-y-3 md:space-y-4 p-3 sm:p-4 md:p-6" : "space-y-3 sm:space-y-4 p-4 sm:p-6"}>
                 <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 sm:p-4">
                   <p className="text-xs sm:text-sm text-blue-900 dark:text-blue-100">
-                    💡 Pour chaque pièce sélectionnée, choisissez les tâches à effectuer. Vous pouvez également ajouter vos propres pièces et tâches personnalisées.
+                    {t('customModeleBuilder.roomsInfo')}
                   </p>
                 </div>
                 {getAllPieces().map((piece) => (
@@ -845,8 +1227,8 @@ export function CustomModeleBuilder({
                           }}
                         >
                           <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                          <span className="hidden sm:inline">Ajouter une tâche</span>
-                          <span className="sm:hidden">Ajouter</span>
+                          <span className="hidden sm:inline">{t('customModeleBuilder.addTask')}</span>
+                          <span className="sm:hidden">{t('customModeleBuilder.addTaskShort')}</span>
                         </Button>
                       )}
                     </div>
@@ -871,11 +1253,11 @@ export function CustomModeleBuilder({
                                   <span className="text-sm sm:text-base">{tache.emoji}</span>
                                   <span className="font-medium text-xs sm:text-sm">{tache.titre}</span>
                                   {isCustomTask && (
-                                    <Badge variant="outline" className="text-xs">Personnalisée</Badge>
+                                    <Badge variant="outline" className="text-xs">{t('customModeleBuilder.customLabel')}</Badge>
                                   )}
                                   {tache.photoObligatoire && (
                                     <Badge variant="secondary" className="text-xs">
-                                      📷 <span className="hidden xs:inline">Photo requise</span>
+                                      📷 <span className="hidden xs:inline">{t('customModeleBuilder.photoRequired')}</span>
                                     </Badge>
                                   )}
                                 </div>
@@ -917,7 +1299,7 @@ export function CustomModeleBuilder({
                   onClick={() => setNewPieceDialogOpen(true)}
                 >
                   <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-                  Ajouter une pièce personnalisée
+                  {t('customModeleBuilder.addCustomRoom')}
                 </Button>
               </CardContent>
             </Card>
@@ -927,7 +1309,7 @@ export function CustomModeleBuilder({
               <CardHeader className="px-0 pt-0">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3">
                   <div className="flex items-center gap-2">
-                    <CardTitle className="text-sm sm:text-base md:text-lg">Check-list avant le départ</CardTitle>
+                    <CardTitle className="text-sm sm:text-base md:text-lg">{t('customModeleBuilder.checklistBeforeDeparture')}</CardTitle>
                     <Badge variant="secondary" className="text-xs">
                       {getSelectedQuestionsData().length}
                     </Badge>
@@ -939,15 +1321,15 @@ export function CustomModeleBuilder({
                     className="w-full sm:w-auto justify-center text-xs sm:text-sm"
                   >
                     <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                    <span className="hidden sm:inline">Ajouter une Question</span>
-                    <span className="sm:hidden">Ajouter</span>
+                    <span className="hidden sm:inline">{t('customModeleBuilder.addQuestion')}</span>
+                    <span className="sm:hidden">{t('customModeleBuilder.addQuestionShort')}</span>
                   </Button>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3 sm:space-y-4 px-0">
                 <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 sm:p-4">
                   <p className="text-xs sm:text-sm text-blue-900 dark:text-blue-100">
-                    💡 Sélectionnez les questions que le voyageur devra valider avant de quitter le logement.
+                    {t('customModeleBuilder.checklistInfo')}
                   </p>
                 </div>
 
@@ -967,10 +1349,10 @@ export function CustomModeleBuilder({
                         <div className="font-medium text-xs sm:text-sm">{question.intitule}</div>
                         <div className="flex gap-1.5 mt-1 flex-wrap">
                           {question.photoObligatoire && (
-                            <Badge variant="secondary" className="text-xs">📷 <span className="hidden xs:inline">Photo</span></Badge>
+                            <Badge variant="secondary" className="text-xs">📷 <span className="hidden xs:inline">{t('customModeleBuilder.photoRequiredShort')}</span></Badge>
                           )}
                           <Badge variant="outline" className="text-xs">
-                            {question.type === "oui-non" ? "Oui/Non" : "💬 Ouverte"}
+                            {question.type === "oui-non" ? t('customModeleBuilder.yesNo') : t('customModeleBuilder.openQuestion')}
                           </Badge>
                         </div>
                       </div>
@@ -1044,11 +1426,11 @@ export function CustomModeleBuilder({
                 }
               }}
             >
-              Annuler
+              {t('customModeleBuilder.cancel')}
             </Button>
             <Button onClick={handleSave} className="w-full sm:w-auto">
-              <span className="hidden sm:inline">{editingModele ? "Enregistrer les modifications" : "Créer le modèle"}</span>
-              <span className="sm:hidden">{editingModele ? "Enregistrer" : "Créer"}</span>
+              <span className="hidden sm:inline">{editingModele ? t('customModeleBuilder.saveChanges') : t('customModeleBuilder.createModel')}</span>
+              <span className="sm:hidden">{editingModele ? t('customModeleBuilder.saveChangesShort') : t('customModeleBuilder.createModelShort')}</span>
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1066,15 +1448,15 @@ export function CustomModeleBuilder({
       <Dialog open={newTaskDialogOpen} onOpenChange={setNewTaskDialogOpen}>
         <DialogContent className="sm:max-w-[500px] w-[calc(100vw-2rem)] max-w-[95vw]">
           <DialogHeader>
-            <DialogTitle className="text-base sm:text-lg">Ajouter une tâche personnalisée</DialogTitle>
+            <DialogTitle className="text-base sm:text-lg">{t('customModeleBuilder.addCustomTask')}</DialogTitle>
             <DialogDescription className="text-xs sm:text-sm">
-              Pour la pièce : {currentPiece}
+              {t('customModeleBuilder.forRoom')} {currentPiece}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-3 sm:space-y-4">
             <div className="space-y-2">
-              <Label className="text-sm">Emoji (optionnel)</Label>
+              <Label className="text-sm">{t('customModeleBuilder.emojiOptional')}</Label>
               <EmojiPicker
                 value={newTask.emoji}
                 onChange={(emoji) => setNewTask({ ...newTask, emoji })}
@@ -1083,9 +1465,9 @@ export function CustomModeleBuilder({
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm">Titre de la tâche *</Label>
+              <Label className="text-sm">{t('customModeleBuilder.taskTitle')}</Label>
               <Input
-                placeholder="Ex: Vérifier le chauffage"
+                placeholder={t('customModeleBuilder.taskTitlePlaceholder')}
                 value={newTask.titre}
                 onChange={(e) => setNewTask({ ...newTask, titre: e.target.value })}
                 className="text-sm"
@@ -1093,9 +1475,9 @@ export function CustomModeleBuilder({
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm">Description</Label>
+              <Label className="text-sm">{t('customModeleBuilder.description')}</Label>
               <Input
-                placeholder="Ex: S'assurer que le chauffage fonctionne"
+                placeholder={t('customModeleBuilder.descriptionPlaceholder')}
                 value={newTask.description}
                 onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
                 className="text-sm"
@@ -1111,17 +1493,17 @@ export function CustomModeleBuilder({
                 }
               />
               <Label htmlFor="photo-required" className="cursor-pointer text-sm">
-                Photo obligatoire
+                {t('customModeleBuilder.photoMandatory')}
               </Label>
             </div>
           </div>
 
           <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setNewTaskDialogOpen(false)} className="w-full sm:w-auto">
-              Annuler
+              {t('customModeleBuilder.cancel')}
             </Button>
             <Button onClick={handleAddCustomTask} disabled={!newTask.titre} className="w-full sm:w-auto">
-              Ajouter
+              {t('customModeleBuilder.add')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1140,19 +1522,19 @@ export function CustomModeleBuilder({
       <Dialog open={newPieceDialogOpen} onOpenChange={setNewPieceDialogOpen}>
         <DialogContent className="sm:max-w-[500px] w-[calc(100vw-2rem)] max-w-[95vw]">
           <DialogHeader>
-            <DialogTitle className="text-base sm:text-lg">Ajouter une pièce personnalisée</DialogTitle>
+            <DialogTitle className="text-base sm:text-lg">{t('customModeleBuilder.addCustomRoomTitle')}</DialogTitle>
             <DialogDescription className="text-xs sm:text-sm">
-              Ajoutez une pièce qui n'est pas dans la liste prédéfinie
+              {t('customModeleBuilder.addCustomRoomDesc')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 sm:space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="piece-name" className="text-sm">Nom de la pièce *</Label>
+              <Label htmlFor="piece-name" className="text-sm">{t('customModeleBuilder.roomName')}</Label>
               <Input
                 id="piece-name"
                 value={newPieceName}
                 onChange={(e) => setNewPieceName(e.target.value)}
-                placeholder="Ex: Buanderie, Terrasse, Cave..."
+                placeholder={t('customModeleBuilder.roomNamePlaceholder')}
                 className="text-sm"
               />
             </div>
@@ -1162,10 +1544,10 @@ export function CustomModeleBuilder({
               setNewPieceDialogOpen(false);
               setNewPieceName("");
             }} className="w-full sm:w-auto">
-              Annuler
+              {t('customModeleBuilder.cancel')}
             </Button>
             <Button onClick={handleAddCustomPiece} disabled={!newPieceName.trim()} className="w-full sm:w-auto">
-              Ajouter
+              {t('customModeleBuilder.add')}
             </Button>
           </DialogFooter>
         </DialogContent>

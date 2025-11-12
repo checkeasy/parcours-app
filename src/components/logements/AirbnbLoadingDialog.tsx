@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -48,11 +49,12 @@ export function AirbnbLoadingDialog({
   onClose,
   isFullScreenMode = false,
 }: AirbnbLoadingDialogProps) {
+  const { t } = useTranslation();
   const [inputLink, setInputLink] = useState("");
   const [validationError, setValidationError] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [statusMessage, setStatusMessage] = useState("🔍 Analyse de l'annonce Airbnb...");
+  const [statusMessage, setStatusMessage] = useState(t('airbnb.analyzing'));
   const [isComplete, setIsComplete] = useState(false);
   const [mockData, setMockData] = useState<{ pieces: PieceData[]; totalPhotos: number } | null>(null);
 
@@ -62,7 +64,7 @@ export function AirbnbLoadingDialog({
       setValidationError("");
       setIsAnalyzing(false);
       setProgress(0);
-      setStatusMessage("🔍 Analyse de l'annonce Airbnb...");
+      setStatusMessage(t('airbnb.analyzing'));
       setIsComplete(false);
       setMockData(null);
       return;
@@ -81,7 +83,7 @@ export function AirbnbLoadingDialog({
     // Appeler l'API de scraping réelle
     const performScraping = async () => {
       try {
-        setStatusMessage("🔍 Analyse de l'annonce Airbnb...");
+        setStatusMessage(t('airbnb.analyzing'));
         setProgress(10);
 
         // TODO: Remplacer par les vrais IDs de l'utilisateur
@@ -108,7 +110,7 @@ export function AirbnbLoadingDialog({
         });
 
         setProgress(50);
-        setStatusMessage("📸 Téléchargement et conversion des photos en base64...");
+        setStatusMessage(t('airbnb.extracting'));
 
         if (!response.ok) {
           throw new Error(`Erreur HTTP ${response.status}`);
@@ -121,7 +123,7 @@ export function AirbnbLoadingDialog({
         }
 
         setProgress(90);
-        setStatusMessage("🎨 Classification des pièces...");
+        setStatusMessage(t('airbnb.loading'));
 
         // Transformer les données de l'API en format attendu par le frontend
         const pieces: PieceData[] = result.data.pieces.map((piece: any) => ({
@@ -135,7 +137,7 @@ export function AirbnbLoadingDialog({
         const totalPhotos = pieces.reduce((sum, piece) => sum + piece.photos.length, 0);
 
         setProgress(100);
-        setStatusMessage("✅ Analyse terminée !");
+        setStatusMessage(t('common.success'));
         setMockData({ pieces, totalPhotos });
         setIsComplete(true);
 
@@ -151,7 +153,7 @@ export function AirbnbLoadingDialog({
         const data = generateMockAirbnbData();
         setMockData(data);
         setIsComplete(true);
-        setStatusMessage("✅ Analyse terminée (mode démo)");
+        setStatusMessage(t('common.success'));
       }
     };
 
@@ -259,10 +261,10 @@ export function AirbnbLoadingDialog({
           )}
           <div className={onBack ? "pl-10 pr-10" : ""}>
             <DialogTitle className="text-base text-center">
-              Étape 4/5 - Import Airbnb
+              {t('logement.step', { current: 4, total: 5 })} - {t('airbnb.analyzing')}
             </DialogTitle>
             <DialogDescription className="text-center">
-              {isAnalyzing ? "Analyse en cours..." : "Importez votre annonce Airbnb"}
+              {isAnalyzing ? t('airbnb.loading') : t('airbnb.extracting')}
             </DialogDescription>
           </div>
         </DialogHeader>
@@ -272,14 +274,14 @@ export function AirbnbLoadingDialog({
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="airbnb-link" className="text-sm font-medium">
-                Lien de l'annonce Airbnb
+                {t('logement.airbnbLink')}
               </Label>
               <div className="flex items-center gap-2">
                 <img src={airbnbLogo} alt="Airbnb" className="w-5 h-5 flex-shrink-0" />
                 <Input
                   id="airbnb-link"
                   type="url"
-                  placeholder="https://www.airbnb.fr/rooms/..."
+                  placeholder={t('logement.airbnbLinkPlaceholder')}
                   value={inputLink}
                   onChange={(e) => {
                     setInputLink(e.target.value);
@@ -294,7 +296,7 @@ export function AirbnbLoadingDialog({
             </div>
 
             <Button onClick={handleStartAnalysis} className="w-full">
-              Lancer l'analyse
+              {t('airbnb.analyzing')}
             </Button>
           </div>
         ) : (
@@ -303,7 +305,7 @@ export function AirbnbLoadingDialog({
             <CardContent className="p-3 space-y-3">
               {/* Lien Airbnb */}
               <div className="space-y-1">
-                <p className="text-xs font-medium text-muted-foreground">Annonce Airbnb</p>
+                <p className="text-xs font-medium text-muted-foreground">{t('logement.airbnbLink')}</p>
                 <div className="flex items-center gap-2 p-2 bg-background/50 rounded-md border">
                   <img src={airbnbLogo} alt="Airbnb" className="w-4 h-4 flex-shrink-0" />
                   <p className="text-xs text-foreground truncate flex-1">{inputLink}</p>
@@ -313,7 +315,7 @@ export function AirbnbLoadingDialog({
               {/* Barre de progression globale */}
               <div className="space-y-1">
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Progression</span>
+                  <span className="text-muted-foreground">{t('common.loading')}</span>
                   <span className="font-semibold text-primary">{Math.round(progress)}%</span>
                 </div>
                 <Progress value={progress} className="h-2" />
@@ -337,7 +339,7 @@ export function AirbnbLoadingDialog({
               onClick={() => onComplete({ ...mockData, airbnbLink: inputLink })}
               className="w-full"
             >
-              Suivant
+              {t('logement.next')}
             </Button>
           )}
 
@@ -348,7 +350,7 @@ export function AirbnbLoadingDialog({
               onClick={onSkipToManual}
               className="text-sm text-muted-foreground hover:text-foreground justify-start px-0"
             >
-              ← Préférer le choix manuel des pièces
+              ← {t('pieces.selectPieces')}
             </Button>
           )}
         </div>

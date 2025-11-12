@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Iframe - Parcours App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-fr { background: #3b82f6; color: white; }
+        .btn-en { background: #10b981; color: white; }
+        .btn-pt { background: #f59e0b; color: white; }
+        .btn-es { background: #ef4444; color: white; }
+        .btn-ar { background: #8b5cf6; color: white; }
+        .btn-de { background: #ec4899; color: white; }
+        
+        .info {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .info p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .info strong {
+            color: #333;
+        }
+        
+        .iframe-container {
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            height: calc(100vh - 280px);
+            min-height: 600px;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+        }
+        
+        .url-display {
+            background: #1f2937;
+            color: #10b981;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Test Iframe - Parcours App</h1>
+            <p>Testez votre application avec différentes langues</p>
+            
+            <div class="controls">
+                <button class="btn-fr" onclick="changeLanguage('fr')">🇫🇷 Français</button>
+                <button class="btn-en" onclick="changeLanguage('en')">🇬🇧 English</button>
+                <button class="btn-pt" onclick="changeLanguage('pt')">🇵🇹 Português</button>
+                <button class="btn-es" onclick="changeLanguage('es')">🇪🇸 Español</button>
+                <button class="btn-ar" onclick="changeLanguage('ar')">🇸🇦 العربية</button>
+                <button class="btn-de" onclick="changeLanguage('de')">🇩🇪 Deutsch</button>
+            </div>
+            
+            <div class="info">
+                <p><strong>Langue actuelle :</strong> <span id="current-lang">fr</span></p>
+                <p><strong>URL de l'iframe :</strong></p>
+                <div class="url-display" id="url-display"></div>
+            </div>
+        </div>
+        
+        <div class="iframe-container">
+            <iframe id="parcours-iframe" src=""></iframe>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration
+        const BASE_URL = 'http://localhost:8080/api/send-webhook';
+        const PARAMS = {
+            conciergerieID: '1730741276842x778024514623373300',
+            userID: '1730741188020x554510837711264200',
+            logementid: '1746548810037x386469807784722400',
+            viewmode: 'full',
+            'version-test': 'true',
+            test: '0104434342'
+        };
+        
+        // Fonction pour construire l'URL
+        function buildURL(lang) {
+            const params = new URLSearchParams({
+                lang: lang,
+                ...PARAMS
+            });
+            return `${BASE_URL}?${params.toString()}`;
+        }
+        
+        // Fonction pour changer la langue
+        function changeLanguage(lang) {
+            const iframe = document.getElementById('parcours-iframe');
+            const url = buildURL(lang);
+            
+            // Mettre à jour l'iframe
+            iframe.src = url;
+            
+            // Mettre à jour l'affichage
+            document.getElementById('current-lang').textContent = lang;
+            document.getElementById('url-display').textContent = url;
+            
+            console.log('🌍 Langue changée:', lang);
+            console.log('📍 URL:', url);
+        }
+        
+        // Initialiser avec le français
+        changeLanguage('fr');
+    </script>
+</body>
+</html>
+

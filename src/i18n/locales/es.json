@@ -1,0 +1,372 @@
+{
+  "app": {
+    "title": "Demo AddLogementDialog",
+    "description": "Modal completo para agregar una propiedad con recorrido de limpieza o viajero"
+  },
+  "logement": {
+    "step": "Paso {{current}}/{{total}}",
+    "createNew": "Crear una nueva propiedad",
+    "basicInfo": "Ingrese la información básica de su propiedad",
+    "name": "Nombre de la propiedad",
+    "nameRequired": "Obligatorio",
+    "namePlaceholder": "Ej: Apartamento Centro París",
+    "address": "Dirección postal (opcional)",
+    "addressPlaceholder": "Ej: 15 Rue de la Paix, 75002 París",
+    "airbnbLink": "Enlace de Airbnb (opcional)",
+    "airbnbLinkDescription": "Usaremos este enlace para extraer automáticamente las habitaciones y fotos de su anuncio",
+    "airbnbLinkPlaceholder": "https://www.airbnb.es/rooms/...",
+    "next": "Siguiente",
+    "back": "Atrás",
+    "close": "Cerrar"
+  },
+  "parcours": {
+    "chooseType": "¿Por cuál recorrido empezamos?",
+    "chooseTypeDescription": "Puede agregar el otro después con 1 clic.",
+    "menage": "Agentes de limpieza",
+    "menageDescription": "Seguir calidad de limpieza",
+    "voyageur": "Viajero",
+    "voyageurDescription": "Inspección de la propiedad",
+    "selectModel": "Selección de modelo",
+    "selectModelDescription": "Elija un modelo de recorrido para su propiedad"
+  },
+  "pieces": {
+    "title": "Habitaciones",
+    "selectPieces": "Seleccionar habitaciones",
+    "addPhotos": "Agregar fotos"
+  },
+  "pieces": {
+    "title": "Habitaciones",
+    "selectPieces": "Seleccionar habitaciones",
+    "addPhotos": "Añadir fotos"
+  },
+  "photos": {
+    "addPhotosFor": "Añadir fotos para {{logementNom}}",
+    "added": "añadida",
+    "added_plural": "añadidas",
+    "add": "Añadir",
+    "clickToAdd": "Haga clic para añadir fotos"
+  },
+  "airbnb": {
+    "analyzing": "Analizando...",
+    "loading": "Cargando...",
+    "extracting": "Extrayendo datos de Airbnb",
+    "results": "Resultados del análisis de Airbnb",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "validated": "¡Propiedad validada!",
+    "redirecting": "La propiedad se mostrará en unos segundos...",
+    "classification": "Clasificación de habitaciones",
+    "analysisResult": "Analizamos su propiedad e identificamos {{piecesCount}} tipos de habitaciones con {{photosCount}} fotos",
+    "photosSelected": "Fotos seleccionadas",
+    "activePieces": "Habitaciones activas",
+    "photo": "foto",
+    "photo_plural": "fotos",
+    "task": "tarea",
+    "task_plural": "tareas",
+    "active": "Activo",
+    "associatedTasks": "Tareas asociadas:",
+    "photoRequired": "Foto requerida",
+    "finish": "Finalizar"
+  },
+  "modele": {
+    "custom": "Modelo personalizado",
+    "predefined": "Modelo predefinido",
+    "create": "Recargar modelos",
+    "edit": "Editar modelo",
+    "delete": "Eliminar modelo",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "next": "Siguiente",
+    "back": "Atrás",
+    "required": "Obligatorio",
+    "optional": "Opcional"
+  },
+  "toast": {
+    "logementCreated": "Propiedad creada con éxito",
+    "logementUpdated": "Propiedad actualizada",
+    "modeleCreated": "Modelo creado con éxito",
+    "modeleUpdated": "Modelo actualizado",
+    "modeleDeleted": "Modelo eliminado",
+    "error": "Ocurrió un error",
+    "loadingModeles": "Cargando modelos...",
+    "modelesLoaded": "Modelos cargados con éxito",
+    "modelesLoadError": "No se pueden cargar los modelos desde Bubble.io. Usando modelos locales."
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "¡Éxito!",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "optional": "Opcional",
+    "delete": "Eliminar"
+  },
+  "modele": {
+    "chooseModel": "Elegir el modelo del recorrido",
+    "selectOrCreate": "Seleccione un modelo predefinido o cree el suyo propio",
+    "menageCheckEasy": "Limpieza Check Easy",
+    "menageDescription": "Modelo optimizado para el seguimiento de limpieza con lista de verificación completa",
+    "voyageurCheckEasy": "Viajero Check Easy",
+    "voyageurDescription": "Modelo para la recepción de huéspedes con verificaciones esenciales",
+    "viewTasks": "Ver tareas",
+    "yourCustomModels": "Sus modelos personalizados",
+    "custom": "Personalizado",
+    "modified": "Modificado",
+    "createOwn": "Crear su propio modelo",
+    "configureCustom": "Configure un modelo personalizado según sus necesidades",
+    "deleteCustomModel": "¿Eliminar modelo personalizado?",
+    "deleteConfirmation": "¿Está seguro de que desea eliminar el modelo \"{{modelName}}\"?",
+    "irreversible": "Esta acción es irreversible.",
+    "previewTitle": "Vista previa del modelo",
+    "allTasksAvailable": "Aquí están todas las tareas disponibles en este modelo"
+  },
+  "piecesDialog": {
+    "selectRooms": "Seleccione las habitaciones de la propiedad",
+    "indicateNumber": "Indique el número de cada tipo de habitación para",
+    "noRoomSelected": "Ninguna habitación seleccionada",
+    "roomsSelected": "{{count}} habitación seleccionada",
+    "roomsSelected_plural": "{{count}} habitaciones seleccionadas",
+    "continue": "Continuar",
+    "importFromAirbnb": "Importar desde Airbnb"
+  },
+  "customModeleBuilder": {
+    "createTitle": "Crear su propio modelo de recorrido",
+    "editTitle": "Editar su propio modelo de recorrido",
+    "lastUpdate": "Última actualización:",
+    "modelConfig": "Configuración del modelo",
+    "modelName": "Nombre del modelo *",
+    "modelNamePlaceholder": "Ej: Limpieza completa apartamento 3 habitaciones",
+    "parcoursType": "Tipo de recorrido *",
+    "inventoryMoment": "Inventario",
+    "exitOnly": "Solo a la salida",
+    "exitOnlyShort": "Salida",
+    "arrivalExit": "A la llegada y a la salida",
+    "arrivalExitShort": "Llegada/Salida",
+    "inventoryInfo": "Nuestra IA solo usa fotos de salida para detectar diferencias del estado inicial.",
+    "roomsAndTasks": "Habitaciones y tareas",
+    "roomsInfo": "💡 Para cada habitación seleccionada, elija las tareas a realizar. También puede agregar sus propias habitaciones y tareas personalizadas.",
+    "addTask": "Agregar una tarea",
+    "addTaskShort": "Agregar",
+    "customLabel": "Personalizado",
+    "photoRequired": "Foto requerida",
+    "photoRequiredShort": "Foto",
+    "addCustomRoom": "Agregar una habitación personalizada",
+    "checklistBeforeDeparture": "Lista de verificación antes de la salida",
+    "checklistInfo": "💡 Seleccione las preguntas que el viajero debe validar antes de dejar la propiedad.",
+    "addQuestion": "Agregar una Pregunta",
+    "addQuestionShort": "Agregar",
+    "yesNo": "Sí/No",
+    "openQuestion": "💬 Abierta",
+    "cancel": "Cancelar",
+    "saveChanges": "Guardar cambios",
+    "saveChangesShort": "Guardar",
+    "createModel": "Crear modelo",
+    "createModelShort": "Crear",
+    "addCustomTask": "Agregar una tarea personalizada",
+    "forRoom": "Para la habitación:",
+    "emojiOptional": "Emoji (opcional)",
+    "taskTitle": "Título de la tarea *",
+    "taskTitlePlaceholder": "Ej: Verificar calefacción",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Ej: Asegúrese de que la calefacción funcione",
+    "photoMandatory": "Foto obligatoria",
+    "add": "Agregar",
+    "addCustomRoomTitle": "Agregar una habitación personalizada",
+    "addCustomRoomDesc": "Agregue una habitación que no esté en la lista predefinida",
+    "roomName": "Nombre de la habitación *",
+    "roomNamePlaceholder": "Ej: Lavandería, Terraza, Bodega...",
+    "errorTitle": "Error",
+    "roomNameRequired": "El nombre de la habitación es obligatorio",
+    "roomAlreadyExists": "Esta habitación ya existe",
+    "roomAdded": "Habitación agregada",
+    "roomAddedDesc": "\"{{roomName}}\" se ha agregado con éxito",
+    "roomDeleted": "Habitación eliminada",
+    "roomDeletedDesc": "\"{{roomName}}\" ha sido eliminada",
+    "taskCreated": "Tarea creada",
+    "taskCreatedDesc": "\"{{taskTitle}}\" se ha agregado a {{roomName}}",
+    "taskDeleted": "Tarea eliminada",
+    "taskDeletedDesc": "La tarea personalizada ha sido eliminada",
+    "taskModified": "Tarea modificada",
+    "taskModifiedDesc": "\"{{taskTitle}}\" ha sido actualizada",
+    "questionDeleted": "Pregunta eliminada",
+    "questionDeletedDesc": "La pregunta ha sido eliminada de la lista de verificación",
+    "questionDuplicated": "Pregunta duplicada",
+    "questionDuplicatedDesc": "La pregunta se ha duplicado con éxito",
+    "questionModified": "Pregunta modificada",
+    "questionModifiedDesc": "La pregunta ha sido actualizada",
+    "questionAdded": "Pregunta agregada",
+    "questionAddedDesc": "La pregunta se ha agregado a la lista de verificación",
+    "nameRequired": "Nombre requerido",
+    "nameRequiredDesc": "Por favor, dé un nombre a su modelo",
+    "modelCreated": "Modelo creado",
+    "modelModified": "Modelo modificado",
+    "modelCreatedDesc": "El modelo \"{{modelName}}\" se ha creado con éxito",
+    "modelModifiedDesc": "El modelo \"{{modelName}}\" se ha modificado con éxito"
+  },
+  "rooms": {
+    "kitchen": "Cocina",
+    "bathroomNoToilet": "Baño (sin inodoro)",
+    "bathroomWithToilet": "Baño con inodoro",
+    "separateToilet": "Inodoro separado",
+    "bedroom": "Dormitorio",
+    "livingRoom": "Sala de Estar",
+    "diningRoom": "Comedor",
+    "entryHallStairs": "Entrada / Pasillo / Escaleras",
+    "laundryRoom": "Lavandería",
+    "outdoorSpaces": "Espacios Exteriores"
+  },
+  "defaultQuestions": {
+    "menage": {
+      "q1": "¿Las luces, calefactores y aire acondicionado están apagados?",
+      "q2": "¿Los stocks de consumibles (jabón, champú, papel higiénico) y productos de limpieza (esponja, jabón para platos, bolsas de basura, etc.) son suficientes para los próximos viajeros?",
+      "q3": "¿Ha notado algún daño o anomalía no reportada? ¿Algún equipo necesita reemplazo o reparación?",
+      "q4": "Si notó un problema o desea agregar un comentario, especifíquelo aquí.",
+      "q5": "¿Ha devuelto la llave al lugar correcto? (Foto de la llave en la caja de llaves. O si no hay caja de llaves, foto de la llave en el mueble de la entrada o mesa de la sala)",
+      "q6": "¿La propiedad está debidamente asegurada (puertas y ventanas cerradas) después de su visita?"
+    },
+    "voyageur": {
+      "q1": "Todas sus pertenencias personales han sido recogidas",
+      "q2": "La basura ha sido vaciada y la separación respetada",
+      "q3": "Calefactores, luces y aparatos innecesarios están apagados",
+      "q4": "¿Ha notado una anomalía o daño? ¿Desea agregar un comentario?",
+      "q5": "Las llaves han sido depositadas en el lugar designado",
+      "q6": "La propiedad está debidamente cerrada con llave"
+    }
+  },
+  "defaultTasks": {
+    "menage": {
+      "Cuisine": [
+        { "titre": "Vaciar papeleras", "description": "Reemplazar bolsa; limpiar tapa y cubo." },
+        { "titre": "Lavar vajilla", "description": "Limpiar, secar, guardar toda la vajilla." },
+        { "titre": "Limpiar todas las superficies", "description": "Encimeras, salpicadero, puertas de armario, mesa de bar." },
+        { "titre": "Limpiar microondas", "description": "El interior debe estar limpio" },
+        { "titre": "Limpiar refrigerador", "description": "Vaciar y lavar estantes." },
+        { "titre": "Limpiar congelador", "description": "Vaciar y lavar." },
+        { "titre": "Limpiar horno", "description": "Limpiar interior del horno y cristal." },
+        { "titre": "Limpiar placas/cocina", "description": "Gas: quemadores desengrasados. Inducción: sin marcas." },
+        { "titre": "Desengrasar campana y filtro", "description": "Filtro limpio o marcado para cambio." },
+        { "titre": "Limpiar pequeños electrodomésticos", "description": "Cafetera, hervidor, tostadora sin migas." },
+        { "titre": "Vaciar lavavajillas", "description": "Guardar vajilla, dejar 2 pastillas." },
+        { "titre": "Controlar esponja y jabón", "description": "Esponja sana; y jabón para platos" },
+        { "titre": "Barrer y fregar", "description": "Suelo sin migas, manchas, marcas de grasa." }
+      ],
+      "Salle de bain (sans toilettes)": [
+        { "titre": "Quitar pelos (desagüe)", "description": "Desagüe de ducha limpio." },
+        { "titre": "Descalcificar paredes y grifería", "description": "Sin cal ni moho." },
+        { "titre": "Limpiar azulejos y juntas", "description": "Juntas blancas, azulejos sin jabón." },
+        { "titre": "Limpiar espejo y lavabo", "description": "Sin marcas de agua ni pasta de dientes." },
+        { "titre": "Limpiar mueble bajo lavabo", "description": "Interior vaciado, fachada limpia." },
+        { "titre": "Verificar ropa de baño", "description": "Toallas limpias, dobladas, cantidad suficiente." },
+        { "titre": "Vaciar papelera del baño", "description": "Bolsa nueva, sin olor." },
+        { "titre": "Cambiar alfombra de baño", "description": "Tomar una alfombra limpia" }
+      ],
+      "Salle de bain avec toilettes": [
+        { "titre": "Limpiar taza y asiento", "description": "Descalcificación, desinfección, parte inferior del asiento incluida." },
+        { "titre": "Reponer papel higiénico", "description": "≥ 1 rollo lleno disponible." },
+        { "titre": "Quitar pelos (desagüe)", "description": "Desagüe de ducha limpio." },
+        { "titre": "Descalcificar paredes y grifería", "description": "Sin cal ni moho." },
+        { "titre": "Limpiar azulejos y juntas", "description": "Juntas blancas, azulejos sin jabón." },
+        { "titre": "Limpiar espejo y lavabo", "description": "Sin marcas de agua ni pasta de dientes." },
+        { "titre": "Limpiar mueble bajo lavabo", "description": "Interior vaciado, fachada limpia." },
+        { "titre": "Verificar ropa de baño", "description": "Toallas limpias, dobladas, cantidad suficiente." },
+        { "titre": "Vaciar papelera del baño", "description": "Bolsa nueva, sin olor." },
+        { "titre": "Cambiar alfombra de baño", "description": "Tomar una alfombra limpia" }
+      ],
+      "Toilettes séparés": [
+        { "titre": "Limpiar taza y asiento", "description": "Descalcificación, desinfección, parte inferior del asiento incluida." },
+        { "titre": "Reponer papel higiénico", "description": "≥ 1 rollo lleno disponible." }
+      ],
+      "Chambre": [
+        { "titre": "Cambiar sábanas y fundas", "description": "Juego limpio, bien estirado." },
+        { "titre": "Aspirar colchón", "description": "Pelos / polvo eliminados." },
+        { "titre": "Controlar almohadas y edredón", "description": "Sin manchas ni olor." },
+        { "titre": "Reportar lama rota", "description": "Levantar somier y verificar." },
+        { "titre": "Aspirar bajo cama y muebles", "description": "Sin bolas de polvo." },
+        { "titre": "Limpiar mesitas de noche", "description": "Quitar polvo, limpiar lámparas." },
+        { "titre": "Verificar armarios y cajones", "description": "Vacíos, limpios." },
+        { "titre": "Arreglar cortinas / persianas", "description": "Funcionando OK, sin manchas." }
+      ],
+      "Salon / Séjour": [
+        { "titre": "Quitar polvo de superficies", "description": "Mesas, estantes, TV, molduras." },
+        { "titre": "Aspirar sofá y sillones", "description": "Quitar pelos, migas, sacudir cojines." },
+        { "titre": "Aspirar y sacudir alfombras", "description": "Sin migas, sin olor." },
+        { "titre": "Colocar mando de TV", "description": "Colocar en lugar visible" },
+        { "titre": "Alinear muebles y decoración", "description": "Mesa de centro centrada, cojines colocados." }
+      ],
+      "Salle à manger": [
+        { "titre": "Limpiar mesa y sillas", "description": "Tablero sin marcas, sillas sin polvo." },
+        { "titre": "Verificar manteles / decoración", "description": "Limpio, ordenado." },
+        { "titre": "Limpiar aparador / vitrina", "description": "Tiradores sin huellas." },
+        { "titre": "Aspirar bajo mesa", "description": "Sin residuos." }
+      ],
+      "Entrée / Couloir / Escaliers": [
+        { "titre": "Limpiar/sacudir felpudo", "description": "Sin arena ni grava." },
+        { "titre": "Limpiar espejo e interfono", "description": "Sin marcas de dedos." },
+        { "titre": "Quitar polvo de barandilla", "description": "Barandilla y barras sin polvo." }
+      ],
+      "Buanderie / Laverie": [
+        { "titre": "Limpiar tambor de lavadora", "description": "Junta y puerta limpias." },
+        { "titre": "Vaciar filtro de secadora", "description": "Pelusas eliminadas." },
+        { "titre": "Limpiar superficie de plegado", "description": "Sin manchas de detergente." },
+        { "titre": "Controlar stock de detergente", "description": "≥ 2 dosis." }
+      ],
+      "Espaces extérieurs": [
+        { "titre": "Limpiar muebles de jardín", "description": "Mesa y sillas limpias." },
+        { "titre": "Guardar cojines y sombrilla", "description": "Cojines secos, sombrilla cerrada." },
+        { "titre": "Vaciar ceniceros y colillas", "description": "Sin colillas en el suelo." },
+        { "titre": "Limpiar barbacoa", "description": "Parrilla cepillada, cenizas vaciadas." },
+        { "titre": "Verificar SPA", "description": "Agua clara, tapa repuesta." },
+        { "titre": "Verificar piscina", "description": "Agua limpia, skimmer vaciado, cubierta asegurada." },
+        { "titre": "Regar / verificar plantas", "description": "Hojas muertas eliminadas." }
+      ]
+    },
+    "voyageur": {
+      "Cuisine": [
+        { "titre": "Vaciar papeleras", "description": "Sacar todas las bolsas, poner bolsa limpia, cerrar tapa." },
+        { "titre": "Guardar vajilla", "description": "Lavar o poner lavavajillas y guardar toda la vajilla limpia." },
+        { "titre": "Vaciar refrigerador", "description": "Quitar todos los alimentos abiertos, tirar o llevar." }
+      ],
+      "Salle de bain (sans toilettes)": [
+        { "titre": "Reunir toallas", "description": "Colocar todas las toallas usadas en la cesta o en el suelo designado." },
+        { "titre": "Vaciar papelera", "description": "Tirar pañuelos o productos usados, poner bolsa limpia si se proporciona." },
+        { "titre": "Verificar efectos personales", "description": "Ningún producto o accesorio olvidado en la ducha o en el lavabo." }
+      ],
+      "Salle de bain avec toilettes": [
+        { "titre": "Tirar de la cadena y bajar asiento", "description": "Dejar taza limpia y cerrada." },
+        { "titre": "Vaciar papelera", "description": "Bolsa retirada o contenido tirado en la basura principal." },
+        { "titre": "Agrupar toallas", "description": "Poner ropa húmeda en el mismo lugar (cesta o suelo designado)." }
+      ],
+      "Toilettes séparés": [
+        { "titre": "Tirar de la cadena y cerrar tapa", "description": "Dejar taza y tapa limpias." },
+        { "titre": "Vaciar papelera", "description": "Quitar bolsa o su contenido." }
+      ],
+      "Chambre": [
+        { "titre": "Deshacer ropa de cama", "description": "Quitar sábanas y fundas, colocar donde se indica (cesta, bolsa…)." },
+        { "titre": "Verificar armarios/cajones", "description": "Nada olvidado ni basura dentro." }
+      ],
+      "Salon / Séjour": [
+        { "titre": "Ordenar sofá y cojines", "description": "Cojines sacudidos, manta doblada, sofá despejado." },
+        { "titre": "Apagar TV y aparatos", "description": "Mando en su lugar, TV y consola apagadas." }
+      ],
+      "Espaces extérieurs": [
+        { "titre": "Ordenar muebles", "description": "Sillas empujadas, cojines guardados o apilados." },
+        { "titre": "Vaciar ceniceros", "description": "Tirar colillas, limpiar cenicero si es necesario." },
+        { "titre": "Cerrar sombrilla / barbacoa", "description": "Sombrilla cerrada; barbacoa apagada y tapa repuesta." },
+        { "titre": "Verificar portón / portillo", "description": "Cerrado o bloqueado según instrucciones." }
+      ]
+    }
+  }
+}
+

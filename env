@@ -12,3 +12,8 @@ BUBBLE_API_KEY=your_bubble_api_key_here
 # Obtenir une clé API: https://console.cloud.google.com/google/maps-apis
 VITE_GOOGLE_MAPS_API_KEY=AIzaSyB4jU_gmu7xz1VRF4cBncN9tjjYwOlRz6M
 
+# Weglot API
+# Obtenir une clé API: https://dashboard.weglot.com/settings/api
+# Documentation: https://developers.weglot.com/api/
+VITE_WEGLOT_API_KEY=wg_594771a5b0a8318b805497f9f42ce2c87
+

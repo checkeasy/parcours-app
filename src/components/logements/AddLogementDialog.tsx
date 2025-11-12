@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -66,6 +67,8 @@ export function AddLogementDialog({
   isFullScreenMode = false,
   initialLogementData = null,
 }: AddLogementDialogProps) {
+  const { t } = useTranslation();
+
   // Détecter si on a un logement existant (logementid dans l'URL)
   const hasExistingLogement = !!initialLogementData;
 
@@ -293,14 +296,14 @@ export function AddLogementDialog({
             )}
             <div className={step === 1 && !hasExistingLogement ? "space-y-1 sm:space-y-2" : ""}>
               <DialogTitle className={step === 1 && !hasExistingLogement ? (isFullScreenMode ? "text-base sm:text-lg md:text-xl pr-8" : "text-lg sm:text-xl md:text-2xl pr-8") : ""}>
-                {step === 1 && !hasExistingLogement && `Étape ${getDisplayedStepNumber(1)}/${getTotalSteps()} - Créer un nouveau logement`}
-                {step === 2 && `Étape ${getDisplayedStepNumber(2)}/${getTotalSteps()} - Choisir le type de parcours`}
-                {step === 3 && `Étape ${getDisplayedStepNumber(3)}/${getTotalSteps()} - Sélection du modèle`}
+                {step === 1 && !hasExistingLogement && `${t('logement.step', { current: getDisplayedStepNumber(1), total: getTotalSteps() })} - ${t('logement.createNew')}`}
+                {step === 2 && `${t('logement.step', { current: getDisplayedStepNumber(2), total: getTotalSteps() })} - ${t('parcours.chooseType')}`}
+                {step === 3 && `${t('logement.step', { current: getDisplayedStepNumber(3), total: getTotalSteps() })} - ${t('parcours.selectModel')}`}
               </DialogTitle>
               <DialogDescription className={step === 1 && !hasExistingLogement ? "text-xs sm:text-sm text-muted-foreground" : ""}>
-                {step === 1 && !hasExistingLogement && "Renseignez les informations de base de votre logement"}
-                {step === 2 && "Choisissez le type de parcours pour votre logement"}
-                {step === 3 && "Choisissez un modèle de parcours pour votre logement"}
+                {step === 1 && !hasExistingLogement && t('logement.basicInfo')}
+                {step === 2 && t('parcours.chooseTypeDescription')}
+                {step === 3 && t('parcours.selectModelDescription')}
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -312,14 +315,14 @@ export function AddLogementDialog({
               <div className={isFullScreenMode ? "space-y-2 sm:space-y-3 overflow-y-auto max-h-[calc(100vh-180px)] sm:max-h-[calc(100vh-200px)] px-1" : "space-y-3 sm:space-y-4 overflow-y-auto max-h-[55vh] sm:max-h-[50vh] px-1"}>
                 <div className="space-y-2">
                   <Label htmlFor="nom">
-                    Nom du logement <span className="text-destructive">*</span>
+                    {t('logement.name')} <span className="text-destructive">*</span>
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    Obligatoire
+                    {t('logement.nameRequired')}
                   </p>
                   <Input
                     id="nom"
-                    placeholder="Ex: Appartement Paris Centre"
+                    placeholder={t('logement.namePlaceholder')}
                     value={nom}
                     onChange={(e) => setNom(e.target.value)}
                   />
@@ -327,13 +330,13 @@ export function AddLogementDialog({
 
                 <div className="space-y-2">
                   <Label htmlFor="adresse">
-                    Adresse postale (facultatif)
+                    {t('logement.address')}
                     {isGoogleMapsLoaded && <span className="text-xs text-green-600 ml-2">✓ Google Maps</span>}
                   </Label>
                   {isGoogleMapsLoaded ? (
                     <CustomAddressAutocomplete
                       id="adresse"
-                      placeholder="Ex: 15 Rue de la Paix, 75002 Paris"
+                      placeholder={t('logement.addressPlaceholder')}
                       value={adresse}
                       onChange={setAdresse}
                       onPlaceSelected={(place) => {
@@ -343,7 +346,7 @@ export function AddLogementDialog({
                   ) : (
                     <Input
                       id="adresse"
-                      placeholder="Ex: 15 Rue de la Paix, 75002 Paris"
+                      placeholder={t('logement.addressPlaceholder')}
                       value={adresse}
                       onChange={(e) => setAdresse(e.target.value)}
                     />
@@ -353,14 +356,14 @@ export function AddLogementDialog({
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <img src={airbnbLogo} alt="Airbnb" className="h-5 w-5" />
-                    <Label htmlFor="airbnb-link">Lien Airbnb (facultatif)</Label>
+                    <Label htmlFor="airbnb-link">{t('logement.airbnbLink')}</Label>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Nous utiliserons ce lien pour extraire automatiquement les pièces et les photos de votre annonce
+                    {t('logement.airbnbLinkDescription')}
                   </p>
                   <Input
                     id="airbnb-link"
-                    placeholder="https://www.airbnb.fr/rooms/..."
+                    placeholder={t('logement.airbnbLinkPlaceholder')}
                     value={airbnbLink}
                     onChange={(e) => setAirbnbLink(e.target.value)}
                   />
@@ -373,7 +376,7 @@ export function AddLogementDialog({
                   disabled={!nom.trim()}
                   className="w-full sm:w-auto"
                 >
-                  Suivant
+                  {t('logement.next')}
                 </Button>
               </div>
             </>
@@ -404,10 +407,10 @@ export function AddLogementDialog({
                 </Button>
                 <div className="pl-8 sm:pl-10 pr-8 pb-3 sm:pb-4">
                   <h2 className={isFullScreenMode ? "text-base sm:text-lg md:text-xl font-semibold" : "text-lg sm:text-xl md:text-2xl font-semibold"}>
-                    Étape {getDisplayedStepNumber(2)}/{getTotalSteps()} - On commence par quel parcours ?
+                    {t('logement.step', { current: getDisplayedStepNumber(2), total: getTotalSteps() })} - {t('parcours.chooseType')}
                   </h2>
                   <p className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
-                    Vous pourrez ajouter l'autre ensuite en 1 clic.
+                    {t('parcours.chooseTypeDescription')}
                   </p>
                 </div>
               </div>
@@ -424,9 +427,9 @@ export function AddLogementDialog({
                       </div>
                     </div>
                     <div className="text-center space-y-1 sm:space-y-2">
-                      <h3 className="font-semibold text-base sm:text-lg">Agents de ménage</h3>
+                      <h3 className="font-semibold text-base sm:text-lg">{t('parcours.menage')}</h3>
                       <p className="text-xs sm:text-sm text-muted-foreground">
-                        Suivre la qualité ménage
+                        {t('parcours.menageDescription')}
                       </p>
                     </div>
                   </div>
@@ -443,9 +446,9 @@ export function AddLogementDialog({
                       </div>
                     </div>
                     <div className="text-center space-y-1 sm:space-y-2">
-                      <h3 className="font-semibold text-base sm:text-lg">Voyageur</h3>
+                      <h3 className="font-semibold text-base sm:text-lg">{t('parcours.voyageur')}</h3>
                       <p className="text-xs sm:text-sm text-muted-foreground">
-                        État des lieux
+                        {t('parcours.voyageurDescription')}
                       </p>
                     </div>
                   </div>

@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus, ArrowLeft, X } from "lucide-react";
@@ -48,6 +49,8 @@ export default function SelectPiecesDialog({
   onSwitchToAirbnb,
   isFullScreenMode = false,
 }: SelectPiecesDialogProps) {
+  const { t } = useTranslation();
+
   // Déterminer les pièces disponibles selon le modèle sélectionné
   const piecesDisponibles = useMemo(() => {
     if (typeof selectedModele === "string") {
@@ -134,10 +137,10 @@ export default function SelectPiecesDialog({
           </Button>
           <div className="pl-8 sm:pl-10 pr-8">
             <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
-              Étape 4/5 - Sélectionnez les pièces du logement
+              {t('logement.step', { current: 4, total: 5 })} - {t('piecesDialog.selectRooms')}
             </DialogTitle>
             <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
-              Indiquez le nombre de chaque type de pièce pour <span className="font-semibold">{logementNom}</span>
+              {t('piecesDialog.indicateNumber')} <span className="font-semibold">{logementNom}</span>
             </DialogDescription>
           </div>
         </DialogHeader>
@@ -156,7 +159,7 @@ export default function SelectPiecesDialog({
                     <span className="font-medium text-sm sm:text-base truncate">{piece.nom}</span>
                     {taskCount > 0 && (
                       <span className="text-xs text-muted-foreground">
-                        {taskCount} tâche{taskCount > 1 ? 's' : ''}
+                        {taskCount} {t('airbnb.task', { count: taskCount })}
                       </span>
                     )}
                   </div>
@@ -196,13 +199,13 @@ export default function SelectPiecesDialog({
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
             <p className="text-xs sm:text-sm text-muted-foreground">
               {totalPieces === 0 ? (
-                "Aucune pièce sélectionnée"
+                t('piecesDialog.noRoomSelected')
               ) : (
-                `${totalPieces} pièce${totalPieces > 1 ? 's' : ''} sélectionnée${totalPieces > 1 ? 's' : ''}`
+                t('piecesDialog.roomsSelected', { count: totalPieces })
               )}
             </p>
             <Button onClick={handleSave} disabled={totalPieces === 0} className="w-full sm:w-auto">
-              Continuer
+              {t('piecesDialog.continue')}
             </Button>
           </div>
 
@@ -214,7 +217,7 @@ export default function SelectPiecesDialog({
                 onClick={onSwitchToAirbnb}
                 className="text-xs sm:text-sm text-muted-foreground hover:text-foreground justify-start px-0 w-full"
               >
-                ← Importer depuis Airbnb
+                ← {t('piecesDialog.importFromAirbnb')}
               </Button>
             </div>
           )}

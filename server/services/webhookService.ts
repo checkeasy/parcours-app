@@ -529,8 +529,13 @@ function getTasksForPiece(pieceName: string, modele: any): any[] {
     const tasksSource = modele === 'menage' ? TACHES_MENAGE : TACHES_VOYAGEUR;
     return tasksSource[pieceName] || [];
   } else {
+    // Pour les modèles personnalisés, retourner seulement les tâches sélectionnées
     const pieceData = modele.pieces?.find((p: any) => p.nom === pieceName);
-    return pieceData ? pieceData.tachesDisponibles : [];
+    if (!pieceData) return [];
+
+    // Filtrer tachesDisponibles pour ne garder que les tâches sélectionnées
+    const selectedTaskIds = new Set(pieceData.tachesSelectionnees || []);
+    return pieceData.tachesDisponibles.filter((task: any) => selectedTaskIds.has(task.id));
   }
 }
 

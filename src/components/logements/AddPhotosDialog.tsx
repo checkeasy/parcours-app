@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -49,6 +50,7 @@ export function AddPhotosDialog({
   onBack,
   isFullScreenMode = false,
 }: AddPhotosDialogProps) {
+  const { t } = useTranslation();
   const [piecesPhotos, setPiecesPhotos] = useState<Record<string, string[]>>({});
 
   // Créer une liste de pièces individuelles basée sur les quantités
@@ -132,10 +134,10 @@ export function AddPhotosDialog({
           </Button>
           <div className="pl-8 sm:pl-10 pr-8">
             <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
-              Étape 5/5 - Ajoutez des photos pour {logementNom}
+              {t('logement.step', { current: 5, total: 5 })} - {t('photos.addPhotosFor', { logementNom })}
             </DialogTitle>
             <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
-              Optionnel · {totalPhotos} photo{totalPhotos !== 1 ? "s" : ""} ajoutée{totalPhotos !== 1 ? "s" : ""}
+              {t('common.optional')} · {totalPhotos} {t('airbnb.photo', { count: totalPhotos })} {t('photos.added', { count: totalPhotos })}
             </DialogDescription>
           </div>
         </DialogHeader>
@@ -156,8 +158,7 @@ export function AddPhotosDialog({
                           {piece.displayName}
                         </h3>
                         <p className="text-xs text-muted-foreground">
-                          {photosForPiece.length} photo
-                          {photosForPiece.length !== 1 ? "s" : ""}
+                          {photosForPiece.length} {t('airbnb.photo', { count: photosForPiece.length })}
                         </p>
                       </div>
                     </div>
@@ -172,7 +173,7 @@ export function AddPhotosDialog({
                         }
                       >
                         <ImagePlus className="h-3 w-3 sm:h-4 sm:w-4" />
-                        <span className="hidden xs:inline">Ajouter</span>
+                        <span className="hidden xs:inline">{t('photos.add')}</span>
                       </Button>
                       <input
                         id={`upload-${piece.key}`}
@@ -215,7 +216,7 @@ export function AddPhotosDialog({
                     >
                       <Upload className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground mb-2" />
                       <p className="text-xs sm:text-sm text-muted-foreground text-center">
-                        Cliquez pour ajouter des photos
+                        {t('photos.clickToAdd')}
                       </p>
                     </label>
                   )}
@@ -227,9 +228,9 @@ export function AddPhotosDialog({
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-0 pt-3 sm:pt-4 border-t">
           <Button variant="outline" onClick={onBack} className="w-full sm:w-auto">
-            Précédent
+            {t('logement.back')}
           </Button>
-          <Button onClick={handleSave} className="w-full sm:w-auto">Terminer</Button>
+          <Button onClick={handleSave} className="w-full sm:w-auto">{t('airbnb.finish')}</Button>
         </div>
       </DialogContent>
     </Dialog>

@@ -1,0 +1,367 @@
+{
+  "app": {
+    "title": "Démo AddLogementDialog",
+    "description": "Modal complète pour ajouter un logement avec parcours de ménage ou voyageur"
+  },
+  "logement": {
+    "step": "Étape {{current}}/{{total}}",
+    "createNew": "Créer un nouveau logement",
+    "basicInfo": "Renseignez les informations de base de votre logement",
+    "name": "Nom du logement",
+    "nameRequired": "Obligatoire",
+    "namePlaceholder": "Ex: Appartement Paris Centre",
+    "address": "Adresse postale (facultatif)",
+    "addressPlaceholder": "Ex: 15 Rue de la Paix, 75002 Paris",
+    "airbnbLink": "Lien Airbnb (facultatif)",
+    "airbnbLinkDescription": "Nous utiliserons ce lien pour extraire automatiquement les pièces et les photos de votre annonce",
+    "airbnbLinkPlaceholder": "https://www.airbnb.fr/rooms/...",
+    "next": "Suivant",
+    "back": "Retour",
+    "close": "Fermer"
+  },
+  "parcours": {
+    "chooseType": "On commence par quel parcours ?",
+    "chooseTypeDescription": "Vous pourrez ajouter l'autre ensuite en 1 clic.",
+    "menage": "Agents de ménage",
+    "menageDescription": "Suivre la qualité ménage",
+    "voyageur": "Voyageur",
+    "voyageurDescription": "État des lieux",
+    "selectModel": "Sélection du modèle",
+    "selectModelDescription": "Choisissez un modèle de parcours pour votre logement"
+  },
+  "pieces": {
+    "title": "Pièces",
+    "selectPieces": "Sélectionner les pièces",
+    "addPhotos": "Ajouter des photos"
+  },
+  "photos": {
+    "addPhotosFor": "Ajoutez des photos pour {{logementNom}}",
+    "added": "ajoutée",
+    "added_plural": "ajoutées",
+    "add": "Ajouter",
+    "clickToAdd": "Cliquez pour ajouter des photos"
+  },
+  "airbnb": {
+    "analyzing": "Analyse en cours...",
+    "loading": "Chargement...",
+    "extracting": "Extraction des données Airbnb",
+    "results": "Résultats de l'analyse Airbnb",
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "validated": "Logement validé !",
+    "redirecting": "Le logement va s'afficher dans quelques secondes...",
+    "classification": "Classification des pièces",
+    "analysisResult": "Nous avons analysé votre propriété et identifié {{piecesCount}} types de pièces avec {{photosCount}} photos",
+    "photosSelected": "Photos sélectionnées",
+    "activePieces": "Pièces actives",
+    "photo": "photo",
+    "photo_plural": "photos",
+    "task": "tâche",
+    "task_plural": "tâches",
+    "active": "Activé",
+    "associatedTasks": "Tâches associées :",
+    "photoRequired": "Photo requise",
+    "finish": "Terminer"
+  },
+  "modele": {
+    "custom": "Modèle personnalisé",
+    "predefined": "Modèle prédéfini",
+    "create": "Recharger les modèles",
+    "edit": "Modifier le modèle",
+    "delete": "Supprimer le modèle",
+    "save": "Enregistrer",
+    "cancel": "Annuler"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "next": "Suivant",
+    "back": "Retour",
+    "required": "Obligatoire",
+    "optional": "Facultatif"
+  },
+  "toast": {
+    "logementCreated": "Logement créé avec succès",
+    "logementUpdated": "Logement mis à jour",
+    "modeleCreated": "Modèle créé avec succès",
+    "modeleUpdated": "Modèle mis à jour",
+    "modeleDeleted": "Modèle supprimé",
+    "error": "Une erreur est survenue",
+    "loadingModeles": "Chargement des modèles...",
+    "modelesLoaded": "Modèles chargés avec succès",
+    "modelesLoadError": "Impossible de charger les modèles depuis Bubble.io. Utilisation des modèles locaux."
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès !",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "optional": "Optionnel",
+    "delete": "Supprimer"
+  },
+  "modele": {
+    "chooseModel": "Choisir le modèle du parcours",
+    "selectOrCreate": "Sélectionnez un modèle prédéfini ou créez le vôtre",
+    "menageCheckEasy": "Ménage Check Easy",
+    "menageDescription": "Modèle optimisé pour le suivi du ménage avec checklist complète",
+    "voyageurCheckEasy": "Voyageur Check Easy",
+    "voyageurDescription": "Modèle pour l'accueil voyageurs avec vérifications essentielles",
+    "viewTasks": "Voir les tâches",
+    "yourCustomModels": "Vos modèles personnalisés",
+    "custom": "Personnalisé",
+    "modified": "Modifié",
+    "createOwn": "Créer son propre modèle",
+    "configureCustom": "Configurez un modèle personnalisé selon vos besoins",
+    "deleteCustomModel": "Supprimer le modèle personnalisé ?",
+    "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer le modèle \"{{modelName}}\" ?",
+    "irreversible": "Cette action est irréversible.",
+    "previewTitle": "Aperçu du modèle",
+    "allTasksAvailable": "Voici toutes les tâches disponibles dans ce modèle"
+  },
+  "piecesDialog": {
+    "selectRooms": "Sélectionnez les pièces du logement",
+    "indicateNumber": "Indiquez le nombre de chaque type de pièce pour",
+    "noRoomSelected": "Aucune pièce sélectionnée",
+    "roomsSelected": "{{count}} pièce sélectionnée",
+    "roomsSelected_plural": "{{count}} pièces sélectionnées",
+    "continue": "Continuer",
+    "importFromAirbnb": "Importer depuis Airbnb"
+  },
+  "customModeleBuilder": {
+    "createTitle": "Créer son propre modèle de parcours",
+    "editTitle": "Modifier son propre modèle de parcours",
+    "lastUpdate": "Dernière mise à jour :",
+    "modelConfig": "Configuration du modèle",
+    "modelName": "Nom du modèle *",
+    "modelNamePlaceholder": "Ex: Ménage complet appartement T3",
+    "parcoursType": "Type de parcours *",
+    "inventoryMoment": "État des lieux",
+    "exitOnly": "À la sortie uniquement",
+    "exitOnlyShort": "Sortie",
+    "arrivalExit": "À l'arrivée et à la sortie",
+    "arrivalExitShort": "Arrivée/Sortie",
+    "inventoryInfo": "Notre IA utilise uniquement les photos de sortie pour détecter les différences avec l'état initial.",
+    "roomsAndTasks": "Pièces et tâches",
+    "roomsInfo": "💡 Pour chaque pièce sélectionnée, choisissez les tâches à effectuer. Vous pouvez également ajouter vos propres pièces et tâches personnalisées.",
+    "addTask": "Ajouter une tâche",
+    "addTaskShort": "Ajouter",
+    "customLabel": "Personnalisée",
+    "photoRequired": "Photo requise",
+    "photoRequiredShort": "Photo",
+    "addCustomRoom": "Ajouter une pièce personnalisée",
+    "checklistBeforeDeparture": "Check-list avant le départ",
+    "checklistInfo": "💡 Sélectionnez les questions que le voyageur devra valider avant de quitter le logement.",
+    "addQuestion": "Ajouter une Question",
+    "addQuestionShort": "Ajouter",
+    "yesNo": "Oui/Non",
+    "openQuestion": "💬 Ouverte",
+    "cancel": "Annuler",
+    "saveChanges": "Enregistrer les modifications",
+    "saveChangesShort": "Enregistrer",
+    "createModel": "Créer le modèle",
+    "createModelShort": "Créer",
+    "addCustomTask": "Ajouter une tâche personnalisée",
+    "forRoom": "Pour la pièce :",
+    "emojiOptional": "Emoji (optionnel)",
+    "taskTitle": "Titre de la tâche *",
+    "taskTitlePlaceholder": "Ex: Vérifier le chauffage",
+    "description": "Description",
+    "descriptionPlaceholder": "Ex: S'assurer que le chauffage fonctionne",
+    "photoMandatory": "Photo obligatoire",
+    "add": "Ajouter",
+    "addCustomRoomTitle": "Ajouter une pièce personnalisée",
+    "addCustomRoomDesc": "Ajoutez une pièce qui n'est pas dans la liste prédéfinie",
+    "roomName": "Nom de la pièce *",
+    "roomNamePlaceholder": "Ex: Buanderie, Terrasse, Cave...",
+    "errorTitle": "Erreur",
+    "roomNameRequired": "Le nom de la pièce est obligatoire",
+    "roomAlreadyExists": "Cette pièce existe déjà",
+    "roomAdded": "Pièce ajoutée",
+    "roomAddedDesc": "\"{{roomName}}\" a été ajoutée avec succès",
+    "roomDeleted": "Pièce supprimée",
+    "roomDeletedDesc": "\"{{roomName}}\" a été supprimée",
+    "taskCreated": "Tâche créée",
+    "taskCreatedDesc": "\"{{taskTitle}}\" a été ajoutée à {{roomName}}",
+    "taskDeleted": "Tâche supprimée",
+    "taskDeletedDesc": "La tâche personnalisée a été supprimée",
+    "taskModified": "Tâche modifiée",
+    "taskModifiedDesc": "\"{{taskTitle}}\" a été mise à jour",
+    "questionDeleted": "Question supprimée",
+    "questionDeletedDesc": "La question a été retirée de la checklist",
+    "questionDuplicated": "Question dupliquée",
+    "questionDuplicatedDesc": "La question a été dupliquée avec succès",
+    "questionModified": "Question modifiée",
+    "questionModifiedDesc": "La question a été mise à jour",
+    "questionAdded": "Question ajoutée",
+    "questionAddedDesc": "La question a été ajoutée à la checklist",
+    "nameRequired": "Nom requis",
+    "nameRequiredDesc": "Veuillez donner un nom à votre modèle",
+    "modelCreated": "Modèle créé",
+    "modelModified": "Modèle modifié",
+    "modelCreatedDesc": "Le modèle \"{{modelName}}\" a été créé avec succès",
+    "modelModifiedDesc": "Le modèle \"{{modelName}}\" a été modifié avec succès"
+  },
+  "rooms": {
+    "kitchen": "Cuisine",
+    "bathroomNoToilet": "Salle de bain (sans toilettes)",
+    "bathroomWithToilet": "Salle de bain avec toilettes",
+    "separateToilet": "Toilettes séparés",
+    "bedroom": "Chambre",
+    "livingRoom": "Salon / Séjour",
+    "diningRoom": "Salle à manger",
+    "entryHallStairs": "Entrée / Couloir / Escaliers",
+    "laundryRoom": "Buanderie / Laverie",
+    "outdoorSpaces": "Espaces extérieurs"
+  },
+  "defaultQuestions": {
+    "menage": {
+      "q1": "Les lumières, les radiateurs et la climatisation sont-ils bien éteints ?",
+      "q2": "Les stocks de consommables (savon, shampoing, papier toilette) et les produits d'entretien (éponge, liquide vaisselle, sacs-poubelle, etc.) sont-ils suffisants pour les prochains voyageurs ?",
+      "q3": "Avez-vous constaté des dégradations ou anomalies non signalées ? Certains équipements nécessitent-ils un remplacement ou une réparation ?",
+      "q4": "Si vous avez remarqué un problème ou souhaitez ajouter un commentaire, merci de le préciser ici.",
+      "q5": "Avez-vous remis la clé au bon endroit ? (Photo de la clé dans la boîte à clé. Ou si pas de boîte à clé, photo de la clé sur le meuble de l'entrée ou la table du salon)",
+      "q6": "Le logement est-il bien sécurisé (portes et fenêtres fermées) après votre passage ?"
+    },
+    "voyageur": {
+      "q1": "Tous vos effets personnels ont été récupérés",
+      "q2": "Les poubelles ont été vidées et le tri respecté",
+      "q3": "Les radiateurs, les lumières et appareils inutiles sont éteints",
+      "q4": "Avez-vous constaté une anomalie ou une dégradation ? Souhaitez-vous ajouter un commentaire ?",
+      "q5": "Les clés ont été déposées à l'endroit prévu",
+      "q6": "Le logement est bien fermé à clé"
+    }
+  },
+  "defaultTasks": {
+    "menage": {
+      "Cuisine": [
+        { "titre": "Vider les poubelles", "description": "Remplacer sac ; nettoyer couvercle & bac." },
+        { "titre": "Laver la vaisselle", "description": "Nettoyer, sécher, ranger toute la vaisselle." },
+        { "titre": "Essuyer toutes surfaces", "description": "Plans, crédence, porte-placard, table bar." },
+        { "titre": "Nettoyer micro-ondes", "description": "Intérieur doit être propre" },
+        { "titre": "Nettoyer réfrigérateur", "description": "Vider et laver les étagères." },
+        { "titre": "Nettoyer congélateur", "description": "Vider et laver." },
+        { "titre": "Nettoyer four", "description": "Nettoyer l'intérieur du four et la vitre." },
+        { "titre": "Nettoyer plaques/cuisson", "description": "Gaz : brûleurs dégraissés. Induction : sans trace." },
+        { "titre": "Dégraisser hotte & filtre", "description": "Filtre nettoyé ou signalé à changer." },
+        { "titre": "Nettoyer petits électros", "description": "Cafetière, bouilloire, grille-pain sans miettes." },
+        { "titre": "Vider lave-vaisselle", "description": "Ranger la vaisselle, laisser 2 pastilles." },
+        { "titre": "Contrôler éponge & liquide", "description": "Éponge saine ; et produit vaisselle" },
+        { "titre": "Balayer & serpillière", "description": "Sol sans miettes, taches, traces de gras." }
+      ],
+      "Salle de bain (sans toilettes)": [
+        { "titre": "Retirer cheveux/poils (siphon)", "description": "Siphon de douche propre." },
+        { "titre": "Détartrer parois & robinetterie", "description": "Sans calcaire ni moisissure." },
+        { "titre": "Nettoyer carrelage & joints", "description": "Joints blancs, carreaux sans savon." },
+        { "titre": "Nettoyer miroir & vasque", "description": "Sans trace d'eau ni dentifrice." },
+        { "titre": "Nettoyer meuble sous-vasque", "description": "Intérieur vidé, façade essuyée." },
+        { "titre": "Vérifier linge de toilette", "description": "Serviettes propres, pliées, quantité suffisante." },
+        { "titre": "Vider poubelle SDB", "description": "Sac neuf, sans odeur." },
+        { "titre": "Changer le tapis de bain", "description": "Prendre un tapis propre" }
+      ],
+      "Salle de bain avec toilettes": [
+        { "titre": "Nettoyer cuvette & lunette", "description": "Détartrage, désinfection, dessous de lunette inclus." },
+        { "titre": "Recharger papier toilette", "description": "≥ 1 rouleau plein disponible." },
+        { "titre": "Retirer cheveux/poils (siphon)", "description": "Siphon de douche propre." },
+        { "titre": "Détartrer parois & robinetterie", "description": "Sans calcaire ni moisissure." },
+        { "titre": "Nettoyer carrelage & joints", "description": "Joints blancs, carreaux sans savon." },
+        { "titre": "Nettoyer miroir & vasque", "description": "Sans trace d'eau ni dentifrice." },
+        { "titre": "Nettoyer meuble sous-vasque", "description": "Intérieur vidé, façade essuyée." },
+        { "titre": "Vérifier linge de toilette", "description": "Serviettes propres, pliées, quantité suffisante." },
+        { "titre": "Vider poubelle SDB", "description": "Sac neuf, sans odeur." },
+        { "titre": "Changer le tapis de bain", "description": "Prendre un tapis propre" }
+      ],
+      "Toilettes séparés": [
+        { "titre": "Nettoyer cuvette & lunette", "description": "Détartrage, désinfection, dessous de lunette inclus." },
+        { "titre": "Recharger papier toilette", "description": "≥ 1 rouleau plein disponible." }
+      ],
+      "Chambre": [
+        { "titre": "Changer draps & taies", "description": "Parure propre, tirée au carré." },
+        { "titre": "Aspirer matelas", "description": "Cheveux / poussière retirés." },
+        { "titre": "Contrôler oreillers & couette", "description": "Sans taches ni odeur." },
+        { "titre": "Signaler latte cassée", "description": "Lever sommier et vérifier." },
+        { "titre": "Aspirer sous lit & meubles", "description": "Aucune boule de poussière." },
+        { "titre": "Nettoyer tables de chevet", "description": "Dépoussiérer, essuyer lampes." },
+        { "titre": "Vérifier placards & tiroirs", "description": "Vides, propres." },
+        { "titre": "Ranger rideaux / volets", "description": "Fonctionnement OK, pas de tache." }
+      ],
+      "Salon / Séjour": [
+        { "titre": "Dépoussiérer surfaces", "description": "Tables, étagères, TV, moulures." },
+        { "titre": "Aspirer canapé & fauteuils", "description": "Retirer poils, miettes, coussins tapotés." },
+        { "titre": "Aspirer & secouer tapis", "description": "Pas de miette, pas d'odeur." },
+        { "titre": "Remettre télécommande TV", "description": "Placer dans un endroit visible" },
+        { "titre": "Aligner mobilier & déco", "description": "Table basse centrée, coussins placés." }
+      ],
+      "Salle à manger": [
+        { "titre": "Essuyer table & chaises", "description": "Plateau sans trace, chaises dépoussiérées." },
+        { "titre": "Vérifier sets de table / déco", "description": "Propre, rangé." },
+        { "titre": "Nettoyer buffet / vaisselier", "description": "Poignées sans empreintes." },
+        { "titre": "Passer aspirateur sous table", "description": "Aucun débris." }
+      ],
+      "Entrée / Couloir / Escaliers": [
+        { "titre": "Nettoyer/secouer paillasson", "description": "Sans sable ni gravier." },
+        { "titre": "Nettoyer miroir & interphone", "description": "Sans trace de doigts." },
+        { "titre": "Dépoussiérer rampe escalier", "description": "Rampe & barreaux sans poussière." }
+      ],
+      "Buanderie / Laverie": [
+        { "titre": "Nettoyer tambour lave-linge", "description": "Joint & hublot essuyés." },
+        { "titre": "Vider filtre sèche-linge", "description": "Peluches retirées." },
+        { "titre": "Nettoyer plan de pliage", "description": "Sans tache de lessive." },
+        { "titre": "Contrôler stock lessive", "description": "≥ 2 doses." }
+      ],
+      "Espaces extérieurs": [
+        { "titre": "Nettoyer mobilier jardin", "description": "Table & chaises essuyées." },
+        { "titre": "Ranger coussins & parasol", "description": "Coussins secs, parasol fermé." },
+        { "titre": "Vider cendriers & mégots", "description": "Aucun mégot au sol." },
+        { "titre": "Nettoyer barbecue", "description": "Grille brossée, cendres vidées." },
+        { "titre": "Vérifier SPA", "description": "Eau claire, couvercle remis." },
+        { "titre": "Vérifier piscine", "description": "Eau propre, skimmer vidé, couverture sécurisée." },
+        { "titre": "Arroser / vérifier plantes", "description": "Feuilles mortes retirées." }
+      ]
+    },
+    "voyageur": {
+      "Cuisine": [
+        { "titre": "Vider les poubelles", "description": "Sortir tous les sacs, remettre un sac propre, fermer le couvercle." },
+        { "titre": "Ranger la vaisselle", "description": "Laver ou lancer le lave-vaisselle puis ranger toute la vaisselle propre." },
+        { "titre": "Vider le réfrigérateur", "description": "Retirer tous les aliments entamés, jeter ou emporter." }
+      ],
+      "Salle de bain (sans toilettes)": [
+        { "titre": "Rassembler serviettes", "description": "Déposer toutes les serviettes utilisées dans le panier ou sur le sol prévu." },
+        { "titre": "Vider la poubelle", "description": "Jeter mouchoirs ou produits usagés, remettre un sac propre si fourni." },
+        { "titre": "Vérifier effets personnels", "description": "Aucun produit ou accessoire oublié dans la douche ou sur la vasque." }
+      ],
+      "Salle de bain avec toilettes": [
+        { "titre": "Tirer chasse & abaisser lunette", "description": "Laisser la cuvette propre et fermée." },
+        { "titre": "Vider la poubelle", "description": "Sac retiré ou contenu jeté dans la grande poubelle." },
+        { "titre": "Regrouper serviettes", "description": "Mettre linge humide au même endroit (panier ou sol prévu)." }
+      ],
+      "Toilettes séparés": [
+        { "titre": "Tirer chasse & fermer abattant", "description": "Laisser cuvette et abattant propres." },
+        { "titre": "Vider la poubelle", "description": "Retirer le sac ou son contenu." }
+      ],
+      "Chambre": [
+        { "titre": "Défaire le linge de lit", "description": "Retirer draps & taies, les placer où indiqué (panier, sac…)." },
+        { "titre": "Vérifier placards/tiroirs", "description": "Rien d'oublié ni de déchets à l'intérieur." }
+      ],
+      "Salon / Séjour": [
+        { "titre": "Ranger canapé & coussins", "description": "Coussins tapotés, plaid plié, canapé dégagé." },
+        { "titre": "Éteindre TV & appareils", "description": "Télécommande posée à sa place, TV et console éteintes." }
+      ],
+      "Espaces extérieurs": [
+        { "titre": "Ranger mobilier", "description": "Chaises repoussées, coussins rentrés ou empilés." },
+        { "titre": "Vider cendriers", "description": "Jeter mégots, nettoyer cendrier si besoin." },
+        { "titre": "Fermer parasol / BBQ", "description": "Parasol fermé ; BBQ éteint & couvercle remis." },
+        { "titre": "Vérifier portail / portillon", "description": "Fermé ou verrouillé selon consigne." }
+      ]
+    }
+  }
+}
+

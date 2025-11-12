@@ -1,0 +1,372 @@
+{
+  "app": {
+    "title": "AddLogementDialog Demo",
+    "description": "Complete modal to add a property with cleaning or traveler journey"
+  },
+  "logement": {
+    "step": "Step {{current}}/{{total}}",
+    "createNew": "Create a new property",
+    "basicInfo": "Enter the basic information of your property",
+    "name": "Property name",
+    "nameRequired": "Required",
+    "namePlaceholder": "E.g.: Paris Center Apartment",
+    "address": "Postal address (optional)",
+    "addressPlaceholder": "E.g.: 15 Rue de la Paix, 75002 Paris",
+    "airbnbLink": "Airbnb link (optional)",
+    "airbnbLinkDescription": "We will use this link to automatically extract the rooms and photos from your listing",
+    "airbnbLinkPlaceholder": "https://www.airbnb.com/rooms/...",
+    "next": "Next",
+    "back": "Back",
+    "close": "Close"
+  },
+  "parcours": {
+    "chooseType": "Which journey do we start with?",
+    "chooseTypeDescription": "You can add the other one later with 1 click.",
+    "menage": "Cleaning agents",
+    "menageDescription": "Track cleaning quality",
+    "voyageur": "Traveler",
+    "voyageurDescription": "Property inspection",
+    "selectModel": "Model selection",
+    "selectModelDescription": "Choose a journey model for your property"
+  },
+  "pieces": {
+    "title": "Rooms",
+    "selectPieces": "Select rooms",
+    "addPhotos": "Add photos"
+  },
+  "pieces": {
+    "title": "Rooms",
+    "selectPieces": "Select rooms",
+    "addPhotos": "Add photos"
+  },
+  "photos": {
+    "addPhotosFor": "Add photos for {{logementNom}}",
+    "added": "added",
+    "added_plural": "added",
+    "add": "Add",
+    "clickToAdd": "Click to add photos"
+  },
+  "airbnb": {
+    "analyzing": "Analyzing...",
+    "loading": "Loading...",
+    "extracting": "Extracting Airbnb data",
+    "results": "Airbnb analysis results",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "validated": "Property validated!",
+    "redirecting": "The property will be displayed in a few seconds...",
+    "classification": "Room classification",
+    "analysisResult": "We analyzed your property and identified {{piecesCount}} room types with {{photosCount}} photos",
+    "photosSelected": "Photos selected",
+    "activePieces": "Active rooms",
+    "photo": "photo",
+    "photo_plural": "photos",
+    "task": "task",
+    "task_plural": "tasks",
+    "active": "Active",
+    "associatedTasks": "Associated tasks:",
+    "photoRequired": "Photo required",
+    "finish": "Finish"
+  },
+  "modele": {
+    "custom": "Custom model",
+    "predefined": "Predefined model",
+    "create": "Reload models",
+    "edit": "Edit model",
+    "delete": "Delete model",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "next": "Next",
+    "back": "Back",
+    "required": "Required",
+    "optional": "Optional"
+  },
+  "toast": {
+    "logementCreated": "Property created successfully",
+    "logementUpdated": "Property updated",
+    "modeleCreated": "Model created successfully",
+    "modeleUpdated": "Model updated",
+    "modeleDeleted": "Model deleted",
+    "error": "An error occurred",
+    "loadingModeles": "Loading models...",
+    "modelesLoaded": "Models loaded successfully",
+    "modelesLoadError": "Unable to load models from Bubble.io. Using local models."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success!",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "optional": "Optional",
+    "delete": "Delete"
+  },
+  "modele": {
+    "chooseModel": "Choose the journey model",
+    "selectOrCreate": "Select a predefined model or create your own",
+    "menageCheckEasy": "Cleaning Check Easy",
+    "menageDescription": "Optimized model for cleaning tracking with complete checklist",
+    "voyageurCheckEasy": "Traveler Check Easy",
+    "voyageurDescription": "Model for guest welcome with essential checks",
+    "viewTasks": "View tasks",
+    "yourCustomModels": "Your custom models",
+    "custom": "Custom",
+    "modified": "Modified",
+    "createOwn": "Create your own model",
+    "configureCustom": "Configure a custom model according to your needs",
+    "deleteCustomModel": "Delete custom model?",
+    "deleteConfirmation": "Are you sure you want to delete the model \"{{modelName}}\"?",
+    "irreversible": "This action is irreversible.",
+    "previewTitle": "Model preview",
+    "allTasksAvailable": "Here are all the tasks available in this model"
+  },
+  "piecesDialog": {
+    "selectRooms": "Select the property rooms",
+    "indicateNumber": "Indicate the number of each room type for",
+    "noRoomSelected": "No room selected",
+    "roomsSelected": "{{count}} room selected",
+    "roomsSelected_plural": "{{count}} rooms selected",
+    "continue": "Continue",
+    "importFromAirbnb": "Import from Airbnb"
+  },
+  "customModeleBuilder": {
+    "createTitle": "Create your own journey model",
+    "editTitle": "Edit your own journey model",
+    "lastUpdate": "Last update:",
+    "modelConfig": "Model configuration",
+    "modelName": "Model name *",
+    "modelNamePlaceholder": "Ex: Complete cleaning 3-room apartment",
+    "parcoursType": "Journey type *",
+    "inventoryMoment": "Inventory",
+    "exitOnly": "At exit only",
+    "exitOnlyShort": "Exit",
+    "arrivalExit": "At arrival and exit",
+    "arrivalExitShort": "Arrival/Exit",
+    "inventoryInfo": "Our AI only uses exit photos to detect differences from the initial state.",
+    "roomsAndTasks": "Rooms and tasks",
+    "roomsInfo": "💡 For each selected room, choose the tasks to perform. You can also add your own custom rooms and tasks.",
+    "addTask": "Add a task",
+    "addTaskShort": "Add",
+    "customLabel": "Custom",
+    "photoRequired": "Photo required",
+    "photoRequiredShort": "Photo",
+    "addCustomRoom": "Add a custom room",
+    "checklistBeforeDeparture": "Checklist before departure",
+    "checklistInfo": "💡 Select the questions the traveler must validate before leaving the property.",
+    "addQuestion": "Add a Question",
+    "addQuestionShort": "Add",
+    "yesNo": "Yes/No",
+    "openQuestion": "💬 Open",
+    "cancel": "Cancel",
+    "saveChanges": "Save changes",
+    "saveChangesShort": "Save",
+    "createModel": "Create model",
+    "createModelShort": "Create",
+    "addCustomTask": "Add a custom task",
+    "forRoom": "For room:",
+    "emojiOptional": "Emoji (optional)",
+    "taskTitle": "Task title *",
+    "taskTitlePlaceholder": "Ex: Check heating",
+    "description": "Description",
+    "descriptionPlaceholder": "Ex: Make sure the heating works",
+    "photoMandatory": "Photo mandatory",
+    "add": "Add",
+    "addCustomRoomTitle": "Add a custom room",
+    "addCustomRoomDesc": "Add a room that is not in the predefined list",
+    "roomName": "Room name *",
+    "roomNamePlaceholder": "Ex: Laundry room, Terrace, Cellar...",
+    "errorTitle": "Error",
+    "roomNameRequired": "Room name is required",
+    "roomAlreadyExists": "This room already exists",
+    "roomAdded": "Room added",
+    "roomAddedDesc": "\"{{roomName}}\" has been added successfully",
+    "roomDeleted": "Room deleted",
+    "roomDeletedDesc": "\"{{roomName}}\" has been deleted",
+    "taskCreated": "Task created",
+    "taskCreatedDesc": "\"{{taskTitle}}\" has been added to {{roomName}}",
+    "taskDeleted": "Task deleted",
+    "taskDeletedDesc": "The custom task has been deleted",
+    "taskModified": "Task modified",
+    "taskModifiedDesc": "\"{{taskTitle}}\" has been updated",
+    "questionDeleted": "Question deleted",
+    "questionDeletedDesc": "The question has been removed from the checklist",
+    "questionDuplicated": "Question duplicated",
+    "questionDuplicatedDesc": "The question has been duplicated successfully",
+    "questionModified": "Question modified",
+    "questionModifiedDesc": "The question has been updated",
+    "questionAdded": "Question added",
+    "questionAddedDesc": "The question has been added to the checklist",
+    "nameRequired": "Name required",
+    "nameRequiredDesc": "Please give a name to your model",
+    "modelCreated": "Model created",
+    "modelModified": "Model modified",
+    "modelCreatedDesc": "The model \"{{modelName}}\" has been created successfully",
+    "modelModifiedDesc": "The model \"{{modelName}}\" has been modified successfully"
+  },
+  "rooms": {
+    "kitchen": "Kitchen",
+    "bathroomNoToilet": "Bathroom (without toilet)",
+    "bathroomWithToilet": "Bathroom with toilet",
+    "separateToilet": "Separate toilet",
+    "bedroom": "Bedroom",
+    "livingRoom": "Living Room",
+    "diningRoom": "Dining Room",
+    "entryHallStairs": "Entry / Hall / Stairs",
+    "laundryRoom": "Laundry Room",
+    "outdoorSpaces": "Outdoor Spaces"
+  },
+  "defaultQuestions": {
+    "menage": {
+      "q1": "Are the lights, heaters and air conditioning turned off?",
+      "q2": "Are the stocks of consumables (soap, shampoo, toilet paper) and cleaning products (sponge, dish soap, garbage bags, etc.) sufficient for the next travelers?",
+      "q3": "Have you noticed any unreported damage or anomalies? Do any equipment need replacement or repair?",
+      "q4": "If you noticed a problem or wish to add a comment, please specify it here.",
+      "q5": "Have you put the key back in the right place? (Photo of the key in the key box. Or if no key box, photo of the key on the entrance furniture or living room table)",
+      "q6": "Is the property properly secured (doors and windows closed) after your visit?"
+    },
+    "voyageur": {
+      "q1": "All your personal belongings have been collected",
+      "q2": "The trash has been emptied and sorting respected",
+      "q3": "Heaters, lights and unnecessary appliances are turned off",
+      "q4": "Have you noticed an anomaly or damage? Would you like to add a comment?",
+      "q5": "The keys have been deposited in the designated place",
+      "q6": "The property is properly locked"
+    }
+  },
+  "defaultTasks": {
+    "menage": {
+      "Cuisine": [
+        { "titre": "Empty trash bins", "description": "Replace bag; clean lid & bin." },
+        { "titre": "Wash dishes", "description": "Clean, dry, put away all dishes." },
+        { "titre": "Wipe all surfaces", "description": "Counters, backsplash, cabinet doors, bar table." },
+        { "titre": "Clean microwave", "description": "Interior must be clean" },
+        { "titre": "Clean refrigerator", "description": "Empty and wash shelves." },
+        { "titre": "Clean freezer", "description": "Empty and wash." },
+        { "titre": "Clean oven", "description": "Clean oven interior and glass." },
+        { "titre": "Clean stovetop/burners", "description": "Gas: degreased burners. Induction: no traces." },
+        { "titre": "Degrease hood & filter", "description": "Filter cleaned or marked for replacement." },
+        { "titre": "Clean small appliances", "description": "Coffee maker, kettle, toaster without crumbs." },
+        { "titre": "Empty dishwasher", "description": "Put away dishes, leave 2 tablets." },
+        { "titre": "Check sponge & soap", "description": "Healthy sponge; and dish soap" },
+        { "titre": "Sweep & mop", "description": "Floor without crumbs, stains, grease marks." }
+      ],
+      "Salle de bain (sans toilettes)": [
+        { "titre": "Remove hair (drain)", "description": "Shower drain clean." },
+        { "titre": "Descale walls & faucets", "description": "No limescale or mold." },
+        { "titre": "Clean tiles & grout", "description": "White grout, tiles without soap." },
+        { "titre": "Clean mirror & sink", "description": "No water or toothpaste marks." },
+        { "titre": "Clean under-sink cabinet", "description": "Interior emptied, facade wiped." },
+        { "titre": "Check bathroom linens", "description": "Clean towels, folded, sufficient quantity." },
+        { "titre": "Empty bathroom trash", "description": "New bag, no odor." },
+        { "titre": "Change bath mat", "description": "Take a clean mat" }
+      ],
+      "Salle de bain avec toilettes": [
+        { "titre": "Clean bowl & seat", "description": "Descaling, disinfection, underside of seat included." },
+        { "titre": "Refill toilet paper", "description": "≥ 1 full roll available." },
+        { "titre": "Remove hair (drain)", "description": "Shower drain clean." },
+        { "titre": "Descale walls & faucets", "description": "No limescale or mold." },
+        { "titre": "Clean tiles & grout", "description": "White grout, tiles without soap." },
+        { "titre": "Clean mirror & sink", "description": "No water or toothpaste marks." },
+        { "titre": "Clean under-sink cabinet", "description": "Interior emptied, facade wiped." },
+        { "titre": "Check bathroom linens", "description": "Clean towels, folded, sufficient quantity." },
+        { "titre": "Empty bathroom trash", "description": "New bag, no odor." },
+        { "titre": "Change bath mat", "description": "Take a clean mat" }
+      ],
+      "Toilettes séparés": [
+        { "titre": "Clean bowl & seat", "description": "Descaling, disinfection, underside of seat included." },
+        { "titre": "Refill toilet paper", "description": "≥ 1 full roll available." }
+      ],
+      "Chambre": [
+        { "titre": "Change sheets & pillowcases", "description": "Clean set, hospital corners." },
+        { "titre": "Vacuum mattress", "description": "Hair / dust removed." },
+        { "titre": "Check pillows & duvet", "description": "No stains or odor." },
+        { "titre": "Report broken slat", "description": "Lift box spring and check." },
+        { "titre": "Vacuum under bed & furniture", "description": "No dust bunnies." },
+        { "titre": "Clean nightstands", "description": "Dust, wipe lamps." },
+        { "titre": "Check closets & drawers", "description": "Empty, clean." },
+        { "titre": "Arrange curtains / shutters", "description": "Working OK, no stains." }
+      ],
+      "Salon / Séjour": [
+        { "titre": "Dust surfaces", "description": "Tables, shelves, TV, moldings." },
+        { "titre": "Vacuum sofa & armchairs", "description": "Remove hair, crumbs, fluff cushions." },
+        { "titre": "Vacuum & shake rugs", "description": "No crumbs, no odor." },
+        { "titre": "Put back TV remote", "description": "Place in visible location" },
+        { "titre": "Align furniture & decor", "description": "Coffee table centered, cushions placed." }
+      ],
+      "Salle à manger": [
+        { "titre": "Wipe table & chairs", "description": "Tabletop without marks, chairs dusted." },
+        { "titre": "Check placemats / decor", "description": "Clean, tidy." },
+        { "titre": "Clean buffet / sideboard", "description": "Handles without fingerprints." },
+        { "titre": "Vacuum under table", "description": "No debris." }
+      ],
+      "Entrée / Couloir / Escaliers": [
+        { "titre": "Clean/shake doormat", "description": "No sand or gravel." },
+        { "titre": "Clean mirror & intercom", "description": "No fingerprints." },
+        { "titre": "Dust stair railing", "description": "Railing & bars without dust." }
+      ],
+      "Buanderie / Laverie": [
+        { "titre": "Clean washing machine drum", "description": "Seal & door wiped." },
+        { "titre": "Empty dryer filter", "description": "Lint removed." },
+        { "titre": "Clean folding surface", "description": "No detergent stains." },
+        { "titre": "Check detergent stock", "description": "≥ 2 doses." }
+      ],
+      "Espaces extérieurs": [
+        { "titre": "Clean garden furniture", "description": "Table & chairs wiped." },
+        { "titre": "Store cushions & umbrella", "description": "Dry cushions, umbrella closed." },
+        { "titre": "Empty ashtrays & butts", "description": "No butts on ground." },
+        { "titre": "Clean barbecue", "description": "Grill brushed, ashes emptied." },
+        { "titre": "Check SPA", "description": "Clear water, cover replaced." },
+        { "titre": "Check pool", "description": "Clean water, skimmer emptied, cover secured." },
+        { "titre": "Water / check plants", "description": "Dead leaves removed." }
+      ]
+    },
+    "voyageur": {
+      "Cuisine": [
+        { "titre": "Empty trash bins", "description": "Take out all bags, put in clean bag, close lid." },
+        { "titre": "Put away dishes", "description": "Wash or start dishwasher then put away all clean dishes." },
+        { "titre": "Empty refrigerator", "description": "Remove all opened food, throw away or take." }
+      ],
+      "Salle de bain (sans toilettes)": [
+        { "titre": "Gather towels", "description": "Place all used towels in basket or on designated floor." },
+        { "titre": "Empty trash", "description": "Throw away tissues or used products, put in clean bag if provided." },
+        { "titre": "Check personal items", "description": "No product or accessory forgotten in shower or on sink." }
+      ],
+      "Salle de bain avec toilettes": [
+        { "titre": "Flush & lower seat", "description": "Leave bowl clean and closed." },
+        { "titre": "Empty trash", "description": "Bag removed or contents thrown in main trash." },
+        { "titre": "Group towels", "description": "Put damp linens in same place (basket or designated floor)." }
+      ],
+      "Toilettes séparés": [
+        { "titre": "Flush & close lid", "description": "Leave bowl and lid clean." },
+        { "titre": "Empty trash", "description": "Remove bag or its contents." }
+      ],
+      "Chambre": [
+        { "titre": "Strip bed linens", "description": "Remove sheets & pillowcases, place where indicated (basket, bag…)." },
+        { "titre": "Check closets/drawers", "description": "Nothing forgotten or trash inside." }
+      ],
+      "Salon / Séjour": [
+        { "titre": "Tidy sofa & cushions", "description": "Cushions fluffed, throw folded, sofa cleared." },
+        { "titre": "Turn off TV & devices", "description": "Remote in its place, TV and console off." }
+      ],
+      "Espaces extérieurs": [
+        { "titre": "Tidy furniture", "description": "Chairs pushed in, cushions brought in or stacked." },
+        { "titre": "Empty ashtrays", "description": "Throw away butts, clean ashtray if needed." },
+        { "titre": "Close umbrella / BBQ", "description": "Umbrella closed; BBQ off & lid replaced." },
+        { "titre": "Check gate / door", "description": "Closed or locked as instructed." }
+      ]
+    }
+  }
+}
+

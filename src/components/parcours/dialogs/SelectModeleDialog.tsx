@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ParcoursModele } from "@/types/modele";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS, pt, es, ar, de } from "date-fns/locale";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,6 +26,7 @@ import {
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Eye } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface SelectModeleDialogProps {
   open: boolean;
@@ -58,10 +59,23 @@ export function SelectModeleDialog({
   onCreateCustom,
   isFullScreenMode = false,
 }: SelectModeleDialogProps) {
+  const { t, i18n } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [modeleToDelete, setModeleToDelete] = useState<ParcoursModele | null>(null);
   const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
   const [previewType, setPreviewType] = useState<"menage" | "voyageur">("menage");
+
+  // Get date-fns locale based on current language
+  const getDateLocale = () => {
+    switch (i18n.language) {
+      case 'en': return enUS;
+      case 'pt': return pt;
+      case 'es': return es;
+      case 'ar': return ar;
+      case 'de': return de;
+      default: return fr;
+    }
+  };
 
   const handleDeleteClick = (e: React.MouseEvent, modele: ParcoursModele) => {
     e.stopPropagation();
@@ -158,10 +172,10 @@ export function SelectModeleDialog({
             </Button>
             <div className="pl-8 sm:pl-10 pr-8">
               <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
-                Étape 3/5 - Choisir le modèle du parcours {filterType === "menage" ? "ménage" : "voyageur"}
+                {t('logement.step', { current: 3, total: 5 })} - {t('modele.chooseModel')} {filterType === "menage" ? t('parcours.menage') : t('parcours.voyageur')}
               </DialogTitle>
               <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
-                Sélectionnez un modèle prédéfini ou créez le vôtre
+                {t('modele.selectOrCreate')}
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -178,9 +192,9 @@ export function SelectModeleDialog({
                 <div className="flex items-start gap-2 sm:gap-3">
                   <div className="text-2xl sm:text-3xl">🧹</div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-base sm:text-lg">Ménage Check Easy</h3>
+                    <h3 className="font-semibold text-base sm:text-lg">{t('modele.menageCheckEasy')}</h3>
                     <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                      Modèle optimisé pour le suivi du ménage avec checklist complète
+                      {t('modele.menageDescription')}
                     </p>
                   </div>
                   <Button
@@ -190,7 +204,7 @@ export function SelectModeleDialog({
                     onClick={(e) => handlePreviewClick(e, "menage")}
                   >
                     <Eye className="h-4 w-4" />
-                    <span className="hidden md:inline">Voir les tâches</span>
+                    <span className="hidden md:inline">{t('modele.viewTasks')}</span>
                   </Button>
                   <Button
                     size="sm"
@@ -214,9 +228,9 @@ export function SelectModeleDialog({
                 <div className="flex items-start gap-2 sm:gap-3">
                   <div className="text-2xl sm:text-3xl">✈️</div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-base sm:text-lg">Voyageur Check Easy</h3>
+                    <h3 className="font-semibold text-base sm:text-lg">{t('modele.voyageurCheckEasy')}</h3>
                     <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                      Modèle pour l'accueil voyageurs avec vérifications essentielles
+                      {t('modele.voyageurDescription')}
                     </p>
                   </div>
                   <Button
@@ -226,7 +240,7 @@ export function SelectModeleDialog({
                     onClick={(e) => handlePreviewClick(e, "voyageur")}
                   >
                     <Eye className="h-4 w-4" />
-                    <span className="hidden md:inline">Voir les tâches</span>
+                    <span className="hidden md:inline">{t('modele.viewTasks')}</span>
                   </Button>
                   <Button
                     size="sm"
@@ -245,7 +259,7 @@ export function SelectModeleDialog({
               <>
                 <div className="flex items-center gap-2 sm:gap-3 my-2">
                   <Separator className="flex-1" />
-                  <span className="text-xs sm:text-sm text-muted-foreground font-medium">Vos modèles personnalisés</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground font-medium">{t('modele.yourCustomModels')}</span>
                   <Separator className="flex-1" />
                 </div>
 
@@ -264,13 +278,13 @@ export function SelectModeleDialog({
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-semibold text-base sm:text-lg">{modele.nom}</h3>
-                          <Badge variant="secondary" className="text-xs">Personnalisé</Badge>
+                          <Badge variant="secondary" className="text-xs">{t('modele.custom')}</Badge>
                         </div>
                         <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                          {modele.pieces.length} pièce{modele.pieces.length > 1 ? 's' : ''} • {getTotalTaches(modele)} tâche{getTotalTaches(modele) > 1 ? 's' : ''}
+                          {modele.pieces.length} {t('pieces.title', { count: modele.pieces.length }).toLowerCase()} • {getTotalTaches(modele)} {t('airbnb.task', { count: getTotalTaches(modele) })}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1 sm:mt-2">
-                          Modifié {formatDistanceToNow(new Date(modele.updatedAt), { addSuffix: true, locale: fr })}
+                          {t('modele.modified')} {formatDistanceToNow(new Date(modele.updatedAt), { addSuffix: true, locale: getDateLocale() })}
                         </p>
                       </div>
                       <div className="flex gap-1 shrink-0">
@@ -317,9 +331,9 @@ export function SelectModeleDialog({
                   <Plus className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-base sm:text-lg">Créer son propre modèle {filterType === "menage" ? "ménage" : "voyageur"}</h3>
+                  <h3 className="font-semibold text-base sm:text-lg">{t('modele.createOwn')} {filterType === "menage" ? t('parcours.menage') : t('parcours.voyageur')}</h3>
                   <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                    Configurez un modèle personnalisé selon vos besoins
+                    {t('modele.configureCustom')}
                   </p>
                 </div>
               </div>
@@ -332,19 +346,19 @@ export function SelectModeleDialog({
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Supprimer le modèle personnalisé ?</AlertDialogTitle>
+            <AlertDialogTitle>{t('modele.deleteCustomModel')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Êtes-vous sûr de vouloir supprimer le modèle "{modeleToDelete?.nom}" ?
-              Cette action est irréversible.
+              {t('modele.deleteConfirmation', { modelName: modeleToDelete?.nom })}
+              {t('modele.irreversible')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
               className="bg-destructive hover:bg-destructive/90"
             >
-              Supprimer
+              {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -356,10 +370,10 @@ export function SelectModeleDialog({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <span className="text-2xl">{previewType === "menage" ? "🧹" : "✈️"}</span>
-              Aperçu du modèle {previewType === "menage" ? "Ménage" : "Voyageur"} Check Easy
+              {t('modele.previewTitle')} {previewType === "menage" ? t('parcours.menage') : t('parcours.voyageur')} Check Easy
             </DialogTitle>
             <DialogDescription>
-              Voici toutes les tâches disponibles dans ce modèle
+              {t('modele.allTasksAvailable')}
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="max-h-[60vh] pr-4">

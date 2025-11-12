@@ -1,0 +1,372 @@
+{
+  "app": {
+    "title": "AddLogementDialog Demo",
+    "description": "Vollständiges Modal zum Hinzufügen einer Immobilie mit Reinigungs- oder Reiseroute"
+  },
+  "logement": {
+    "step": "Schritt {{current}}/{{total}}",
+    "createNew": "Neue Immobilie erstellen",
+    "basicInfo": "Geben Sie die grundlegenden Informationen Ihrer Immobilie ein",
+    "name": "Name der Immobilie",
+    "nameRequired": "Erforderlich",
+    "namePlaceholder": "Z.B.: Apartment Paris Zentrum",
+    "address": "Postanschrift (optional)",
+    "addressPlaceholder": "Z.B.: 15 Rue de la Paix, 75002 Paris",
+    "airbnbLink": "Airbnb-Link (optional)",
+    "airbnbLinkDescription": "Wir verwenden diesen Link, um automatisch die Zimmer und Fotos aus Ihrer Anzeige zu extrahieren",
+    "airbnbLinkPlaceholder": "https://www.airbnb.de/rooms/...",
+    "next": "Weiter",
+    "back": "Zurück",
+    "close": "Schließen"
+  },
+  "parcours": {
+    "chooseType": "Mit welcher Route beginnen wir?",
+    "chooseTypeDescription": "Sie können die andere später mit 1 Klick hinzufügen.",
+    "menage": "Reinigungskräfte",
+    "menageDescription": "Reinigungsqualität verfolgen",
+    "voyageur": "Reisender",
+    "voyageurDescription": "Objektinspektion",
+    "selectModel": "Modellauswahl",
+    "selectModelDescription": "Wählen Sie ein Routenmodell für Ihre Immobilie"
+  },
+  "pieces": {
+    "title": "Zimmer",
+    "selectPieces": "Zimmer auswählen",
+    "addPhotos": "Fotos hinzufügen"
+  },
+  "pieces": {
+    "title": "Zimmer",
+    "selectPieces": "Zimmer auswählen",
+    "addPhotos": "Fotos hinzufügen"
+  },
+  "photos": {
+    "addPhotosFor": "Fotos hinzufügen für {{logementNom}}",
+    "added": "hinzugefügt",
+    "added_plural": "hinzugefügt",
+    "add": "Hinzufügen",
+    "clickToAdd": "Klicken Sie, um Fotos hinzuzufügen"
+  },
+  "airbnb": {
+    "analyzing": "Analysiere...",
+    "loading": "Lädt...",
+    "extracting": "Airbnb-Daten extrahieren",
+    "results": "Airbnb-Analyseergebnisse",
+    "confirm": "Bestätigen",
+    "cancel": "Abbrechen",
+    "validated": "Immobilie validiert!",
+    "redirecting": "Die Immobilie wird in wenigen Sekunden angezeigt...",
+    "classification": "Raumklassifizierung",
+    "analysisResult": "Wir haben Ihre Immobilie analysiert und {{piecesCount}} Raumtypen mit {{photosCount}} Fotos identifiziert",
+    "photosSelected": "Ausgewählte Fotos",
+    "activePieces": "Aktive Räume",
+    "photo": "Foto",
+    "photo_plural": "Fotos",
+    "task": "Aufgabe",
+    "task_plural": "Aufgaben",
+    "active": "Aktiv",
+    "associatedTasks": "Zugehörige Aufgaben:",
+    "photoRequired": "Foto erforderlich",
+    "finish": "Fertig"
+  },
+  "modele": {
+    "custom": "Benutzerdefiniertes Modell",
+    "predefined": "Vordefiniertes Modell",
+    "create": "Modelle neu laden",
+    "edit": "Modell bearbeiten",
+    "delete": "Modell löschen",
+    "save": "Speichern",
+    "cancel": "Abbrechen"
+  },
+  "common": {
+    "loading": "Lädt...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "confirm": "Bestätigen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "close": "Schließen",
+    "next": "Weiter",
+    "back": "Zurück",
+    "required": "Erforderlich",
+    "optional": "Optional"
+  },
+  "toast": {
+    "logementCreated": "Immobilie erfolgreich erstellt",
+    "logementUpdated": "Immobilie aktualisiert",
+    "modeleCreated": "Modell erfolgreich erstellt",
+    "modeleUpdated": "Modell aktualisiert",
+    "modeleDeleted": "Modell gelöscht",
+    "error": "Ein Fehler ist aufgetreten",
+    "loadingModeles": "Modelle werden geladen...",
+    "modelesLoaded": "Modelle erfolgreich geladen",
+    "modelesLoadError": "Modelle konnten nicht von Bubble.io geladen werden. Verwende lokale Modelle."
+  },
+  "common": {
+    "loading": "Lädt...",
+    "error": "Fehler",
+    "success": "Erfolg!",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "optional": "Optional",
+    "delete": "Löschen"
+  },
+  "modele": {
+    "chooseModel": "Wählen Sie das Reisemodell",
+    "selectOrCreate": "Wählen Sie ein vordefiniertes Modell oder erstellen Sie Ihr eigenes",
+    "menageCheckEasy": "Reinigung Check Easy",
+    "menageDescription": "Optimiertes Modell für die Reinigungsverfolgung mit vollständiger Checkliste",
+    "voyageurCheckEasy": "Reisender Check Easy",
+    "voyageurDescription": "Modell für den Gästeempfang mit wesentlichen Überprüfungen",
+    "viewTasks": "Aufgaben anzeigen",
+    "yourCustomModels": "Ihre benutzerdefinierten Modelle",
+    "custom": "Benutzerdefiniert",
+    "modified": "Geändert",
+    "createOwn": "Erstellen Sie Ihr eigenes Modell",
+    "configureCustom": "Konfigurieren Sie ein benutzerdefiniertes Modell nach Ihren Bedürfnissen",
+    "deleteCustomModel": "Benutzerdefiniertes Modell löschen?",
+    "deleteConfirmation": "Sind Sie sicher, dass Sie das Modell \"{{modelName}}\" löschen möchten?",
+    "irreversible": "Diese Aktion ist irreversibel.",
+    "previewTitle": "Modellvorschau",
+    "allTasksAvailable": "Hier sind alle in diesem Modell verfügbaren Aufgaben"
+  },
+  "piecesDialog": {
+    "selectRooms": "Wählen Sie die Zimmer der Immobilie",
+    "indicateNumber": "Geben Sie die Anzahl jedes Zimmertyps an für",
+    "noRoomSelected": "Kein Zimmer ausgewählt",
+    "roomsSelected": "{{count}} Zimmer ausgewählt",
+    "roomsSelected_plural": "{{count}} Zimmer ausgewählt",
+    "continue": "Weiter",
+    "importFromAirbnb": "Von Airbnb importieren"
+  },
+  "customModeleBuilder": {
+    "createTitle": "Erstellen Sie Ihr eigenes Reisemodell",
+    "editTitle": "Bearbeiten Sie Ihr eigenes Reisemodell",
+    "lastUpdate": "Letzte Aktualisierung:",
+    "modelConfig": "Modellkonfiguration",
+    "modelName": "Modellname *",
+    "modelNamePlaceholder": "Bsp: Vollständige Reinigung 3-Zimmer-Wohnung",
+    "parcoursType": "Reisetyp *",
+    "inventoryMoment": "Inventar",
+    "exitOnly": "Nur beim Auszug",
+    "exitOnlyShort": "Auszug",
+    "arrivalExit": "Bei Ankunft und Auszug",
+    "arrivalExitShort": "Ankunft/Auszug",
+    "inventoryInfo": "Unsere KI verwendet nur Auszugsfotos, um Unterschiede zum Ausgangszustand zu erkennen.",
+    "roomsAndTasks": "Zimmer und Aufgaben",
+    "roomsInfo": "💡 Wählen Sie für jedes ausgewählte Zimmer die auszuführenden Aufgaben. Sie können auch Ihre eigenen benutzerdefinierten Zimmer und Aufgaben hinzufügen.",
+    "addTask": "Eine Aufgabe hinzufügen",
+    "addTaskShort": "Hinzufügen",
+    "customLabel": "Benutzerdefiniert",
+    "photoRequired": "Foto erforderlich",
+    "photoRequiredShort": "Foto",
+    "addCustomRoom": "Ein benutzerdefiniertes Zimmer hinzufügen",
+    "checklistBeforeDeparture": "Checkliste vor der Abreise",
+    "checklistInfo": "💡 Wählen Sie die Fragen aus, die der Reisende vor dem Verlassen der Immobilie validieren muss.",
+    "addQuestion": "Eine Frage hinzufügen",
+    "addQuestionShort": "Hinzufügen",
+    "yesNo": "Ja/Nein",
+    "openQuestion": "💬 Offen",
+    "cancel": "Abbrechen",
+    "saveChanges": "Änderungen speichern",
+    "saveChangesShort": "Speichern",
+    "createModel": "Modell erstellen",
+    "createModelShort": "Erstellen",
+    "addCustomTask": "Eine benutzerdefinierte Aufgabe hinzufügen",
+    "forRoom": "Für Zimmer:",
+    "emojiOptional": "Emoji (optional)",
+    "taskTitle": "Aufgabentitel *",
+    "taskTitlePlaceholder": "Bsp: Heizung überprüfen",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Bsp: Stellen Sie sicher, dass die Heizung funktioniert",
+    "photoMandatory": "Foto obligatorisch",
+    "add": "Hinzufügen",
+    "addCustomRoomTitle": "Ein benutzerdefiniertes Zimmer hinzufügen",
+    "addCustomRoomDesc": "Fügen Sie ein Zimmer hinzu, das nicht in der vordefinierten Liste enthalten ist",
+    "roomName": "Zimmername *",
+    "roomNamePlaceholder": "Bsp: Waschküche, Terrasse, Keller...",
+    "errorTitle": "Fehler",
+    "roomNameRequired": "Zimmername ist erforderlich",
+    "roomAlreadyExists": "Dieses Zimmer existiert bereits",
+    "roomAdded": "Zimmer hinzugefügt",
+    "roomAddedDesc": "\"{{roomName}}\" wurde erfolgreich hinzugefügt",
+    "roomDeleted": "Zimmer gelöscht",
+    "roomDeletedDesc": "\"{{roomName}}\" wurde gelöscht",
+    "taskCreated": "Aufgabe erstellt",
+    "taskCreatedDesc": "\"{{taskTitle}}\" wurde zu {{roomName}} hinzugefügt",
+    "taskDeleted": "Aufgabe gelöscht",
+    "taskDeletedDesc": "Die benutzerdefinierte Aufgabe wurde gelöscht",
+    "taskModified": "Aufgabe geändert",
+    "taskModifiedDesc": "\"{{taskTitle}}\" wurde aktualisiert",
+    "questionDeleted": "Frage gelöscht",
+    "questionDeletedDesc": "Die Frage wurde aus der Checkliste entfernt",
+    "questionDuplicated": "Frage dupliziert",
+    "questionDuplicatedDesc": "Die Frage wurde erfolgreich dupliziert",
+    "questionModified": "Frage geändert",
+    "questionModifiedDesc": "Die Frage wurde aktualisiert",
+    "questionAdded": "Frage hinzugefügt",
+    "questionAddedDesc": "Die Frage wurde zur Checkliste hinzugefügt",
+    "nameRequired": "Name erforderlich",
+    "nameRequiredDesc": "Bitte geben Sie Ihrem Modell einen Namen",
+    "modelCreated": "Modell erstellt",
+    "modelModified": "Modell geändert",
+    "modelCreatedDesc": "Das Modell \"{{modelName}}\" wurde erfolgreich erstellt",
+    "modelModifiedDesc": "Das Modell \"{{modelName}}\" wurde erfolgreich geändert"
+  },
+  "rooms": {
+    "kitchen": "Küche",
+    "bathroomNoToilet": "Badezimmer (ohne Toilette)",
+    "bathroomWithToilet": "Badezimmer mit Toilette",
+    "separateToilet": "Separate Toilette",
+    "bedroom": "Schlafzimmer",
+    "livingRoom": "Wohnzimmer",
+    "diningRoom": "Esszimmer",
+    "entryHallStairs": "Eingang / Flur / Treppen",
+    "laundryRoom": "Waschküche",
+    "outdoorSpaces": "Außenbereiche"
+  },
+  "defaultQuestions": {
+    "menage": {
+      "q1": "Sind die Lichter, Heizungen und Klimaanlagen ausgeschaltet?",
+      "q2": "Sind die Vorräte an Verbrauchsmaterialien (Seife, Shampoo, Toilettenpapier) und Reinigungsprodukten (Schwamm, Spülmittel, Müllbeutel usw.) für die nächsten Reisenden ausreichend?",
+      "q3": "Haben Sie nicht gemeldete Schäden oder Anomalien festgestellt? Müssen Geräte ersetzt oder repariert werden?",
+      "q4": "Wenn Sie ein Problem bemerkt haben oder einen Kommentar hinzufügen möchten, geben Sie dies bitte hier an.",
+      "q5": "Haben Sie den Schlüssel an den richtigen Ort zurückgelegt? (Foto des Schlüssels im Schlüsselkasten. Oder wenn kein Schlüsselkasten vorhanden ist, Foto des Schlüssels auf dem Eingangsmöbel oder Wohnzimmertisch)",
+      "q6": "Ist die Immobilie nach Ihrem Besuch ordnungsgemäß gesichert (Türen und Fenster geschlossen)?"
+    },
+    "voyageur": {
+      "q1": "Alle Ihre persönlichen Gegenstände wurden abgeholt",
+      "q2": "Der Müll wurde geleert und die Trennung respektiert",
+      "q3": "Heizungen, Lichter und unnötige Geräte sind ausgeschaltet",
+      "q4": "Haben Sie eine Anomalie oder einen Schaden festgestellt? Möchten Sie einen Kommentar hinzufügen?",
+      "q5": "Die Schlüssel wurden am vorgesehenen Ort hinterlegt",
+      "q6": "Die Immobilie ist ordnungsgemäß verschlossen"
+    }
+  },
+  "defaultTasks": {
+    "menage": {
+      "Cuisine": [
+        { "titre": "Mülleimer leeren", "description": "Beutel ersetzen; Deckel & Eimer reinigen." },
+        { "titre": "Geschirr spülen", "description": "Reinigen, trocknen, alles Geschirr wegräumen." },
+        { "titre": "Alle Oberflächen abwischen", "description": "Arbeitsplatten, Spritzschutz, Schranktüren, Bartheke." },
+        { "titre": "Mikrowelle reinigen", "description": "Innenraum muss sauber sein" },
+        { "titre": "Kühlschrank reinigen", "description": "Regale leeren und waschen." },
+        { "titre": "Gefrierschrank reinigen", "description": "Leeren und waschen." },
+        { "titre": "Backofen reinigen", "description": "Innenraum und Glas des Ofens reinigen." },
+        { "titre": "Kochfeld/Brenner reinigen", "description": "Gas: entfettete Brenner. Induktion: keine Spuren." },
+        { "titre": "Dunstabzugshaube & Filter entfetten", "description": "Filter gereinigt oder zum Austausch markiert." },
+        { "titre": "Kleine Elektrogeräte reinigen", "description": "Kaffeemaschine, Wasserkocher, Toaster ohne Krümel." },
+        { "titre": "Geschirrspüler leeren", "description": "Geschirr wegräumen, 2 Tabs hinterlassen." },
+        { "titre": "Schwamm & Spülmittel prüfen", "description": "Gesunder Schwamm; und Spülmittel" },
+        { "titre": "Fegen & wischen", "description": "Boden ohne Krümel, Flecken, Fettspuren." }
+      ],
+      "Salle de bain (sans toilettes)": [
+        { "titre": "Haare entfernen (Abfluss)", "description": "Duschabfluss sauber." },
+        { "titre": "Wände & Armaturen entkalken", "description": "Ohne Kalk oder Schimmel." },
+        { "titre": "Fliesen & Fugen reinigen", "description": "Weiße Fugen, Fliesen ohne Seife." },
+        { "titre": "Spiegel & Waschbecken reinigen", "description": "Ohne Wasser- oder Zahnpastaspuren." },
+        { "titre": "Unterschrank reinigen", "description": "Innenraum geleert, Fassade abgewischt." },
+        { "titre": "Handtücher prüfen", "description": "Saubere Handtücher, gefaltet, ausreichende Menge." },
+        { "titre": "Badezimmer-Mülleimer leeren", "description": "Neuer Beutel, kein Geruch." },
+        { "titre": "Badematte wechseln", "description": "Saubere Matte nehmen" }
+      ],
+      "Salle de bain avec toilettes": [
+        { "titre": "Schüssel & Sitz reinigen", "description": "Entkalkung, Desinfektion, Unterseite des Sitzes inklusive." },
+        { "titre": "Toilettenpapier auffüllen", "description": "≥ 1 volle Rolle verfügbar." },
+        { "titre": "Haare entfernen (Abfluss)", "description": "Duschabfluss sauber." },
+        { "titre": "Wände & Armaturen entkalken", "description": "Ohne Kalk oder Schimmel." },
+        { "titre": "Fliesen & Fugen reinigen", "description": "Weiße Fugen, Fliesen ohne Seife." },
+        { "titre": "Spiegel & Waschbecken reinigen", "description": "Ohne Wasser- oder Zahnpastaspuren." },
+        { "titre": "Unterschrank reinigen", "description": "Innenraum geleert, Fassade abgewischt." },
+        { "titre": "Handtücher prüfen", "description": "Saubere Handtücher, gefaltet, ausreichende Menge." },
+        { "titre": "Badezimmer-Mülleimer leeren", "description": "Neuer Beutel, kein Geruch." },
+        { "titre": "Badematte wechseln", "description": "Saubere Matte nehmen" }
+      ],
+      "Toilettes séparés": [
+        { "titre": "Schüssel & Sitz reinigen", "description": "Entkalkung, Desinfektion, Unterseite des Sitzes inklusive." },
+        { "titre": "Toilettenpapier auffüllen", "description": "≥ 1 volle Rolle verfügbar." }
+      ],
+      "Chambre": [
+        { "titre": "Bettwäsche & Kissenbezüge wechseln", "description": "Sauberes Set, straff gespannt." },
+        { "titre": "Matratze saugen", "description": "Haare / Staub entfernt." },
+        { "titre": "Kissen & Bettdecke prüfen", "description": "Ohne Flecken oder Geruch." },
+        { "titre": "Gebrochene Latte melden", "description": "Lattenrost anheben und prüfen." },
+        { "titre": "Unter Bett & Möbeln saugen", "description": "Keine Staubflocken." },
+        { "titre": "Nachttische reinigen", "description": "Abstauben, Lampen abwischen." },
+        { "titre": "Schränke & Schubladen prüfen", "description": "Leer, sauber." },
+        { "titre": "Vorhänge / Rollläden ordnen", "description": "Funktioniert OK, keine Flecken." }
+      ],
+      "Salon / Séjour": [
+        { "titre": "Oberflächen abstauben", "description": "Tische, Regale, TV, Zierleisten." },
+        { "titre": "Sofa & Sessel saugen", "description": "Haare, Krümel entfernen, Kissen aufschütteln." },
+        { "titre": "Teppiche saugen & ausschütteln", "description": "Keine Krümel, kein Geruch." },
+        { "titre": "TV-Fernbedienung zurücklegen", "description": "An sichtbarer Stelle platzieren" },
+        { "titre": "Möbel & Deko ausrichten", "description": "Couchtisch zentriert, Kissen platziert." }
+      ],
+      "Salle à manger": [
+        { "titre": "Tisch & Stühle abwischen", "description": "Tischplatte ohne Spuren, Stühle entstaubt." },
+        { "titre": "Tischsets / Deko prüfen", "description": "Sauber, ordentlich." },
+        { "titre": "Buffet / Anrichte reinigen", "description": "Griffe ohne Fingerabdrücke." },
+        { "titre": "Unter Tisch saugen", "description": "Keine Rückstände." }
+      ],
+      "Entrée / Couloir / Escaliers": [
+        { "titre": "Fußmatte reinigen/ausschütteln", "description": "Ohne Sand oder Kies." },
+        { "titre": "Spiegel & Gegensprechanlage reinigen", "description": "Ohne Fingerabdrücke." },
+        { "titre": "Treppengeländer abstauben", "description": "Geländer & Stäbe ohne Staub." }
+      ],
+      "Buanderie / Laverie": [
+        { "titre": "Waschtrommel reinigen", "description": "Dichtung & Tür abgewischt." },
+        { "titre": "Trocknerfilter leeren", "description": "Flusen entfernt." },
+        { "titre": "Faltfläche reinigen", "description": "Ohne Waschmittelflecken." },
+        { "titre": "Waschmittelvorrat prüfen", "description": "≥ 2 Dosen." }
+      ],
+      "Espaces extérieurs": [
+        { "titre": "Gartenmöbel reinigen", "description": "Tisch & Stühle abgewischt." },
+        { "titre": "Kissen & Sonnenschirm verstauen", "description": "Trockene Kissen, Schirm geschlossen." },
+        { "titre": "Aschenbecher & Kippen leeren", "description": "Keine Kippen auf dem Boden." },
+        { "titre": "Grill reinigen", "description": "Rost gebürstet, Asche geleert." },
+        { "titre": "SPA prüfen", "description": "Klares Wasser, Abdeckung wieder aufgelegt." },
+        { "titre": "Pool prüfen", "description": "Sauberes Wasser, Skimmer geleert, Abdeckung gesichert." },
+        { "titre": "Pflanzen gießen / prüfen", "description": "Tote Blätter entfernt." }
+      ]
+    },
+    "voyageur": {
+      "Cuisine": [
+        { "titre": "Mülleimer leeren", "description": "Alle Beutel rausnehmen, sauberen Beutel einlegen, Deckel schließen." },
+        { "titre": "Geschirr wegräumen", "description": "Spülen oder Geschirrspüler starten, dann alles saubere Geschirr wegräumen." },
+        { "titre": "Kühlschrank leeren", "description": "Alle angebrochenen Lebensmittel entfernen, wegwerfen oder mitnehmen." }
+      ],
+      "Salle de bain (sans toilettes)": [
+        { "titre": "Handtücher sammeln", "description": "Alle benutzten Handtücher in den Korb oder auf den vorgesehenen Boden legen." },
+        { "titre": "Mülleimer leeren", "description": "Taschentücher oder gebrauchte Produkte wegwerfen, sauberen Beutel einlegen falls vorhanden." },
+        { "titre": "Persönliche Gegenstände prüfen", "description": "Kein Produkt oder Zubehör in der Dusche oder am Waschbecken vergessen." }
+      ],
+      "Salle de bain avec toilettes": [
+        { "titre": "Spülen & Sitz senken", "description": "Schüssel sauber und geschlossen hinterlassen." },
+        { "titre": "Mülleimer leeren", "description": "Beutel entfernt oder Inhalt in Hauptmüll geworfen." },
+        { "titre": "Handtücher zusammenlegen", "description": "Feuchte Wäsche an derselben Stelle (Korb oder vorgesehener Boden)." }
+      ],
+      "Toilettes séparés": [
+        { "titre": "Spülen & Deckel schließen", "description": "Schüssel und Deckel sauber hinterlassen." },
+        { "titre": "Mülleimer leeren", "description": "Beutel oder Inhalt entfernen." }
+      ],
+      "Chambre": [
+        { "titre": "Bettwäsche abziehen", "description": "Laken & Kissenbezüge entfernen, wo angegeben ablegen (Korb, Beutel...)." },
+        { "titre": "Schränke/Schubladen prüfen", "description": "Nichts vergessen oder Müll darin." }
+      ],
+      "Salon / Séjour": [
+        { "titre": "Sofa & Kissen ordnen", "description": "Kissen aufgeschüttelt, Decke gefaltet, Sofa aufgeräumt." },
+        { "titre": "TV & Geräte ausschalten", "description": "Fernbedienung an ihrem Platz, TV und Konsole aus." }
+      ],
+      "Espaces extérieurs": [
+        { "titre": "Möbel ordnen", "description": "Stühle zurückgeschoben, Kissen reingebracht oder gestapelt." },
+        { "titre": "Aschenbecher leeren", "description": "Kippen wegwerfen, Aschenbecher bei Bedarf reinigen." },
+        { "titre": "Sonnenschirm / Grill schließen", "description": "Schirm geschlossen; Grill aus & Deckel wieder aufgelegt." },
+        { "titre": "Tor / Pforte prüfen", "description": "Geschlossen oder verriegelt laut Anweisung." }
+      ]
+    }
+  }
+}
+
