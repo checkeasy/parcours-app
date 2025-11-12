@@ -367,6 +367,29 @@
         { "titre": "Verificar portão / portinhola", "description": "Fechado ou trancado conforme instruções." }
       ]
     }
+  },
+  "defaultRooms": {
+    "menage": [
+      "Cozinha",
+      "Banheiro (sem vaso sanitário)",
+      "Banheiro com vaso sanitário",
+      "Vaso sanitário separado",
+      "Quarto",
+      "Sala de estar",
+      "Sala de jantar",
+      "Entrada / Corredor / Escadas",
+      "Lavanderia",
+      "Espaços externos"
+    ],
+    "voyageur": [
+      "Cozinha",
+      "Banheiro (sem vaso sanitário)",
+      "Banheiro com vaso sanitário",
+      "Vaso sanitário separado",
+      "Quarto",
+      "Sala de estar",
+      "Espaços externos"
+    ]
   }
 }
 

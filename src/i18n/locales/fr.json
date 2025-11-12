@@ -362,6 +362,29 @@
         { "titre": "Vérifier portail / portillon", "description": "Fermé ou verrouillé selon consigne." }
       ]
     }
+  },
+  "defaultRooms": {
+    "menage": [
+      "Cuisine",
+      "Salle de bain (sans toilettes)",
+      "Salle de bain avec toilettes",
+      "Toilettes séparés",
+      "Chambre",
+      "Salon / Séjour",
+      "Salle à manger",
+      "Entrée / Couloir / Escaliers",
+      "Buanderie / Laverie",
+      "Espaces extérieurs"
+    ],
+    "voyageur": [
+      "Cuisine",
+      "Salle de bain (sans toilettes)",
+      "Salle de bain avec toilettes",
+      "Toilettes séparés",
+      "Chambre",
+      "Salon / Séjour",
+      "Espaces extérieurs"
+    ]
   }
 }
 

@@ -42,16 +42,16 @@ Tous les textes du builder de modèle personnalisé sont traduits, incluant :
 
 ## 🌍 Langues supportées
 
-| Langue | Code | Statut | Clés |
-|--------|------|--------|------|
-| 🇫🇷 Français | `fr` | ✅ Complet | 203 |
-| 🇬🇧 Anglais | `en` | ✅ Complet | 203 |
-| 🇵🇹 Portugais | `pt` | ✅ Complet | 203 |
-| 🇪🇸 Espagnol | `es` | ✅ Complet | 203 |
-| 🇸🇦 Arabe | `ar` | ✅ Complet | 203 |
-| 🇩🇪 Allemand | `de` | ✅ Complet | 203 |
+| Langue | Code | Statut | Clés UI | Clés Données | Clés Pièces | Clés Questions | Total |
+|--------|------|--------|---------|--------------|-------------|----------------|-------|
+| 🇫🇷 Français | `fr` | ✅ Complet | 203 | 163 | 17 | 12 | 395 |
+| 🇬🇧 Anglais | `en` | ✅ Complet | 203 | 168 | 17 | 12 | 400 |
+| 🇵🇹 Portugais | `pt` | ✅ Complet | 203 | 168 | 17 | 12 | 400 |
+| 🇪🇸 Espagnol | `es` | ✅ Complet | 203 | 168 | 17 | 12 | 400 |
+| 🇸🇦 Arabe | `ar` | ✅ Complet | 203 | 168 | 17 | 12 | 400 |
+| 🇩🇪 Allemand | `de` | ✅ Complet | 203 | 168 | 17 | 12 | 400 |
 
-**Total : 1 218 traductions** (203 clés × 6 langues)
+**Total : 2,395 traductions** (UI + Données + Pièces + Questions)
 
 ---
 

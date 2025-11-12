@@ -367,6 +367,29 @@
         { "titre": "Check gate / door", "description": "Closed or locked as instructed." }
       ]
     }
+  },
+  "defaultRooms": {
+    "menage": [
+      "Kitchen",
+      "Bathroom (without toilet)",
+      "Bathroom with toilet",
+      "Separate toilet",
+      "Bedroom",
+      "Living room",
+      "Dining room",
+      "Entrance / Hallway / Stairs",
+      "Laundry room",
+      "Outdoor spaces"
+    ],
+    "voyageur": [
+      "Kitchen",
+      "Bathroom (without toilet)",
+      "Bathroom with toilet",
+      "Separate toilet",
+      "Bedroom",
+      "Living room",
+      "Outdoor spaces"
+    ]
   }
 }
 

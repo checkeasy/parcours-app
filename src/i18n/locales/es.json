@@ -367,6 +367,29 @@
         { "titre": "Verificar portón / portillo", "description": "Cerrado o bloqueado según instrucciones." }
       ]
     }
+  },
+  "defaultRooms": {
+    "menage": [
+      "Cocina",
+      "Baño (sin inodoro)",
+      "Baño con inodoro",
+      "Inodoro separado",
+      "Dormitorio",
+      "Sala de estar",
+      "Comedor",
+      "Entrada / Pasillo / Escaleras",
+      "Lavandería",
+      "Espacios exteriores"
+    ],
+    "voyageur": [
+      "Cocina",
+      "Baño (sin inodoro)",
+      "Baño con inodoro)",
+      "Inodoro separado",
+      "Dormitorio",
+      "Sala de estar",
+      "Espacios exteriores"
+    ]
   }
 }
 

@@ -367,6 +367,29 @@
         { "titre": "Tor / Pforte prüfen", "description": "Geschlossen oder verriegelt laut Anweisung." }
       ]
     }
+  },
+  "defaultRooms": {
+    "menage": [
+      "Küche",
+      "Badezimmer (ohne Toilette)",
+      "Badezimmer mit Toilette",
+      "Separate Toilette",
+      "Schlafzimmer",
+      "Wohnzimmer",
+      "Esszimmer",
+      "Eingang / Flur / Treppen",
+      "Waschküche",
+      "Außenbereiche"
+    ],
+    "voyageur": [
+      "Küche",
+      "Badezimmer (ohne Toilette)",
+      "Badezimmer mit Toilette",
+      "Separate Toilette",
+      "Schlafzimmer",
+      "Wohnzimmer",
+      "Außenbereiche"
+    ]
   }
 }
 

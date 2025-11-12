@@ -494,10 +494,12 @@ export const TACHES_VOYAGEUR: Record<string, any[]> = {
 
 // Helper function to load tasks from translations
 const loadTasksFromTranslations = (t: any, parcoursType: "menage" | "voyageur", roomName: string): TacheModele[] => {
-  const tasks = t(`defaultTasks.${parcoursType}.${roomName}`, { returnObjects: true });
+  // Get the French key for this room (used in JSON)
+  const frenchKey = getFrenchRoomKey(roomName, parcoursType, t);
+  const tasks = t(`defaultTasks.${parcoursType}.${frenchKey}`, { returnObjects: true });
   if (!Array.isArray(tasks)) return [];
 
-  // Map emoji based on room and task index
+  // Map emoji based on room and task index (using French keys)
   const emojiMap: Record<string, string[]> = {
     "Cuisine": ["🗑️", "🍽️", "🧽", "📡", "❄️", "🧊", "🔥", "🍳", "💨", "☕", "🧼", "🧴", "🧹"],
     "Salle de bain (sans toilettes)": ["💈", "🚿", "🧱", "🪞", "🚪", "🧺", "🗑️", "🛁"],
@@ -524,11 +526,11 @@ const loadTasksFromTranslations = (t: any, parcoursType: "menage" | "voyageur", 
     "Espaces extérieurs": [false, false, false, true, false, false, false]
   };
 
-  const emojis = emojiMap[roomName] || [];
-  const photoRequired = photoRequiredMap[roomName] || [];
+  const emojis = emojiMap[frenchKey] || [];
+  const photoRequired = photoRequiredMap[frenchKey] || [];
 
   return tasks.map((task: any, index: number) => ({
-    id: `${parcoursType}-${roomName}-${index}`,
+    id: `${parcoursType}-${frenchKey}-${index}`,
     emoji: emojis[index] || "📋",
     titre: task.titre,
     description: task.description,
@@ -536,18 +538,15 @@ const loadTasksFromTranslations = (t: any, parcoursType: "menage" | "voyageur", 
   }));
 };
 
-interface CustomModeleBuilderProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSave: (modele: any) => void;
-  onBack?: () => void;
-  parcoursType?: "menage" | "voyageur";
-  editingModele?: any;
-  isFullScreenMode?: boolean;
-}
+// Helper function to load room names from translations
+const loadRoomsFromTranslations = (t: any, parcoursType: "menage" | "voyageur"): string[] => {
+  const rooms = t(`defaultRooms.${parcoursType}`, { returnObjects: true });
+  if (!Array.isArray(rooms)) return [];
+  return rooms;
+};
 
-// Pièces disponibles pour MÉNAGE
-const PIECES_MENAGE = [
+// French room keys (used as keys in defaultTasks JSON)
+const FRENCH_ROOM_KEYS_MENAGE = [
   "Cuisine",
   "Salle de bain (sans toilettes)",
   "Salle de bain avec toilettes",
@@ -560,8 +559,7 @@ const PIECES_MENAGE = [
   "Espaces extérieurs"
 ];
 
-// Pièces disponibles pour VOYAGEUR
-const PIECES_VOYAGEUR = [
+const FRENCH_ROOM_KEYS_VOYAGEUR = [
   "Cuisine",
   "Salle de bain (sans toilettes)",
   "Salle de bain avec toilettes",
@@ -571,87 +569,76 @@ const PIECES_VOYAGEUR = [
   "Espaces extérieurs"
 ];
 
-// Questions par défaut pour la checklist MÉNAGE
-const DEFAULT_QUESTIONS_MENAGE: QuestionModele[] = [
-  {
-    id: "q1",
-    intitule: "Les lumières, les radiateurs et la climatisation sont-ils bien éteints ?",
-    type: "oui-non",
-    obligatoire: true
-  },
-  {
-    id: "q2",
-    intitule: "Les stocks de consommables (savon, shampoing, papier toilette) et les produits d'entretien (éponge, liquide vaisselle, sacs-poubelle, etc.) sont-ils suffisants pour les prochains voyageurs ?",
-    type: "oui-non",
-    obligatoire: true
-  },
-  {
-    id: "q3",
-    intitule: "Avez-vous constaté des dégradations ou anomalies non signalées ? Certains équipements nécessitent-ils un remplacement ou une réparation ?",
-    type: "ouverte",
-    obligatoire: false
-  },
-  {
-    id: "q4",
-    intitule: "Si vous avez remarqué un problème ou souhaitez ajouter un commentaire, merci de le préciser ici.",
-    type: "ouverte",
-    obligatoire: false
-  },
-  {
-    id: "q5",
-    intitule: "Avez-vous remis la clé au bon endroit ? (Photo de la clé dans la boîte à clé. Ou si pas de boîte à clé, photo de la clé sur le meuble de l'entrée ou la table du salon)",
-    type: "oui-non",
-    photoObligatoire: true,
-    obligatoire: true
-  },
-  {
-    id: "q6",
-    intitule: "Le logement est-il bien sécurisé (portes et fenêtres fermées) après votre passage ?",
-    type: "oui-non",
-    obligatoire: true
-  }
-];
+// Helper function to get French room key from translated room name
+const getFrenchRoomKey = (translatedRoomName: string, parcoursType: "menage" | "voyageur", t: any): string => {
+  const translatedRooms = loadRoomsFromTranslations(t, parcoursType);
+  const frenchKeys = parcoursType === "menage" ? FRENCH_ROOM_KEYS_MENAGE : FRENCH_ROOM_KEYS_VOYAGEUR;
 
-// Questions par défaut pour la checklist VOYAGEUR
-const DEFAULT_QUESTIONS_VOYAGEUR: QuestionModele[] = [
-  {
-    id: "q1",
-    intitule: "Tous vos effets personnels ont été récupérés",
-    type: "oui-non",
-    obligatoire: true
-  },
-  {
-    id: "q2",
-    intitule: "Les poubelles ont été vidées et le tri respecté",
-    type: "oui-non",
-    obligatoire: true
-  },
-  {
-    id: "q3",
-    intitule: "Les radiateurs, les lumières et appareils inutiles sont éteints",
-    type: "oui-non",
-    obligatoire: true
-  },
-  {
-    id: "q4",
-    intitule: "Avez-vous constaté une anomalie ou une dégradation ? Souhaitez-vous ajouter un commentaire ?",
-    type: "ouverte",
-    obligatoire: false
-  },
-  {
-    id: "q5",
-    intitule: "Les clés ont été déposées à l'endroit prévu",
-    type: "oui-non",
-    photoObligatoire: true,
-    obligatoire: true
-  },
-  {
-    id: "q6",
-    intitule: "Le logement est bien fermé à clé",
-    type: "oui-non",
-    obligatoire: true
+  const index = translatedRooms.indexOf(translatedRoomName);
+  if (index !== -1 && index < frenchKeys.length) {
+    return frenchKeys[index];
   }
-];
+
+  // Fallback: return the translated name (for custom rooms)
+  return translatedRoomName;
+};
+
+// Helper function to load questions from translations
+const loadQuestionsFromTranslations = (t: any, parcoursType: "menage" | "voyageur"): QuestionModele[] => {
+  const questionIds = ["q1", "q2", "q3", "q4", "q5", "q6"];
+  const questions: QuestionModele[] = [];
+
+  // Question metadata (type, obligatoire, photoObligatoire)
+  const questionMetadata: Record<string, Record<string, { type: "oui-non" | "ouverte", obligatoire: boolean, photoObligatoire?: boolean }>> = {
+    "menage": {
+      "q1": { type: "oui-non", obligatoire: true },
+      "q2": { type: "oui-non", obligatoire: true },
+      "q3": { type: "ouverte", obligatoire: false },
+      "q4": { type: "ouverte", obligatoire: false },
+      "q5": { type: "oui-non", obligatoire: true, photoObligatoire: true },
+      "q6": { type: "oui-non", obligatoire: true }
+    },
+    "voyageur": {
+      "q1": { type: "oui-non", obligatoire: true },
+      "q2": { type: "oui-non", obligatoire: true },
+      "q3": { type: "oui-non", obligatoire: true },
+      "q4": { type: "ouverte", obligatoire: false },
+      "q5": { type: "oui-non", obligatoire: true, photoObligatoire: true },
+      "q6": { type: "oui-non", obligatoire: true }
+    }
+  };
+
+  questionIds.forEach(id => {
+    const intitule = t(`defaultQuestions.${parcoursType}.${id}`);
+    const metadata = questionMetadata[parcoursType][id];
+
+    if (intitule && metadata) {
+      questions.push({
+        id,
+        intitule,
+        type: metadata.type,
+        obligatoire: metadata.obligatoire,
+        ...(metadata.photoObligatoire && { photoObligatoire: metadata.photoObligatoire })
+      });
+    }
+  });
+
+  return questions;
+};
+
+interface CustomModeleBuilderProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSave: (modele: any) => void;
+  onBack?: () => void;
+  parcoursType?: "menage" | "voyageur";
+  editingModele?: any;
+  isFullScreenMode?: boolean;
+}
+
+
+
+
 
 export function CustomModeleBuilder({
   open,
@@ -699,7 +686,7 @@ export function CustomModeleBuilder({
       const customPiecesArray: string[] = [];
       const customTasksMap = new Map<string, TacheModele[]>();
       
-      const defaultPieces = editingModele.type === "menage" ? PIECES_MENAGE : PIECES_VOYAGEUR;
+      const defaultPieces = loadRoomsFromTranslations(t, editingModele.type);
 
       editingModele.pieces.forEach((piece: PieceModele) => {
         piecesMap.set(piece.nom, piece.tachesSelectionnees);
@@ -727,9 +714,7 @@ export function CustomModeleBuilder({
       setCustomTasks(customTasksMap);
       
       // Restaurer les questions
-      const defaultQuestions = editingModele.type === "menage" 
-        ? DEFAULT_QUESTIONS_MENAGE 
-        : DEFAULT_QUESTIONS_VOYAGEUR;
+      const defaultQuestions = loadQuestionsFromTranslations(t, editingModele.type);
       
       const selectedQuestionsSet = new Set<string>();
       const customQs: QuestionModele[] = [];
@@ -758,15 +743,12 @@ export function CustomModeleBuilder({
   }, [editingModele, open]);
 
   const getAllPieces = (): string[] => {
-    const defaultPieces = activeParcoursType === "menage" ? PIECES_MENAGE : PIECES_VOYAGEUR;
+    const defaultPieces = loadRoomsFromTranslations(t, activeParcoursType);
     return [...defaultPieces, ...customPieces];
   };
 
   const getAllAvailableQuestions = (): QuestionModele[] => {
-    const defaultQuestions = activeParcoursType === "menage" 
-      ? DEFAULT_QUESTIONS_MENAGE 
-      : DEFAULT_QUESTIONS_VOYAGEUR;
-    return defaultQuestions;
+    return loadQuestionsFromTranslations(t, activeParcoursType);
   };
 
   const getSelectedQuestionsData = (): QuestionModele[] => {
