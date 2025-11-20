@@ -20,7 +20,7 @@
     "close": "Schließen"
   },
   "parcours": {
-    "chooseType": "Mit welcher Route beginnen wir?",
+    "chooseType": "Für wen erstellen Sie diese erste Route?",
     "chooseTypeDescription": "Sie können die andere später mit 1 Klick hinzufügen.",
     "menage": "Reinigungskräfte",
     "menageDescription": "Reinigungsqualität verfolgen",
@@ -64,9 +64,22 @@
     "task": "Aufgabe",
     "task_plural": "Aufgaben",
     "active": "Aktiv",
+    "disabled": "Deaktiviert",
     "associatedTasks": "Zugehörige Aufgaben:",
     "photoRequired": "Foto erforderlich",
-    "finish": "Fertig"
+    "finish": "Fertig",
+    "addRoom": "Raum hinzufügen",
+    "roomType": "Raumtyp",
+    "selectRoomType": "Wählen Sie einen Raumtyp",
+    "roomName": "Raumname",
+    "roomNamePlaceholder": "Z.B.: Schlafzimmer, Wohnzimmer...",
+    "roomEmoji": "Emoji",
+    "add": "Hinzufügen",
+    "addPhotos": "Fotos hinzufügen",
+    "disable": "Raum deaktivieren",
+    "enable": "Raum aktivieren",
+    "showTasks": "Aufgaben anzeigen",
+    "hideTasks": "Aufgaben ausblenden"
   },
   "modele": {
     "custom": "Benutzerdefiniertes Modell",
@@ -116,9 +129,11 @@
   "modele": {
     "chooseModel": "Wählen Sie das Reisemodell",
     "selectOrCreate": "Wählen Sie ein vordefiniertes Modell oder erstellen Sie Ihr eigenes",
-    "menageCheckEasy": "Reinigung Check Easy",
+    "selectTemplateDescription": "Das Modell definiert die Zimmer und Aufgaben Ihres Teams. Sie konfigurieren dann die spezifischen Eigenschaften Ihrer Immobilie.",
+    "workflowExplanation": "Check Easy stellt Ihnen eine Modellroute zur Verfügung. Sie können auch Ihre eigene erstellen oder auswählen und auf alle Ihre Immobilien duplizieren.",
+    "menageCheckEasy": "Modellroute von Check Easy",
     "menageDescription": "Optimiertes Modell für die Reinigungsverfolgung mit vollständiger Checkliste",
-    "voyageurCheckEasy": "Reisender Check Easy",
+    "voyageurCheckEasy": "Modellroute von Check Easy",
     "voyageurDescription": "Modell für den Gästeempfang mit wesentlichen Überprüfungen",
     "viewTasks": "Aufgaben anzeigen",
     "yourCustomModels": "Ihre benutzerdefinierten Modelle",
@@ -133,7 +148,7 @@
     "allTasksAvailable": "Hier sind alle in diesem Modell verfügbaren Aufgaben"
   },
   "piecesDialog": {
-    "selectRooms": "Wählen Sie die Zimmer der Immobilie",
+    "selectRooms": "Wählen Sie die in {{logementNom}} vorhandenen Zimmer",
     "indicateNumber": "Geben Sie die Anzahl jedes Zimmertyps an für",
     "noRoomSelected": "Kein Zimmer ausgewählt",
     "roomsSelected": "{{count}} Zimmer ausgewählt",
@@ -156,7 +171,8 @@
     "arrivalExitShort": "Ankunft/Auszug",
     "inventoryInfo": "Unsere KI verwendet nur Auszugsfotos, um Unterschiede zum Ausgangszustand zu erkennen.",
     "roomsAndTasks": "Zimmer und Aufgaben",
-    "roomsInfo": "💡 Wählen Sie für jedes ausgewählte Zimmer die auszuführenden Aufgaben. Sie können auch Ihre eigenen benutzerdefinierten Zimmer und Aufgaben hinzufügen.",
+    "roomsInfo": "Wählen Sie für jedes ausgewählte Zimmer die auszuführenden Aufgaben. Sie können auch Ihre eigenen benutzerdefinierten Zimmer und Aufgaben hinzufügen.",
+    "configureAllRooms": "Tipp: Konfigurieren Sie alle Zimmer, die dem Workflow Ihres Teams entsprechen, um ein vollständiges Modell zu erstellen und Zeit beim Erstellen neuer Reisen zu sparen.",
     "addTask": "Eine Aufgabe hinzufügen",
     "addTaskShort": "Hinzufügen",
     "customLabel": "Benutzerdefiniert",
@@ -164,11 +180,11 @@
     "photoRequiredShort": "Foto",
     "addCustomRoom": "Ein benutzerdefiniertes Zimmer hinzufügen",
     "checklistBeforeDeparture": "Checkliste vor der Abreise",
-    "checklistInfo": "💡 Wählen Sie die Fragen aus, die der Reisende vor dem Verlassen der Immobilie validieren muss.",
+    "checklistInfo": "Wählen Sie die Fragen aus, die der Reisende vor dem Verlassen der Immobilie validieren muss.",
     "addQuestion": "Eine Frage hinzufügen",
     "addQuestionShort": "Hinzufügen",
     "yesNo": "Ja/Nein",
-    "openQuestion": "💬 Offen",
+    "openQuestion": "Offen",
     "cancel": "Abbrechen",
     "saveChanges": "Änderungen speichern",
     "saveChangesShort": "Speichern",
@@ -360,6 +376,18 @@
         { "titre": "Sofa & Kissen ordnen", "description": "Kissen aufgeschüttelt, Decke gefaltet, Sofa aufgeräumt." },
         { "titre": "TV & Geräte ausschalten", "description": "Fernbedienung an ihrem Platz, TV und Konsole aus." }
       ],
+      "Salle à manger": [
+        { "titre": "Ihre Sachen vom Tisch holen", "description": "Taschen, Spielzeug, Bücher, persönliche Flaschen, usw." },
+        { "titre": "Stühle um den Tisch stellen", "description": "Die Stühle werden einfach wieder um den Tisch gestellt." }
+      ],
+      "Entrée / Couloir / Escaliers": [
+        { "titre": "Prüfen, dass Sie nichts vergessen haben", "description": "Mäntel, Schuhe, Taschen, Ladegeräte..." },
+        { "titre": "Ihre Schuhe holen", "description": "Falls Sie welche im Eingang gelassen haben, vor dem Gehen mitnehmen." }
+      ],
+      "Buanderie / Laverie": [
+        { "titre": "Maschinen prüfen", "description": "Keine Kleidung in der Waschmaschine oder im Trockner lassen." },
+        { "titre": "Ihre Produkte holen", "description": "Falls Sie Ihr Waschmittel oder andere Produkte mitgebracht haben, wieder mitnehmen." }
+      ],
       "Espaces extérieurs": [
         { "titre": "Möbel ordnen", "description": "Stühle zurückgeschoben, Kissen reingebracht oder gestapelt." },
         { "titre": "Aschenbecher leeren", "description": "Kippen wegwerfen, Aschenbecher bei Bedarf reinigen." },
@@ -388,6 +416,9 @@
       "Separate Toilette",
       "Schlafzimmer",
       "Wohnzimmer",
+      "Esszimmer",
+      "Eingang / Flur / Treppen",
+      "Waschküche",
       "Außenbereiche"
     ]
   }

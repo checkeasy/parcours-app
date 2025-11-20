@@ -34,6 +34,16 @@ app.use((req: Request, res: Response) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
+// Global error handler (must be last)
+app.use((err: Error, req: Request, res: Response, next: any) => {
+  console.error('❌ Unhandled error:', err);
+  res.status(500).json({
+    success: false,
+    error: 'Internal server error',
+    message: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

@@ -20,7 +20,7 @@
     "close": "Fechar"
   },
   "parcours": {
-    "chooseType": "Por qual percurso começamos?",
+    "chooseType": "Para quem você está criando este primeiro percurso?",
     "chooseTypeDescription": "Você pode adicionar o outro depois com 1 clique.",
     "menage": "Agentes de limpeza",
     "menageDescription": "Acompanhar qualidade da limpeza",
@@ -64,9 +64,22 @@
     "task": "tarefa",
     "task_plural": "tarefas",
     "active": "Ativo",
+    "disabled": "Desativado",
     "associatedTasks": "Tarefas associadas:",
     "photoRequired": "Foto obrigatória",
-    "finish": "Concluir"
+    "finish": "Concluir",
+    "addRoom": "Adicionar cômodo",
+    "roomType": "Tipo de cômodo",
+    "selectRoomType": "Selecione um tipo de cômodo",
+    "roomName": "Nome do cômodo",
+    "roomNamePlaceholder": "Ex: Quarto, Sala de estar...",
+    "roomEmoji": "Emoji",
+    "add": "Adicionar",
+    "addPhotos": "Adicionar fotos",
+    "disable": "Desativar cômodo",
+    "enable": "Ativar cômodo",
+    "showTasks": "Mostrar tarefas",
+    "hideTasks": "Ocultar tarefas"
   },
   "modele": {
     "custom": "Modelo personalizado",
@@ -116,9 +129,11 @@
   "modele": {
     "chooseModel": "Escolher o modelo do percurso",
     "selectOrCreate": "Selecione um modelo predefinido ou crie o seu próprio",
-    "menageCheckEasy": "Limpeza Check Easy",
+    "selectTemplateDescription": "O modelo define os cômodos e tarefas da sua equipe. Você configurará então as propriedades específicas da sua propriedade.",
+    "workflowExplanation": "Check Easy fornece um percurso modelo. Você também pode criar ou escolher o seu e duplicá-lo em todas as suas propriedades.",
+    "menageCheckEasy": "Percurso modelo por Check Easy",
     "menageDescription": "Modelo otimizado para rastreamento de limpeza com checklist completo",
-    "voyageurCheckEasy": "Viajante Check Easy",
+    "voyageurCheckEasy": "Percurso modelo por Check Easy",
     "voyageurDescription": "Modelo para recepção de hóspedes com verificações essenciais",
     "viewTasks": "Ver tarefas",
     "yourCustomModels": "Seus modelos personalizados",
@@ -133,7 +148,7 @@
     "allTasksAvailable": "Aqui estão todas as tarefas disponíveis neste modelo"
   },
   "piecesDialog": {
-    "selectRooms": "Selecione os cômodos da propriedade",
+    "selectRooms": "Selecione os cômodos presentes em {{logementNom}}",
     "indicateNumber": "Indique o número de cada tipo de cômodo para",
     "noRoomSelected": "Nenhum cômodo selecionado",
     "roomsSelected": "{{count}} cômodo selecionado",
@@ -156,7 +171,8 @@
     "arrivalExitShort": "Chegada/Saída",
     "inventoryInfo": "Nossa IA usa apenas fotos de saída para detectar diferenças do estado inicial.",
     "roomsAndTasks": "Cômodos e tarefas",
-    "roomsInfo": "💡 Para cada cômodo selecionado, escolha as tarefas a realizar. Você também pode adicionar seus próprios cômodos e tarefas personalizados.",
+    "roomsInfo": "Para cada cômodo selecionado, escolha as tarefas a realizar. Você também pode adicionar seus próprios cômodos e tarefas personalizados.",
+    "configureAllRooms": "Dica: Configure todos os cômodos que correspondem ao fluxo de trabalho da sua equipe para criar um modelo completo e economizar tempo ao criar novas jornadas.",
     "addTask": "Adicionar uma tarefa",
     "addTaskShort": "Adicionar",
     "customLabel": "Personalizado",
@@ -164,11 +180,11 @@
     "photoRequiredShort": "Foto",
     "addCustomRoom": "Adicionar um cômodo personalizado",
     "checklistBeforeDeparture": "Checklist antes da partida",
-    "checklistInfo": "💡 Selecione as perguntas que o viajante deve validar antes de deixar a propriedade.",
+    "checklistInfo": "Selecione as perguntas que o viajante deve validar antes de deixar a propriedade.",
     "addQuestion": "Adicionar uma Pergunta",
     "addQuestionShort": "Adicionar",
     "yesNo": "Sim/Não",
-    "openQuestion": "💬 Aberta",
+    "openQuestion": "Aberta",
     "cancel": "Cancelar",
     "saveChanges": "Salvar alterações",
     "saveChangesShort": "Salvar",
@@ -360,6 +376,18 @@
         { "titre": "Arrumar sofá e almofadas", "description": "Almofadas batidas, manta dobrada, sofá limpo." },
         { "titre": "Desligar TV e aparelhos", "description": "Controle remoto no lugar, TV e console desligados." }
       ],
+      "Salle à manger": [
+        { "titre": "Recolher seus pertences da mesa", "description": "Bolsas, brinquedos, livros, garrafas pessoais, etc." },
+        { "titre": "Recolocar as cadeiras ao redor da mesa", "description": "As cadeiras são simplesmente recolocadas ao redor da mesa." }
+      ],
+      "Entrée / Couloir / Escaliers": [
+        { "titre": "Verificar se não esqueceu nada", "description": "Casacos, sapatos, bolsas, carregadores…" },
+        { "titre": "Recolher seus sapatos", "description": "Se deixou algum na entrada, pegá-los antes de sair." }
+      ],
+      "Buanderie / Laverie": [
+        { "titre": "Verificar as máquinas", "description": "Não deixar nenhuma roupa na máquina de lavar ou secadora." },
+        { "titre": "Recolher seus produtos", "description": "Se trouxe seu detergente ou outros produtos, levá-los de volta." }
+      ],
       "Espaces extérieurs": [
         { "titre": "Arrumar móveis", "description": "Cadeiras empurradas, almofadas guardadas ou empilhadas." },
         { "titre": "Esvaziar cinzeiros", "description": "Jogar bitucas, limpar cinzeiro se necessário." },
@@ -388,6 +416,9 @@
       "Vaso sanitário separado",
       "Quarto",
       "Sala de estar",
+      "Sala de jantar",
+      "Entrada / Corredor / Escadas",
+      "Lavanderia",
       "Espaços externos"
     ]
   }

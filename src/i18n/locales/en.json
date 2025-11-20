@@ -20,7 +20,7 @@
     "close": "Close"
   },
   "parcours": {
-    "chooseType": "Which journey do we start with?",
+    "chooseType": "For whom are you creating this first journey?",
     "chooseTypeDescription": "You can add the other one later with 1 click.",
     "menage": "Cleaning agents",
     "menageDescription": "Track cleaning quality",
@@ -64,9 +64,22 @@
     "task": "task",
     "task_plural": "tasks",
     "active": "Active",
+    "disabled": "Disabled",
     "associatedTasks": "Associated tasks:",
     "photoRequired": "Photo required",
-    "finish": "Finish"
+    "finish": "Finish",
+    "addRoom": "Add room",
+    "roomType": "Room type",
+    "selectRoomType": "Select a room type",
+    "roomName": "Room name",
+    "roomNamePlaceholder": "E.g.: Bedroom, Living room...",
+    "roomEmoji": "Emoji",
+    "add": "Add",
+    "addPhotos": "Add photos",
+    "disable": "Disable room",
+    "enable": "Enable room",
+    "showTasks": "Show tasks",
+    "hideTasks": "Hide tasks"
   },
   "modele": {
     "custom": "Custom model",
@@ -116,11 +129,17 @@
   "modele": {
     "chooseModel": "Choose the journey model",
     "selectOrCreate": "Select a predefined model or create your own",
-    "menageCheckEasy": "Cleaning Check Easy",
+    "selectTemplateDescription": "The model defines your team's rooms and tasks. You will then configure the specific properties of your property.",
+    "workflowExplanation": "Check Easy provides you with a model journey. You can also create or choose your own and duplicate it across all your properties.",
+    "menageCheckEasy": "Model journey by Check Easy",
     "menageDescription": "Optimized model for cleaning tracking with complete checklist",
-    "voyageurCheckEasy": "Traveler Check Easy",
+    "voyageurCheckEasy": "Model journey by Check Easy",
     "voyageurDescription": "Model for guest welcome with essential checks",
     "viewTasks": "View tasks",
+    "rooms": "room",
+    "rooms_plural": "rooms",
+    "totalTasks": "task in total",
+    "totalTasks_plural": "tasks in total",
     "yourCustomModels": "Your custom models",
     "custom": "Custom",
     "modified": "Modified",
@@ -133,7 +152,7 @@
     "allTasksAvailable": "Here are all the tasks available in this model"
   },
   "piecesDialog": {
-    "selectRooms": "Select the property rooms",
+    "selectRooms": "Select the rooms present in {{logementNom}}",
     "indicateNumber": "Indicate the number of each room type for",
     "noRoomSelected": "No room selected",
     "roomsSelected": "{{count}} room selected",
@@ -156,7 +175,8 @@
     "arrivalExitShort": "Arrival/Exit",
     "inventoryInfo": "Our AI only uses exit photos to detect differences from the initial state.",
     "roomsAndTasks": "Rooms and tasks",
-    "roomsInfo": "💡 For each selected room, choose the tasks to perform. You can also add your own custom rooms and tasks.",
+    "roomsInfo": "For each selected room, choose the tasks to perform. You can also add your own custom rooms and tasks.",
+    "configureAllRooms": "Tip: Configure all rooms that match your team's workflow to create a complete model and save time when creating new journeys.",
     "addTask": "Add a task",
     "addTaskShort": "Add",
     "customLabel": "Custom",
@@ -164,11 +184,11 @@
     "photoRequiredShort": "Photo",
     "addCustomRoom": "Add a custom room",
     "checklistBeforeDeparture": "Checklist before departure",
-    "checklistInfo": "💡 Select the questions the traveler must validate before leaving the property.",
+    "checklistInfo": "Select the questions the traveler must validate before leaving the property.",
     "addQuestion": "Add a Question",
     "addQuestionShort": "Add",
     "yesNo": "Yes/No",
-    "openQuestion": "💬 Open",
+    "openQuestion": "Open",
     "cancel": "Cancel",
     "saveChanges": "Save changes",
     "saveChangesShort": "Save",
@@ -360,6 +380,18 @@
         { "titre": "Tidy sofa & cushions", "description": "Cushions fluffed, throw folded, sofa cleared." },
         { "titre": "Turn off TV & devices", "description": "Remote in its place, TV and console off." }
       ],
+      "Salle à manger": [
+        { "titre": "Collect your belongings from the table", "description": "Bags, toys, books, personal bottles, etc." },
+        { "titre": "Put chairs back around the table", "description": "Chairs are simply placed back around the table." }
+      ],
+      "Entrée / Couloir / Escaliers": [
+        { "titre": "Check you haven't forgotten anything", "description": "Coats, shoes, bags, chargers…" },
+        { "titre": "Collect your shoes", "description": "If you left any in the entrance, take them before leaving." }
+      ],
+      "Buanderie / Laverie": [
+        { "titre": "Check the machines", "description": "Don't leave any clothes in the washing machine or dryer." },
+        { "titre": "Collect your products", "description": "If you brought your detergent or other products, take them back." }
+      ],
       "Espaces extérieurs": [
         { "titre": "Tidy furniture", "description": "Chairs pushed in, cushions brought in or stacked." },
         { "titre": "Empty ashtrays", "description": "Throw away butts, clean ashtray if needed." },
@@ -388,6 +420,9 @@
       "Separate toilet",
       "Bedroom",
       "Living room",
+      "Dining room",
+      "Entrance / Hallway / Stairs",
+      "Laundry room",
       "Outdoor spaces"
     ]
   }

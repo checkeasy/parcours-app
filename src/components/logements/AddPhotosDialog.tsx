@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -21,6 +20,7 @@ interface AddPhotosDialogProps {
   onOpenChange: (open: boolean) => void;
   logementNom: string;
   pieces: PieceQuantity[];
+  parcoursType: "menage" | "voyageur";
   onSave: (photos: Record<string, string[]>) => void;
   onBack: () => void;
   isFullScreenMode?: boolean;
@@ -46,6 +46,7 @@ export function AddPhotosDialog({
   onOpenChange,
   logementNom,
   pieces,
+  parcoursType,
   onSave,
   onBack,
   isFullScreenMode = false,
@@ -136,9 +137,18 @@ export function AddPhotosDialog({
             <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
               {t('logement.step', { current: 5, total: 5 })} - {t('photos.addPhotosFor', { logementNom })}
             </DialogTitle>
-            <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
-              {t('common.optional')} · {totalPhotos} {t('airbnb.photo', { count: totalPhotos })} {t('photos.added', { count: totalPhotos })}
-            </DialogDescription>
+            <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <div className="flex items-start gap-2">
+                <span className="text-base sm:text-lg shrink-0">💡</span>
+                <p className="text-xs sm:text-sm text-blue-900 dark:text-blue-100">
+                  Photos générales de la pièce.
+                  <br /><br />
+                  → Photos de référence utilisées par l'IA pour détecter la propreté, les dégradations, les objets manquants ou déplacés.
+                  <br /><br />
+                  → Photos que les {parcoursType === "menage" ? "agents de ménage" : "voyageurs"} prendront lors du check-out.
+                </p>
+              </div>
+            </div>
           </div>
         </DialogHeader>
 
@@ -150,41 +160,25 @@ export function AddPhotosDialog({
             return (
               <Card key={piece.key} className="p-3 sm:p-4">
                 <div className="space-y-2 sm:space-y-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 min-w-0 flex-1">
-                      <span className="text-xl sm:text-2xl shrink-0">{emoji}</span>
-                      <div className="min-w-0">
-                        <h3 className="font-medium text-sm sm:text-base truncate">
-                          {piece.displayName}
-                        </h3>
-                        <p className="text-xs text-muted-foreground">
-                          {photosForPiece.length} {t('airbnb.photo', { count: photosForPiece.length })}
-                        </p>
-                      </div>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-xl sm:text-2xl shrink-0">{emoji}</span>
+                    <div className="min-w-0">
+                      <h3 className="font-medium text-sm sm:text-base truncate">
+                        {piece.displayName}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {photosForPiece.length} {t('airbnb.photo', { count: photosForPiece.length })}
+                      </p>
                     </div>
-                    <label htmlFor={`upload-${piece.key}`} className="shrink-0">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="gap-1 sm:gap-2 text-xs sm:text-sm"
-                        onClick={() =>
-                          document.getElementById(`upload-${piece.key}`)?.click()
-                        }
-                      >
-                        <ImagePlus className="h-3 w-3 sm:h-4 sm:w-4" />
-                        <span className="hidden xs:inline">{t('photos.add')}</span>
-                      </Button>
-                      <input
-                        id={`upload-${piece.key}`}
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        className="hidden"
-                        onChange={(e) => handleFileUpload(piece.key, e.target.files)}
-                      />
-                    </label>
                   </div>
+                  <input
+                    id={`upload-${piece.key}`}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => handleFileUpload(piece.key, e.target.files)}
+                  />
 
                   {photosForPiece.length > 0 && (
                     <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2">

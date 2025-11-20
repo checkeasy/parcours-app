@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +19,7 @@ interface Tache {
   titre: string;
   description: string;
   photoObligatoire: boolean;
+  photoUrl?: string;
 }
 
 interface TacheDialogProps {
@@ -29,12 +30,12 @@ interface TacheDialogProps {
   onSave: (tache: Omit<Tache, "id">) => void;
 }
 
-export function TacheDialog({ 
-  open, 
-  onOpenChange, 
+export function TacheDialog({
+  open,
+  onOpenChange,
   tache,
   pieceNom,
-  onSave 
+  onSave
 }: TacheDialogProps) {
   const [formData, setFormData] = useState({
     emoji: "",
@@ -42,6 +43,8 @@ export function TacheDialog({
     description: "",
     photoObligatoire: false
   });
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (tache) {
@@ -51,6 +54,7 @@ export function TacheDialog({
         description: tache.description,
         photoObligatoire: tache.photoObligatoire
       });
+      setPhotoPreview(tache.photoUrl || null);
     } else {
       setFormData({
         emoji: "",
@@ -58,8 +62,31 @@ export function TacheDialog({
         description: "",
         photoObligatoire: false
       });
+      setPhotoPreview(null);
     }
   }, [tache, open]);
+
+  const handlePhotoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setPhotoPreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const handleSave = () => {
     if (formData.titre.trim()) {
@@ -67,7 +94,8 @@ export function TacheDialog({
         emoji: formData.emoji || "📋",
         titre: formData.titre,
         description: formData.description,
-        photoObligatoire: formData.photoObligatoire
+        photoObligatoire: formData.photoObligatoire,
+        photoUrl: photoPreview || undefined
       });
       onOpenChange(false);
     }
@@ -75,7 +103,7 @@ export function TacheDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md" hideCloseButton>
         <DialogHeader className="border-b pb-4">
           <div className="flex items-center justify-between">
             <div>
@@ -113,16 +141,47 @@ export function TacheDialog({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label className="text-sm font-medium">Photo facultative</Label>
-              <div className="mt-1.5 flex aspect-video items-center justify-center rounded-md border-2 border-dashed border-muted-foreground/30 bg-muted/30 transition-colors hover:border-muted-foreground/50 hover:bg-muted/50 cursor-pointer">
-                <div className="text-center p-2">
-                  <Upload className="mx-auto h-6 w-6 text-muted-foreground/50" />
-                  <p className="mt-1 text-[10px] text-muted-foreground">
-                    Ajouter une image
-                  </p>
-                </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                className="hidden"
+              />
+              <div
+                onClick={handlePhotoClick}
+                className="mt-1.5 flex aspect-video items-center justify-center rounded-md border-2 border-dashed border-muted-foreground/30 bg-muted/30 transition-colors hover:border-muted-foreground/50 hover:bg-muted/50 cursor-pointer overflow-hidden relative"
+              >
+                {photoPreview ? (
+                  <>
+                    <img
+                      src={photoPreview}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-1 right-1 h-6 w-6"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemovePhoto();
+                      }}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </>
+                ) : (
+                  <div className="text-center p-2">
+                    <Upload className="mx-auto h-6 w-6 text-muted-foreground/50" />
+                    <p className="mt-1 text-[10px] text-muted-foreground">
+                      Ajouter une image
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
-            
+
             <div>
               <Label className="text-sm font-medium">Consigne</Label>
               <Textarea

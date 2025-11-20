@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, X } from "lucide-react";
 import airbnbLogo from "@/assets/airbnb-logo.png";
 import { z } from "zod";
+import { getConciergerieID, getUserID, isTestMode as getIsTestMode } from "@/utils/webhook";
 
 interface PieceData {
   nom: string;
@@ -86,10 +87,10 @@ export function AirbnbLoadingDialog({
         setStatusMessage(t('airbnb.analyzing'));
         setProgress(10);
 
-        // TODO: Remplacer par les vrais IDs de l'utilisateur
-        const conciergerieID = "1730741276842x778024514623373300";
-        const userID = "1730741188020x554510837711264200";
-        const isTestMode = true;
+        // Get real IDs from URL parameters
+        const conciergerieID = getConciergerieID();
+        const userID = getUserID();
+        const isTestMode = getIsTestMode();
 
         // Backend URL - automatically detects environment
         const BACKEND_URL = import.meta.env.PROD

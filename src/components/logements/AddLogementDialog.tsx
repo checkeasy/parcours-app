@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Sparkles, Plane, X, ArrowLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
 import airbnbLogo from "@/assets/airbnb-logo.png";
 import { SelectModeleDialog } from "@/components/parcours/dialogs/SelectModeleDialog";
 import SelectPiecesDialog from "@/components/parcours/dialogs/SelectPiecesDialog";
@@ -405,13 +406,16 @@ export function AddLogementDialog({
                 >
                   <X className="h-4 w-4" />
                 </Button>
-                <div className="pl-8 sm:pl-10 pr-8 pb-3 sm:pb-4">
-                  <h2 className={isFullScreenMode ? "text-base sm:text-lg md:text-xl font-semibold" : "text-lg sm:text-xl md:text-2xl font-semibold"}>
+                {/* En-tête de l'étape */}
+                <div className="px-8 sm:px-10 pb-3 sm:pb-4">
+                  <h2 className={cn(
+                    "font-semibold",
+                    isFullScreenMode
+                      ? "text-base sm:text-lg md:text-xl"
+                      : "text-lg sm:text-xl md:text-2xl"
+                  )}>
                     {t('logement.step', { current: getDisplayedStepNumber(2), total: getTotalSteps() })} - {t('parcours.chooseType')}
                   </h2>
-                  <p className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
-                    {t('parcours.chooseTypeDescription')}
-                  </p>
                 </div>
               </div>
 
@@ -420,11 +424,9 @@ export function AddLogementDialog({
                   className="p-4 sm:p-6 cursor-pointer hover:border-primary hover:shadow-lg transition-all group border-2 active:scale-[0.98] sm:hover:scale-[1.02]"
                   onClick={() => handleStep2Next("menage")}
                 >
-                  <div className="space-y-3 sm:space-y-4">
-                    <div className="flex justify-center">
-                      <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <Sparkles className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-                      </div>
+                  <div className="flex flex-col items-center space-y-3 sm:space-y-4">
+                    <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <Sparkles className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
                     </div>
                     <div className="text-center space-y-1 sm:space-y-2">
                       <h3 className="font-semibold text-base sm:text-lg">{t('parcours.menage')}</h3>
@@ -439,11 +441,9 @@ export function AddLogementDialog({
                   className="p-4 sm:p-6 cursor-pointer hover:border-primary hover:shadow-lg transition-all group border-2 active:scale-[0.98] sm:hover:scale-[1.02]"
                   onClick={() => handleStep2Next("voyageur")}
                 >
-                  <div className="space-y-3 sm:space-y-4">
-                    <div className="flex justify-center">
-                      <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <Plane className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-                      </div>
+                  <div className="flex flex-col items-center space-y-3 sm:space-y-4">
+                    <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <Plane className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
                     </div>
                     <div className="text-center space-y-1 sm:space-y-2">
                       <h3 className="font-semibold text-base sm:text-lg">{t('parcours.voyageur')}</h3>
@@ -513,6 +513,7 @@ export function AddLogementDialog({
           logementNom={nom}
           pieces={airbnbPieces}
           totalPhotos={airbnbTotalPhotos}
+          selectedModele={selectedModele}
           onConfirm={handleAirbnbResultConfirm}
           onBack={() => {
             setStep(3);
@@ -546,7 +547,7 @@ export function AddLogementDialog({
       ) : null}
 
       {/* Dialog d'ajout des photos (Étape 6) */}
-      {step === 6 && (
+      {step === 6 && parcoursType && (
         <AddPhotosDialog
           open={step === 6}
           onOpenChange={(open) => {
@@ -556,6 +557,7 @@ export function AddLogementDialog({
           }}
           logementNom={nom}
           pieces={selectedPieces}
+          parcoursType={parcoursType}
           onSave={handleSavePhotos}
           onBack={() => setStep(5)}
           isFullScreenMode={isFullScreenMode}

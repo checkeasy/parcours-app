@@ -140,12 +140,20 @@ export function SelectModeleDialog({
     ],
   };
 
+  // Calculate stats for Check Easy models
+  const getCheckEasyStats = (type: "menage" | "voyageur") => {
+    const preview = TACHES_PREVIEW[type];
+    const roomCount = preview.length;
+    const totalTasks = preview.reduce((sum, room) => sum + room.taches.length, 0);
+    return { roomCount, totalTasks };
+  };
+
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
           className={isFullScreenMode ? "w-screen h-screen max-w-none max-h-none m-0 rounded-none overflow-auto p-3 sm:p-4 md:p-6 gap-1 sm:gap-2" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
-          hideCloseButton={isFullScreenMode}
+          hideCloseButton
         >
           <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
             <Button
@@ -174,85 +182,112 @@ export function SelectModeleDialog({
               <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
                 {t('logement.step', { current: 3, total: 5 })} - {t('modele.chooseModel')} {filterType === "menage" ? t('parcours.menage') : t('parcours.voyageur')}
               </DialogTitle>
-              <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
-                {t('modele.selectOrCreate')}
-              </DialogDescription>
+              <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <span className="text-base sm:text-lg shrink-0">💡</span>
+                  <p className="text-xs sm:text-sm text-blue-900 dark:text-blue-100">
+                    {t('modele.workflowExplanation')}
+                  </p>
+                </div>
+              </div>
             </div>
           </DialogHeader>
 
           <div className={isFullScreenMode ? "grid gap-3 sm:gap-4 overflow-y-auto max-h-[calc(100vh-160px)] sm:max-h-[calc(100vh-180px)] px-1" : "grid gap-3 sm:gap-4 overflow-y-auto max-h-[60vh] sm:max-h-[55vh] px-1"}>
             {/* Modèles Check Easy */}
-            {showMenageCheckEasy && (
-              <Card
-                className="p-3 sm:p-4 cursor-pointer hover:border-primary hover:shadow-md transition-all group active:scale-[0.98]"
-              onClick={() => {
-                onSelectMenage();
-              }}
-              >
-                <div className="flex items-start gap-2 sm:gap-3">
-                  <div className="text-2xl sm:text-3xl">🧹</div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-base sm:text-lg">{t('modele.menageCheckEasy')}</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                      {t('modele.menageDescription')}
-                    </p>
+            {showMenageCheckEasy && (() => {
+              const stats = getCheckEasyStats("menage");
+              return (
+                <Card
+                  className="p-3 sm:p-4 cursor-pointer hover:border-primary hover:shadow-md transition-all group active:scale-[0.98]"
+                onClick={() => {
+                  onSelectMenage();
+                }}
+                >
+                  <div className="flex items-start gap-2 sm:gap-3">
+                    <div className="text-2xl sm:text-3xl">🧹</div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-base sm:text-lg">{t('modele.menageCheckEasy')}</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                        {t('modele.menageDescription')}
+                      </p>
+                      <div className="flex items-center gap-1.5 sm:gap-2 mt-2 sm:mt-2.5 flex-wrap">
+                        <Badge variant="secondary" className="text-xs font-medium">
+                          📍 {stats.roomCount} {t('modele.rooms', { count: stats.roomCount })}
+                        </Badge>
+                        <Badge variant="outline" className="text-xs font-medium">
+                          ✓ {stats.totalTasks} {t('modele.totalTasks', { count: stats.totalTasks })}
+                        </Badge>
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="hidden sm:flex opacity-0 group-hover:opacity-100 transition-opacity gap-2 shrink-0"
+                      onClick={(e) => handlePreviewClick(e, "menage")}
+                    >
+                      <Eye className="h-4 w-4" />
+                      <span className="hidden md:inline">{t('modele.viewTasks')}</span>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="sm:hidden shrink-0"
+                      onClick={(e) => handlePreviewClick(e, "menage")}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="hidden sm:flex opacity-0 group-hover:opacity-100 transition-opacity gap-2 shrink-0"
-                    onClick={(e) => handlePreviewClick(e, "menage")}
-                  >
-                    <Eye className="h-4 w-4" />
-                    <span className="hidden md:inline">{t('modele.viewTasks')}</span>
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="sm:hidden shrink-0"
-                    onClick={(e) => handlePreviewClick(e, "menage")}
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                </div>
-              </Card>
-            )}
+                </Card>
+              );
+            })()}
 
-            {showVoyageurCheckEasy && (
-              <Card
-                className="p-3 sm:p-4 cursor-pointer hover:border-primary hover:shadow-md transition-all group active:scale-[0.98]"
-              onClick={() => {
-                onSelectVoyageur();
-              }}
-              >
-                <div className="flex items-start gap-2 sm:gap-3">
-                  <div className="text-2xl sm:text-3xl">✈️</div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-base sm:text-lg">{t('modele.voyageurCheckEasy')}</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                      {t('modele.voyageurDescription')}
-                    </p>
+            {showVoyageurCheckEasy && (() => {
+              const stats = getCheckEasyStats("voyageur");
+              return (
+                <Card
+                  className="p-3 sm:p-4 cursor-pointer hover:border-primary hover:shadow-md transition-all group active:scale-[0.98]"
+                onClick={() => {
+                  onSelectVoyageur();
+                }}
+                >
+                  <div className="flex items-start gap-2 sm:gap-3">
+                    <div className="text-2xl sm:text-3xl">✈️</div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-base sm:text-lg">{t('modele.voyageurCheckEasy')}</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                        {t('modele.voyageurDescription')}
+                      </p>
+                      <div className="flex items-center gap-1.5 sm:gap-2 mt-2 sm:mt-2.5 flex-wrap">
+                        <Badge variant="secondary" className="text-xs font-medium">
+                          📍 {stats.roomCount} {t('modele.rooms', { count: stats.roomCount })}
+                        </Badge>
+                        <Badge variant="outline" className="text-xs font-medium">
+                          ✓ {stats.totalTasks} {t('modele.totalTasks', { count: stats.totalTasks })}
+                        </Badge>
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="hidden sm:flex opacity-0 group-hover:opacity-100 transition-opacity gap-2 shrink-0"
+                      onClick={(e) => handlePreviewClick(e, "voyageur")}
+                    >
+                      <Eye className="h-4 w-4" />
+                      <span className="hidden md:inline">{t('modele.viewTasks')}</span>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="sm:hidden shrink-0"
+                      onClick={(e) => handlePreviewClick(e, "voyageur")}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="hidden sm:flex opacity-0 group-hover:opacity-100 transition-opacity gap-2 shrink-0"
-                    onClick={(e) => handlePreviewClick(e, "voyageur")}
-                  >
-                    <Eye className="h-4 w-4" />
-                    <span className="hidden md:inline">{t('modele.viewTasks')}</span>
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="sm:hidden shrink-0"
-                    onClick={(e) => handlePreviewClick(e, "voyageur")}
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                </div>
-              </Card>
-            )}
+                </Card>
+              );
+            })()}
 
             {/* Modèles personnalisés */}
             {filteredCustomModeles.length > 0 && (

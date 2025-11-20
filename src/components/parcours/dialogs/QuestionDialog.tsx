@@ -62,7 +62,7 @@ export function QuestionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-md w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto" hideCloseButton>
         <DialogHeader className="border-b pb-3 sm:pb-4">
           <div className="flex items-center justify-between">
             <div>

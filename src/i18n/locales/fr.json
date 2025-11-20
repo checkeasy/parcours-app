@@ -20,8 +20,7 @@
     "close": "Fermer"
   },
   "parcours": {
-    "chooseType": "On commence par quel parcours ?",
-    "chooseTypeDescription": "Vous pourrez ajouter l'autre ensuite en 1 clic.",
+    "chooseType": "Pour qui créez-vous ce premier parcours ?",
     "menage": "Agents de ménage",
     "menageDescription": "Suivre la qualité ménage",
     "voyageur": "Voyageur",
@@ -59,9 +58,22 @@
     "task": "tâche",
     "task_plural": "tâches",
     "active": "Activé",
+    "disabled": "Désactivé",
     "associatedTasks": "Tâches associées :",
     "photoRequired": "Photo requise",
-    "finish": "Terminer"
+    "finish": "Terminer",
+    "addRoom": "Ajouter une pièce",
+    "roomType": "Type de pièce",
+    "selectRoomType": "Sélectionnez un type de pièce",
+    "roomName": "Nom de la pièce",
+    "roomNamePlaceholder": "Ex: Chambre, Salon...",
+    "roomEmoji": "Emoji",
+    "add": "Ajouter",
+    "addPhotos": "Ajouter des photos",
+    "disable": "Désactiver la pièce",
+    "enable": "Activer la pièce",
+    "showTasks": "Voir les tâches",
+    "hideTasks": "Masquer les tâches"
   },
   "modele": {
     "custom": "Modèle personnalisé",
@@ -111,11 +123,17 @@
   "modele": {
     "chooseModel": "Choisir le modèle du parcours",
     "selectOrCreate": "Sélectionnez un modèle prédéfini ou créez le vôtre",
-    "menageCheckEasy": "Ménage Check Easy",
+    "selectTemplateDescription": "Le modèle définit les pièces et tâches de votre équipe. Vous configurerez ensuite les propriétés spécifiques de votre logement.",
+    "workflowExplanation": "Check Easy vous fournit un parcours modèle. Vous pouvez aussi créer ou choisir le vôtre et le dupliquer sur tous vos logements.",
+    "menageCheckEasy": "Parcours modèle par Check Easy",
     "menageDescription": "Modèle optimisé pour le suivi du ménage avec checklist complète",
-    "voyageurCheckEasy": "Voyageur Check Easy",
+    "voyageurCheckEasy": "Parcours modèle par Check Easy",
     "voyageurDescription": "Modèle pour l'accueil voyageurs avec vérifications essentielles",
     "viewTasks": "Voir les tâches",
+    "rooms": "pièce",
+    "rooms_plural": "pièces",
+    "totalTasks": "tâche au total",
+    "totalTasks_plural": "tâches au total",
     "yourCustomModels": "Vos modèles personnalisés",
     "custom": "Personnalisé",
     "modified": "Modifié",
@@ -128,7 +146,7 @@
     "allTasksAvailable": "Voici toutes les tâches disponibles dans ce modèle"
   },
   "piecesDialog": {
-    "selectRooms": "Sélectionnez les pièces du logement",
+    "selectRooms": "Sélectionnez les pièces présentes dans {{logementNom}}",
     "indicateNumber": "Indiquez le nombre de chaque type de pièce pour",
     "noRoomSelected": "Aucune pièce sélectionnée",
     "roomsSelected": "{{count}} pièce sélectionnée",
@@ -151,7 +169,8 @@
     "arrivalExitShort": "Arrivée/Sortie",
     "inventoryInfo": "Notre IA utilise uniquement les photos de sortie pour détecter les différences avec l'état initial.",
     "roomsAndTasks": "Pièces et tâches",
-    "roomsInfo": "💡 Pour chaque pièce sélectionnée, choisissez les tâches à effectuer. Vous pouvez également ajouter vos propres pièces et tâches personnalisées.",
+    "roomsInfo": "Pour chaque pièce sélectionnée, choisissez les tâches à effectuer. Vous pouvez également ajouter vos propres pièces et tâches personnalisées.",
+    "configureAllRooms": "Conseil : Configurez toutes les pièces qui correspondent au workflow de votre équipe pour créer un modèle complet et gagner du temps lors de la création de nouveaux parcours.",
     "addTask": "Ajouter une tâche",
     "addTaskShort": "Ajouter",
     "customLabel": "Personnalisée",
@@ -159,11 +178,11 @@
     "photoRequiredShort": "Photo",
     "addCustomRoom": "Ajouter une pièce personnalisée",
     "checklistBeforeDeparture": "Check-list avant le départ",
-    "checklistInfo": "💡 Sélectionnez les questions que le voyageur devra valider avant de quitter le logement.",
+    "checklistInfo": "Sélectionnez les questions que le voyageur devra valider avant de quitter le logement.",
     "addQuestion": "Ajouter une Question",
     "addQuestionShort": "Ajouter",
     "yesNo": "Oui/Non",
-    "openQuestion": "💬 Ouverte",
+    "openQuestion": "Ouverte",
     "cancel": "Annuler",
     "saveChanges": "Enregistrer les modifications",
     "saveChangesShort": "Enregistrer",
@@ -355,6 +374,18 @@
         { "titre": "Ranger canapé & coussins", "description": "Coussins tapotés, plaid plié, canapé dégagé." },
         { "titre": "Éteindre TV & appareils", "description": "Télécommande posée à sa place, TV et console éteintes." }
       ],
+      "Salle à manger": [
+        { "titre": "Récupérer vos affaires sur la table", "description": "Sacs, jouets, livres, bouteilles perso, etc." },
+        { "titre": "Remettre les chaises autour de la table", "description": "Les chaises sont simplement replacées autour de la table." }
+      ],
+      "Entrée / Couloir / Escaliers": [
+        { "titre": "Vérifier que vous n'avez rien oublié", "description": "Manteaux, chaussures, sacs, chargeurs…" },
+        { "titre": "Récupérer vos chaussures", "description": "Si vous en avez laissé dans l'entrée, les reprendre avant de partir." }
+      ],
+      "Buanderie / Laverie": [
+        { "titre": "Vérifier les machines", "description": "Ne laisser aucun vêtement dans le lave-linge ou le sèche-linge." },
+        { "titre": "Récupérer vos produits", "description": "Si vous avez apporté votre lessive ou autres produits, les reprendre." }
+      ],
       "Espaces extérieurs": [
         { "titre": "Ranger mobilier", "description": "Chaises repoussées, coussins rentrés ou empilés." },
         { "titre": "Vider cendriers", "description": "Jeter mégots, nettoyer cendrier si besoin." },
@@ -383,6 +414,9 @@
       "Toilettes séparés",
       "Chambre",
       "Salon / Séjour",
+      "Salle à manger",
+      "Entrée / Couloir / Escaliers",
+      "Buanderie / Laverie",
       "Espaces extérieurs"
     ]
   }

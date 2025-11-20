@@ -489,6 +489,54 @@ export const TACHES_VOYAGEUR: Record<string, any[]> = {
       description: "Sol propre ; plantes entretenues.",
       photoObligatoire: false
     }
+  ],
+  "Salle à manger": [
+    {
+      id: "v-salle-manger-1",
+      emoji: "🎒",
+      titre: "Récupérer vos affaires sur la table",
+      description: "Sacs, jouets, livres, bouteilles perso, etc.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-salle-manger-2",
+      emoji: "🪑",
+      titre: "Remettre les chaises autour de la table",
+      description: "Les chaises sont simplement replacées autour de la table.",
+      photoObligatoire: false
+    }
+  ],
+  "Entrée / Couloir / Escaliers": [
+    {
+      id: "v-entree-couloir-1",
+      emoji: "🔍",
+      titre: "Vérifier que vous n'avez rien oublié",
+      description: "Manteaux, chaussures, sacs, chargeurs…",
+      photoObligatoire: false
+    },
+    {
+      id: "v-entree-couloir-2",
+      emoji: "👟",
+      titre: "Récupérer vos chaussures",
+      description: "Si vous en avez laissé dans l'entrée, les reprendre avant de partir.",
+      photoObligatoire: false
+    }
+  ],
+  "Buanderie / Laverie": [
+    {
+      id: "v-buanderie-1",
+      emoji: "🧺",
+      titre: "Vérifier les machines",
+      description: "Ne laisser aucun vêtement dans le lave-linge ou le sèche-linge.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-buanderie-2",
+      emoji: "🧴",
+      titre: "Récupérer vos produits",
+      description: "Si vous avez apporté votre lessive ou autres produits, les reprendre.",
+      photoObligatoire: false
+    }
   ]
 };
 
@@ -500,30 +548,67 @@ const loadTasksFromTranslations = (t: any, parcoursType: "menage" | "voyageur", 
   if (!Array.isArray(tasks)) return [];
 
   // Map emoji based on room and task index (using French keys)
+  // For menage, these are longer lists; for voyageur, shorter lists
   const emojiMap: Record<string, string[]> = {
-    "Cuisine": ["🗑️", "🍽️", "🧽", "📡", "❄️", "🧊", "🔥", "🍳", "💨", "☕", "🧼", "🧴", "🧹"],
-    "Salle de bain (sans toilettes)": ["💈", "🚿", "🧱", "🪞", "🚪", "🧺", "🗑️", "🛁"],
-    "Salle de bain avec toilettes": ["🚽", "🧻", "💈", "🚿", "🧱", "🪞", "🚪", "🧺", "🗑️", "🛁"],
+    "Cuisine": parcoursType === "menage"
+      ? ["🗑️", "🍽️", "🧽", "📡", "❄️", "🧊", "🔥", "🍳", "💨", "☕", "🧼", "🧴", "🧹"]
+      : ["🍽️", "❄️", "🔥", "☕"],
+    "Salle de bain (sans toilettes)": parcoursType === "menage"
+      ? ["💈", "🚿", "🧱", "🪞", "🚪", "🧺", "🗑️", "🛁"]
+      : ["🧴", "🚿", "🧻"],
+    "Salle de bain avec toilettes": parcoursType === "menage"
+      ? ["🚽", "🧻", "💈", "🚿", "🧱", "🪞", "🚪", "🧺", "🗑️", "🛁"]
+      : ["🧴", "🚿", "🧻", "🚽"],
     "Toilettes séparés": ["🚽", "🧻"],
-    "Chambre": ["🛏️", "🧹", "🛌", "🪵", "🧹", "💡", "🚪", "🪟"],
-    "Salon / Séjour": ["🧹", "🛋️", "🧺", "📺", "📐"],
-    "Salle à manger": ["🪑", "🍽️", "🚪", "🧹"],
-    "Entrée / Couloir / Escaliers": ["🚪", "🪞", "🪜"],
-    "Buanderie / Laverie": ["🧺", "🌪️", "🧼", "🧴"],
-    "Espaces extérieurs": ["🪑", "☂️", "🚬", "🍖", "🛁", "🏊", "🌱"]
+    "Chambre": parcoursType === "menage"
+      ? ["🛏️", "🧹", "🛌", "🪵", "🧹", "💡", "🚪", "🪟"]
+      : ["🛏️", "🚪", "💡"],
+    "Salon / Séjour": parcoursType === "menage"
+      ? ["🧹", "🛋️", "🧺", "📺", "📐"]
+      : ["📺", "🛋️", "🌡️"],
+    "Salle à manger": parcoursType === "menage"
+      ? ["🪑", "🍽️", "🚪", "🧹"]
+      : ["🎒", "🪑"],
+    "Entrée / Couloir / Escaliers": parcoursType === "menage"
+      ? ["🚪", "🪞", "🪜"]
+      : ["🔍", "👟"],
+    "Buanderie / Laverie": parcoursType === "menage"
+      ? ["🧺", "🌪️", "🧼", "🧴"]
+      : ["🧺", "🧴"],
+    "Espaces extérieurs": parcoursType === "menage"
+      ? ["🪑", "☂️", "🚬", "🍖", "🛁", "🏊", "🌱"]
+      : ["🪑", "🌿"]
   };
 
   const photoRequiredMap: Record<string, boolean[]> = {
-    "Cuisine": [true, false, false, true, true, true, true, true, false, true, true, false, false],
-    "Salle de bain (sans toilettes)": [true, true, false, false, false, false, false, false],
-    "Salle de bain avec toilettes)": [true, false, true, false, false, false, false, false, false, false],
+    "Cuisine": parcoursType === "menage"
+      ? [true, false, false, true, true, true, true, true, false, true, true, false, false]
+      : [true, false, false, false],
+    "Salle de bain (sans toilettes)": parcoursType === "menage"
+      ? [true, true, false, false, false, false, false, false]
+      : [true, true, false],
+    "Salle de bain avec toilettes": parcoursType === "menage"
+      ? [true, false, true, false, false, false, false, false, false, false]
+      : [true, true, false, true],
     "Toilettes séparés": [true, false],
-    "Chambre": [true, false, false, false, false, false, true, false],
-    "Salon / Séjour": [false, false, false, true, false],
-    "Salle à manger": [true, false, false, false],
-    "Entrée / Couloir / Escaliers": [false, false, false],
-    "Buanderie / Laverie": [false, false, false, false],
-    "Espaces extérieurs": [false, false, false, true, false, false, false]
+    "Chambre": parcoursType === "menage"
+      ? [true, false, false, false, false, false, true, false]
+      : [true, false, false],
+    "Salon / Séjour": parcoursType === "menage"
+      ? [false, false, false, true, false]
+      : [false, false, false],
+    "Salle à manger": parcoursType === "menage"
+      ? [true, false, false, false]
+      : [false, false],
+    "Entrée / Couloir / Escaliers": parcoursType === "menage"
+      ? [false, false, false]
+      : [false, false],
+    "Buanderie / Laverie": parcoursType === "menage"
+      ? [false, false, false, false]
+      : [false, false],
+    "Espaces extérieurs": parcoursType === "menage"
+      ? [false, false, false, true, false, false, false]
+      : [false, false]
   };
 
   const emojis = emojiMap[frenchKey] || [];
@@ -566,6 +651,9 @@ const FRENCH_ROOM_KEYS_VOYAGEUR = [
   "Toilettes séparés",
   "Chambre",
   "Salon / Séjour",
+  "Salle à manger",
+  "Entrée / Couloir / Escaliers",
+  "Buanderie / Laverie",
   "Espaces extérieurs"
 ];
 
@@ -650,6 +738,7 @@ export function CustomModeleBuilder({
   isFullScreenMode = false,
 }: CustomModeleBuilderProps) {
   const { t } = useTranslation();
+  const [currentStep, setCurrentStep] = useState(1);
   const [modeleName, setModeleName] = useState("");
   const [modeleType, setModeleType] = useState<"menage" | "voyageur">(initialParcoursType || "menage");
   const [etatLieuxMoment, setEtatLieuxMoment] = useState<"sortie" | "arrivee-sortie">("arrivee-sortie");
@@ -664,10 +753,10 @@ export function CustomModeleBuilder({
   const [customPieces, setCustomPieces] = useState<string[]>([]);
   const [newPieceDialogOpen, setNewPieceDialogOpen] = useState(false);
   const [newPieceName, setNewPieceName] = useState("");
-  
+
   // Determine the active parcours type: use initialParcoursType if defined (from parent), otherwise use modeleType
   const activeParcoursType = initialParcoursType || modeleType;
-  
+
   // Questions checklist state
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
   const [customQuestions, setCustomQuestions] = useState<QuestionModele[]>([]);
@@ -677,15 +766,16 @@ export function CustomModeleBuilder({
   // Pré-remplir les données si on édite un modèle existant
   useEffect(() => {
     if (editingModele && open) {
+      setCurrentStep(1);
       setModeleName(editingModele.nom);
       setModeleType(editingModele.type);
       setEtatLieuxMoment(editingModele.etatLieuxMoment || "arrivee-sortie");
-      
+
       // Reconstituer selectedPieces avec les tâches sélectionnées
       const piecesMap = new Map<string, string[]>();
       const customPiecesArray: string[] = [];
       const customTasksMap = new Map<string, TacheModele[]>();
-      
+
       const defaultPieces = loadRoomsFromTranslations(t, editingModele.type);
 
       editingModele.pieces.forEach((piece: PieceModele) => {
@@ -708,17 +798,17 @@ export function CustomModeleBuilder({
           customTasksMap.set(piece.nom, customTasksForPiece);
         }
       });
-      
+
       setSelectedPieces(piecesMap);
       setCustomPieces(customPiecesArray);
       setCustomTasks(customTasksMap);
-      
+
       // Restaurer les questions
       const defaultQuestions = loadQuestionsFromTranslations(t, editingModele.type);
-      
+
       const selectedQuestionsSet = new Set<string>();
       const customQs: QuestionModele[] = [];
-      
+
       editingModele.questionsChecklist?.forEach((q: QuestionModele) => {
         const isDefault = defaultQuestions.find(dq => dq.id === q.id);
         if (isDefault) {
@@ -727,11 +817,12 @@ export function CustomModeleBuilder({
           customQs.push(q);
         }
       });
-      
+
       setSelectedQuestions(selectedQuestionsSet);
       setCustomQuestions(customQs);
     } else if (!editingModele && open) {
       // Réinitialiser pour création
+      setCurrentStep(1);
       setModeleName("");
       setSelectedPieces(new Map());
       setSelectedQuestions(new Set());
@@ -1059,6 +1150,49 @@ export function CustomModeleBuilder({
     year: 'numeric',
   });
 
+  const handleNextStep = () => {
+    if (currentStep === 1 && !modeleName.trim()) {
+      toast({
+        title: t('customModeleBuilder.nameRequired'),
+        description: t('customModeleBuilder.nameRequiredDesc'),
+        variant: "destructive",
+      });
+      return;
+    }
+    setCurrentStep(currentStep + 1);
+  };
+
+  const handlePreviousStep = () => {
+    setCurrentStep(currentStep - 1);
+  };
+
+  const renderStepIndicator = () => (
+    <div className="flex items-center justify-center gap-2 mb-6">
+      {[1, 2, 3, 4].map((step) => (
+        <div key={step} className="flex items-center">
+          <div
+            className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold transition-all ${
+              step === currentStep
+                ? "bg-primary text-primary-foreground"
+                : step < currentStep
+                ? "bg-primary/20 text-primary"
+                : "bg-muted text-muted-foreground"
+            }`}
+          >
+            {step}
+          </div>
+          {step < 4 && (
+            <div
+              className={`w-8 h-0.5 mx-1 ${
+                step < currentStep ? "bg-primary" : "bg-muted"
+              }`}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -1072,7 +1206,11 @@ export function CustomModeleBuilder({
               size="icon"
               className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8"
               onClick={() => {
-                onBack ? onBack() : onOpenChange(false);
+                if (currentStep > 1) {
+                  handlePreviousStep();
+                } else {
+                  onBack ? onBack() : onOpenChange(false);
+                }
               }}
             >
               <ArrowLeft className="h-4 w-4" />
@@ -1098,75 +1236,126 @@ export function CustomModeleBuilder({
             </div>
           </DialogHeader>
 
+          {renderStepIndicator()}
+
           <div className={isFullScreenMode ? "space-y-3 sm:space-y-4 md:space-y-6" : "space-y-4 sm:space-y-6"}>
-            {/* Configuration de base */}
-            <Card>
-              <CardHeader className={isFullScreenMode ? "p-3 sm:p-4 md:p-6" : "p-4 sm:p-6"}>
-                <CardTitle className="text-sm sm:text-base">{t('customModeleBuilder.modelConfig')}</CardTitle>
-              </CardHeader>
-              <CardContent className={isFullScreenMode ? "space-y-2 sm:space-y-3 md:space-y-4 p-3 sm:p-4 md:p-6" : "space-y-3 sm:space-y-4 p-4 sm:p-6"}>
-                <div className="space-y-2">
-                  <Label>{t('customModeleBuilder.modelName')}</Label>
-                  <Input
-                    placeholder={t('customModeleBuilder.modelNamePlaceholder')}
-                    value={modeleName}
-                    onChange={(e) => setModeleName(e.target.value)}
-                  />
-                </div>
-
-                {!initialParcoursType && (
+            {/* STEP 1: Model Name */}
+            {currentStep === 1 && (
+              <Card>
+                <CardHeader className={isFullScreenMode ? "p-3 sm:p-4 md:p-6" : "p-4 sm:p-6"}>
+                  <CardTitle className="text-lg sm:text-xl">Étape 1 : Nom du modèle</CardTitle>
+                  <CardDescription>Donnez un nom à votre modèle de parcours</CardDescription>
+                </CardHeader>
+                <CardContent className={isFullScreenMode ? "space-y-2 sm:space-y-3 md:space-y-4 p-3 sm:p-4 md:p-6" : "space-y-3 sm:space-y-4 p-4 sm:p-6"}>
                   <div className="space-y-2">
-                    <Label className="text-sm">{t('customModeleBuilder.parcoursType')}</Label>
-                    <Tabs value={modeleType} onValueChange={(v) => {
-                      const newType = v as "menage" | "voyageur";
-                      setModeleType(newType);
-                      // Reset selected questions when type changes
-                      setSelectedQuestions(new Set());
-                      setCustomQuestions([]);
-                    }}>
-                      <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="menage" className="gap-1 sm:gap-2 text-xs sm:text-sm">
-                          🧹 <span className="hidden xs:inline">{t('parcours.menage')}</span>
-                        </TabsTrigger>
-                        <TabsTrigger value="voyageur" className="gap-1 sm:gap-2 text-xs sm:text-sm">
-                          ✈️ <span className="hidden xs:inline">{t('parcours.voyageur')}</span>
-                        </TabsTrigger>
-                      </TabsList>
-                    </Tabs>
+                    <Label>{t('customModeleBuilder.modelName')}</Label>
+                    <Input
+                      placeholder={t('customModeleBuilder.modelNamePlaceholder')}
+                      value={modeleName}
+                      onChange={(e) => setModeleName(e.target.value)}
+                      className="text-base"
+                    />
                   </div>
-                )}
+                </CardContent>
+              </Card>
+            )}
 
-                <div className="space-y-2">
-                  <Label className="text-sm">{t('customModeleBuilder.inventoryMoment')}</Label>
-                  <Tabs value={etatLieuxMoment} onValueChange={(v) => setEtatLieuxMoment(v as "sortie" | "arrivee-sortie")}>
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="sortie" className="gap-1 sm:gap-2 text-xs sm:text-sm">
-                        📷 <span className="hidden sm:inline">{t('customModeleBuilder.exitOnly')}</span><span className="sm:hidden">{t('customModeleBuilder.exitOnlyShort')}</span>
-                      </TabsTrigger>
-                      <TabsTrigger value="arrivee-sortie" className="gap-1 sm:gap-2 text-xs sm:text-sm">
-                        📷 <span className="hidden sm:inline">{t('customModeleBuilder.arrivalExit')}</span><span className="sm:hidden">{t('customModeleBuilder.arrivalExitShort')}</span>
-                      </TabsTrigger>
-                    </TabsList>
-                  </Tabs>
-                  <p className="text-xs text-muted-foreground">
-                    {t('customModeleBuilder.inventoryInfo')}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            {/* STEP 2: Choose Type of Inspection */}
+            {currentStep === 2 && (
+              <Card>
+                <CardHeader className={isFullScreenMode ? "p-3 sm:p-4 md:p-6" : "p-4 sm:p-6"}>
+                  <CardTitle className="text-lg sm:text-xl">
+                    Étape 2 : Choisir le type d'inspection
+                  </CardTitle>
+                  <CardDescription>
+                    Que demanderez-vous au {activeParcoursType === "menage" ? "service de ménage" : "voyageur"} ?
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className={isFullScreenMode ? "space-y-2 sm:space-y-3 md:space-y-4 p-3 sm:p-4 md:p-6" : "space-y-3 sm:space-y-4 p-4 sm:p-6"}>
+                  <div className="space-y-2">
+                    <Label className="text-sm">{t('customModeleBuilder.inventoryMoment')}</Label>
+                    <div className="grid gap-3">
+                      <Card
+                        className={`p-4 cursor-pointer transition-all ${
+                          etatLieuxMoment === "arrivee-sortie"
+                            ? "border-primary bg-primary/5"
+                            : "hover:border-primary/50"
+                        }`}
+                        onClick={() => setEtatLieuxMoment("arrivee-sortie")}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`flex h-5 w-5 items-center justify-center rounded-full border-2 mt-0.5 ${
+                            etatLieuxMoment === "arrivee-sortie"
+                              ? "border-primary bg-primary"
+                              : "border-muted-foreground"
+                          }`}>
+                            {etatLieuxMoment === "arrivee-sortie" && (
+                              <div className="h-2 w-2 rounded-full bg-white" />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-base">
+                              {activeParcoursType === "menage"
+                                ? "Contrôle de l'état du logement et validation du ménage"
+                                : "État des lieux à l'entrée et à la sortie"}
+                            </h3>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              📷 Photos à l'arrivée et à la sortie
+                            </p>
+                          </div>
+                        </div>
+                      </Card>
 
-            {/* Sélection des pièces et tâches */}
-            <Card>
-              <CardHeader className={isFullScreenMode ? "p-3 sm:p-4 md:p-6" : "p-4 sm:p-6"}>
-                <CardTitle className="text-sm sm:text-base">{t('customModeleBuilder.roomsAndTasks')}</CardTitle>
-              </CardHeader>
-              <CardContent className={isFullScreenMode ? "space-y-2 sm:space-y-3 md:space-y-4 p-3 sm:p-4 md:p-6" : "space-y-3 sm:space-y-4 p-4 sm:p-6"}>
-                <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 sm:p-4">
-                  <p className="text-xs sm:text-sm text-blue-900 dark:text-blue-100">
-                    {t('customModeleBuilder.roomsInfo')}
-                  </p>
-                </div>
-                {getAllPieces().map((piece) => (
+                      <Card
+                        className={`p-4 cursor-pointer transition-all ${
+                          etatLieuxMoment === "sortie"
+                            ? "border-primary bg-primary/5"
+                            : "hover:border-primary/50"
+                        }`}
+                        onClick={() => setEtatLieuxMoment("sortie")}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`flex h-5 w-5 items-center justify-center rounded-full border-2 mt-0.5 ${
+                            etatLieuxMoment === "sortie"
+                              ? "border-primary bg-primary"
+                              : "border-muted-foreground"
+                          }`}>
+                            {etatLieuxMoment === "sortie" && (
+                              <div className="h-2 w-2 rounded-full bg-white" />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-base">
+                              {activeParcoursType === "menage"
+                                ? "Validation du ménage"
+                                : "État des lieux à la sortie uniquement"}
+                            </h3>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              📷 Photos à la sortie uniquement
+                            </p>
+                          </div>
+                        </div>
+                      </Card>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-3">
+                      {t('customModeleBuilder.inventoryInfo')}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* STEP 3: Create Tasks for Each Room */}
+            {currentStep === 3 && (
+              <Card>
+                <CardHeader className={isFullScreenMode ? "p-3 sm:p-4 md:p-6" : "p-4 sm:p-6"}>
+                  <CardTitle className="text-lg sm:text-xl">Étape 3 : Créer les tâches pour chaque pièce</CardTitle>
+                  <CardDescription>
+                    Ajoutez ici les actions à effectuer par {activeParcoursType === "menage" ? "le service de ménage" : "le voyageur"}. Si besoin, demandez une photo pour vérifier qu'une tâche a bien été réalisée. Notre IA analysera la photo pour valider que la tâche a bien été effectuée. Une photo de référence peut être ajoutée pour expliquer davantage ce que {activeParcoursType === "menage" ? "l'agent de ménage" : "le voyageur"} doit faire.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className={isFullScreenMode ? "space-y-2 sm:space-y-3 md:space-y-4 p-3 sm:p-4 md:p-6" : "space-y-3 sm:space-y-4 p-4 sm:p-6"}>
+                  {getAllPieces().map((piece) => (
                   <div key={piece} className="border rounded-lg p-3 sm:p-4 space-y-2 sm:space-y-3">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                       <div className="flex items-center space-x-2 min-w-0 flex-1">
@@ -1198,21 +1387,6 @@ export function CustomModeleBuilder({
                           </Button>
                         )}
                       </div>
-                      {selectedPieces.has(piece) && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full sm:w-auto text-xs sm:text-sm"
-                          onClick={() => {
-                            setCurrentPiece(piece);
-                            setNewTaskDialogOpen(true);
-                          }}
-                        >
-                          <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                          <span className="hidden sm:inline">{t('customModeleBuilder.addTask')}</span>
-                          <span className="sm:hidden">{t('customModeleBuilder.addTaskShort')}</span>
-                        </Button>
-                      )}
                     </div>
 
                     {selectedPieces.has(piece) && (
@@ -1270,42 +1444,50 @@ export function CustomModeleBuilder({
                             </div>
                           );
                         })}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full text-xs sm:text-sm mt-2"
+                          onClick={() => {
+                            setCurrentPiece(piece);
+                            setNewTaskDialogOpen(true);
+                          }}
+                        >
+                          <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                          <span className="hidden sm:inline">{t('customModeleBuilder.addTask')}</span>
+                          <span className="sm:hidden">{t('customModeleBuilder.addTaskShort')}</span>
+                        </Button>
                       </div>
                     )}
                   </div>
                 ))}
 
-                <Button
-                  variant="outline"
-                  className="w-full mt-3 sm:mt-4 text-xs sm:text-sm"
-                  onClick={() => setNewPieceDialogOpen(true)}
-                >
-                  <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-                  {t('customModeleBuilder.addCustomRoom')}
-                </Button>
-              </CardContent>
-            </Card>
+                  <Button
+                    variant="outline"
+                    className="w-full mt-3 sm:mt-4 text-xs sm:text-sm"
+                    onClick={() => setNewPieceDialogOpen(true)}
+                  >
+                    <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                    {t('customModeleBuilder.addCustomRoom')}
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
 
-            {/* Check-list avant le départ */}
-            <Card className={isFullScreenMode ? "p-2 sm:p-3 md:p-4" : "p-3 sm:p-4 md:p-6"}>
+            {/* STEP 4: Pre-Departure Checklist */}
+            {currentStep === 4 && (
+              <Card className={isFullScreenMode ? "p-2 sm:p-3 md:p-4" : "p-3 sm:p-4 md:p-6"}>
               <CardHeader className="px-0 pt-0">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3">
+                <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2">
-                    <CardTitle className="text-sm sm:text-base md:text-lg">{t('customModeleBuilder.checklistBeforeDeparture')}</CardTitle>
+                    <CardTitle className="text-lg sm:text-xl">Étape 4 : Check-list avant le départ</CardTitle>
                     <Badge variant="secondary" className="text-xs">
                       {getSelectedQuestionsData().length}
                     </Badge>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleAjouterQuestion}
-                    className="w-full sm:w-auto justify-center text-xs sm:text-sm"
-                  >
-                    <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                    <span className="hidden sm:inline">{t('customModeleBuilder.addQuestion')}</span>
-                    <span className="sm:hidden">{t('customModeleBuilder.addQuestionShort')}</span>
-                  </Button>
+                  <CardDescription>
+                    Ajoutez ici les points à vérifier avant de quitter le logement. Formulez-les sous forme de phrases affirmatives, par exemple : "J'ai éteint tous les radiateurs." Cela aide à s'assurer que chaque étape a bien été réalisée avant le départ.
+                  </CardDescription>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3 sm:space-y-4 px-0">
@@ -1350,7 +1532,19 @@ export function CustomModeleBuilder({
                       )}
                     </div>
                   ))}
-                  
+
+                  {/* Bouton Ajouter une Question après les questions par défaut */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAjouterQuestion}
+                    className="w-full text-xs sm:text-sm mt-2"
+                  >
+                    <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                    <span className="hidden sm:inline">{t('customModeleBuilder.addQuestion')}</span>
+                    <span className="sm:hidden">{t('customModeleBuilder.addQuestionShort')}</span>
+                  </Button>
+
                   {/* Questions personnalisées */}
                   {customQuestions.map((question) => (
                     <div
@@ -1393,27 +1587,30 @@ export function CustomModeleBuilder({
                   ))}
                 </div>
               </CardContent>
-            </Card>
+              </Card>
+            )}
           </div>
 
-          <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
-            <Button
-              variant="outline"
-              className="w-full sm:w-auto"
-              onClick={() => {
-                if (isFullScreenMode) {
-                  window.location.reload();
-                } else {
-                  onOpenChange(false);
-                }
-              }}
-            >
-              {t('customModeleBuilder.cancel')}
-            </Button>
-            <Button onClick={handleSave} className="w-full sm:w-auto">
-              <span className="hidden sm:inline">{editingModele ? t('customModeleBuilder.saveChanges') : t('customModeleBuilder.createModel')}</span>
-              <span className="sm:hidden">{editingModele ? t('customModeleBuilder.saveChangesShort') : t('customModeleBuilder.createModelShort')}</span>
-            </Button>
+          <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0 mt-6">
+            {currentStep > 1 && (
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto"
+                onClick={handlePreviousStep}
+              >
+                Précédent
+              </Button>
+            )}
+            {currentStep < 4 ? (
+              <Button onClick={handleNextStep} className="w-full sm:w-auto">
+                Suivant
+              </Button>
+            ) : (
+              <Button onClick={handleSave} className="w-full sm:w-auto">
+                <span className="hidden sm:inline">{editingModele ? t('customModeleBuilder.saveChanges') : t('customModeleBuilder.createModel')}</span>
+                <span className="sm:hidden">{editingModele ? t('customModeleBuilder.saveChangesShort') : t('customModeleBuilder.createModelShort')}</span>
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

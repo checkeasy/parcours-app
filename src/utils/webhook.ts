@@ -198,7 +198,8 @@ export const loadLogementFromBubble = async (
 ): Promise<any> => {
   try {
     const endpoint = getBubbleEndpoint('getLogement', testMode);
-    const url = `${endpoint}?logementid=${encodeURIComponent(logementId)}`;
+    // Essayer avec logementId (camelCase) au lieu de logementid
+    const url = `${endpoint}?logementId=${encodeURIComponent(logementId)}`;
 
     console.log('\n' + '='.repeat(60));
     console.log('📥 CHARGEMENT DU LOGEMENT DEPUIS BUBBLE.IO');
@@ -217,7 +218,16 @@ export const loadLogementFromBubble = async (
     });
 
     if (!response.ok) {
-      throw new Error(`Erreur HTTP: ${response.status} ${response.statusText}`);
+      // Essayer de lire le corps de la réponse pour plus de détails
+      let errorDetails = '';
+      try {
+        const errorBody = await response.text();
+        errorDetails = errorBody;
+        console.error('📄 Corps de la réponse d\'erreur:', errorBody);
+      } catch (e) {
+        // Ignorer si on ne peut pas lire le corps
+      }
+      throw new Error(`Erreur HTTP: ${response.status} ${response.statusText}${errorDetails ? ` - ${errorDetails}` : ''}`);
     }
 
     const data = await response.json();

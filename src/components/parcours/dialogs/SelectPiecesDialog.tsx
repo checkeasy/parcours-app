@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus, ArrowLeft, X } from "lucide-react";
 import { PIECES_CHECK_EASY, ParcoursModele, TacheModele } from "@/types/modele";
@@ -114,7 +114,7 @@ export default function SelectPiecesDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={isFullScreenMode ? "w-screen h-screen max-w-none max-h-none m-0 rounded-none overflow-auto p-3 sm:p-4 md:p-6 gap-1 sm:gap-2" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
-        hideCloseButton={isFullScreenMode}
+        hideCloseButton
       >
         <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
           {onBack && (
@@ -137,11 +137,8 @@ export default function SelectPiecesDialog({
           </Button>
           <div className="pl-8 sm:pl-10 pr-8">
             <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
-              {t('logement.step', { current: 4, total: 5 })} - {t('piecesDialog.selectRooms')}
+              {t('piecesDialog.selectRooms', { logementNom })}
             </DialogTitle>
-            <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
-              {t('piecesDialog.indicateNumber')} <span className="font-semibold">{logementNom}</span>
-            </DialogDescription>
           </div>
         </DialogHeader>
 

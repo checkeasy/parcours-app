@@ -82,7 +82,8 @@ function App() {
       };
       loadLogement();
     }
-  }, []); // Exécuter une seule fois au démarrage
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Exécuter une seule fois au démarrage - toast est stable
 
   // Charger les modèles au démarrage de l'application
   useEffect(() => {
@@ -121,7 +122,8 @@ function App() {
     };
 
     loadModeles();
-  }, []); // Exécuter une seule fois au démarrage
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Exécuter une seule fois au démarrage - toast et t sont stables
 
   const handleComplete = (data: any) => {
     console.log("Logement créé:", data);
@@ -171,28 +173,12 @@ function App() {
       const webhookResult = await dispatchModeleWebhook(modele);
 
       if (webhookResult.success) {
-        toast({
-          title: isUpdate ? "Modèle mis à jour !" : "Modèle créé !",
-          description: isUpdate
-            ? `Le modèle "${modele.nom}" a été mis à jour avec succès et envoyé à Bubble.`
-            : `Le modèle "${modele.nom}" a été créé avec succès et envoyé à Bubble.`,
-        });
+        console.log('✅ Modèle webhook sent successfully');
       } else {
-        toast({
-          title: isUpdate ? "Modèle mis à jour localement" : "Modèle créé localement",
-          description: isUpdate
-            ? `Le modèle "${modele.nom}" a été mis à jour mais l'envoi à Bubble a échoué.`
-            : `Le modèle "${modele.nom}" a été créé mais l'envoi à Bubble a échoué.`,
-          variant: "destructive",
-        });
+        console.error('⚠️ Modèle webhook failed');
       }
     } catch (error) {
       console.error('❌ Error sending modele webhook:', error);
-      toast({
-        title: isUpdate ? "Modèle mis à jour localement" : "Modèle créé localement",
-        description: `Le modèle "${modele.nom}" a été ${isUpdate ? 'mis à jour' : 'créé'} mais l'envoi à Bubble a échoué.`,
-        variant: "destructive",
-      });
     }
 
     // Sauvegarder dans le localStorage

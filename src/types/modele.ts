@@ -9,6 +9,7 @@ export interface TacheModele {
   titre: string;
   description: string;
   photoObligatoire: boolean;
+  photoUrl?: string;
 }
 
 export interface QuestionModele {
