@@ -29,6 +29,7 @@ import { useGoogleMaps } from "@/hooks/useGoogleMaps";
 interface PieceQuantity {
   nom: string;
   quantite: number;
+  id?: string; // ID unique pour éviter la duplication des photos quand plusieurs pièces ont le même nom
 }
 
 interface AddLogementDialogProps {
@@ -218,14 +219,19 @@ export function AddLogementDialog({
 
   const handleAirbnbResultConfirm = async (pieces: any[]) => {
     // Convertir les pièces Airbnb en PieceQuantity et piecesPhotos
-    const convertedPieces: PieceQuantity[] = pieces.map((piece) => ({
+    // IMPORTANT: Ajouter un ID unique à chaque pièce pour éviter la duplication des photos
+    // quand plusieurs pièces ont le même nom (ex: "Chambre 1", "Chambre 2")
+    const timestamp = Date.now();
+    const convertedPieces: PieceQuantity[] = pieces.map((piece, index) => ({
       nom: piece.nom,
       quantite: piece.quantite,
+      id: `piece_${index}_${timestamp}_${Math.random().toString(36).substring(2, 9)}`, // ID unique pour chaque pièce
     }));
 
+    // Utiliser l'ID unique comme clé au lieu du nom pour éviter l'écrasement des photos
     const convertedPhotos: Record<string, string[]> = {};
-    pieces.forEach((piece) => {
-      convertedPhotos[piece.nom] = piece.photos;
+    convertedPieces.forEach((piece, index) => {
+      convertedPhotos[piece.id!] = pieces[index].photos;
     });
 
     setSelectedPieces(convertedPieces);

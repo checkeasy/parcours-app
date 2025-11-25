@@ -1,6 +1,7 @@
 export interface PieceQuantity {
   nom: string;
   quantite: number;
+  id?: string; // ID unique pour éviter la duplication des photos quand plusieurs pièces ont le même nom
 }
 
 export interface TacheModele {

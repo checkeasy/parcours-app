@@ -674,7 +674,25 @@ export async function sendWebhookToBubble(payload: WebhookPayload): Promise<void
 
           // Get tasks for this piece
           const tasks = getTasksForPiece(piece.nom, logementData.modele);
-          const photosRaw = logementData.piecesPhotos[piece.nom] || [];
+
+          // CORRECTION: Récupérer les photos en utilisant la bonne clé
+          // 3 cas possibles:
+          // 1. Flux Airbnb: piece.id existe et piecesPhotos[piece.id] contient les photos
+          // 2. Flux manuel avec quantité > 1: piecesPhotos["Nom_1"], piecesPhotos["Nom_2"], etc.
+          // 3. Flux manuel avec quantité = 1: piecesPhotos["Nom"]
+          let photosRaw: any[] = [];
+
+          if (piece.id) {
+            // Cas 1: Flux Airbnb avec ID unique
+            photosRaw = logementData.piecesPhotos[piece.id] || [];
+          } else if (piece.quantite > 1) {
+            // Cas 2: Flux manuel avec plusieurs instances
+            const manualKey = `${piece.nom}_${j + 1}`;
+            photosRaw = logementData.piecesPhotos[manualKey] || [];
+          } else {
+            // Cas 3: Flux manuel avec une seule instance
+            photosRaw = logementData.piecesPhotos[piece.nom] || [];
+          }
 
           // Transform photos into objects with type
           const photos = photosRaw.map((photo: string) => {
@@ -694,6 +712,7 @@ export async function sendWebhookToBubble(payload: WebhookPayload): Promise<void
           // Debug log to check modele type
           const modeleType = typeof logementData.modele === 'string' ? logementData.modele : 'custom';
           console.log(`      - Modèle: ${modeleType}`);
+          console.log(`      - Pièce ID: ${piece.id || 'N/A'}`);
           console.log(`      - Tâches: ${tasks.length}`);
           console.log(`      - Photos: ${photos.length}`);
 
