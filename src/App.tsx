@@ -75,10 +75,18 @@ function App() {
   // Charger le logement depuis l'URL si le paramètre logementid est présent
   useEffect(() => {
     const logementId = getLogementID();
+    console.log('\n' + '='.repeat(60));
+    console.log('🔍 VÉRIFICATION DU PARAMÈTRE logementid DANS L\'URL');
+    console.log('='.repeat(60));
+    console.log(`   URL actuelle: ${window.location.href}`);
+    console.log(`   Query string: ${window.location.search}`);
+    console.log(`   logementid extrait: ${logementId || 'NON TROUVÉ'}`);
+    console.log('='.repeat(60) + '\n');
+
     if (logementId) {
       const loadLogement = async () => {
         try {
-          console.log("🔍 Paramètre logementid détecté dans l'URL");
+          console.log("✅ Paramètre logementid détecté, chargement en cours...");
           const response = await loadLogementFromBubble(logementId, isTestMode());
 
           // Extraire les données du logement de la réponse

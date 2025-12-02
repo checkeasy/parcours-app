@@ -1,9 +1,12 @@
 /**
  * Script de test pour l'endpoint getlogement de Bubble.io
- * 
+ *
+ * Méthode: GET
+ * Query param: logementid
+ *
  * Usage:
  *   node test-getlogement.js <logementid> [test|production]
- * 
+ *
  * Exemples:
  *   node test-getlogement.js 1762768573904x510316102867504260
  *   node test-getlogement.js 1762768573904x510316102867504260 test
@@ -29,7 +32,7 @@ async function testGetLogement(logementId, mode = 'test') {
   console.log('='.repeat(80));
 
   try {
-    console.log('\n⏳ Envoi de la requête...\n');
+    console.log('\n⏳ Envoi de la requête GET...\n');
 
     const response = await fetch(url, {
       method: 'GET',

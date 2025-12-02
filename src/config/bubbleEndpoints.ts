@@ -36,7 +36,7 @@ export const BUBBLE_ENDPOINTS = {
    * Endpoint pour récupérer les informations d'un logement depuis Bubble.io
    *
    * Méthode: GET
-   * Paramètre: logementid (ID du logement)
+   * Query param: logementid (ID du logement)
    *
    * Exemple: GET /getlogement?logementid=1762768573904x510316102867504260
    */

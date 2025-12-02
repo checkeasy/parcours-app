@@ -251,8 +251,14 @@ export const loadLogementFromBubble = async (
   testMode: boolean = true
 ): Promise<any> => {
   try {
+    // Vérifier que logementId n'est pas vide
+    if (!logementId || logementId.trim() === '') {
+      throw new Error('logementId est requis et ne peut pas être vide');
+    }
+
     const endpoint = getBubbleEndpoint('getLogement', testMode);
-    // Utiliser logementid (lowercase) comme attendu par Bubble.io
+
+    // Bubble.io nécessite GET avec le paramètre en query string
     const url = `${endpoint}?logementid=${encodeURIComponent(logementId)}`;
 
     console.log('\n' + '='.repeat(60));
@@ -277,7 +283,13 @@ export const loadLogementFromBubble = async (
       try {
         const errorBody = await response.text();
         errorDetails = errorBody;
+        console.error('\n' + '='.repeat(60));
+        console.error('❌ ERREUR HTTP DE BUBBLE.IO');
+        console.error('='.repeat(60));
+        console.error(`   Status: ${response.status} ${response.statusText}`);
+        console.error(`   URL: ${url}`);
         console.error('📄 Corps de la réponse d\'erreur:', errorBody);
+        console.error('='.repeat(60) + '\n');
       } catch (e) {
         // Ignorer si on ne peut pas lire le corps
       }
