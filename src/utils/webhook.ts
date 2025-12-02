@@ -1,5 +1,6 @@
 import { ParcoursModele, PieceQuantity } from "@/types/modele";
 import { getBubbleEndpoint } from "@/config/bubbleEndpoints";
+import { convertBase64ToUrl, isBase64Image } from "./imageUpload";
 
 // Backend server URL - automatically detects environment
 const BACKEND_URL = import.meta.env.PROD
@@ -45,6 +46,14 @@ export const dispatchWebhook = async (logementData: {
     // Use existing logement ID or generate a new one
     const logementId = logementData.logementId || `logement_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
+    // Convert task photos from base64 to URLs if modele is a custom ParcoursModele
+    let processedModele = logementData.modele;
+    if (typeof logementData.modele !== 'string') {
+      console.log('🔄 Converting task photos in custom modele before creating logement...');
+      processedModele = await convertTaskPhotosToUrls(logementData.modele);
+      console.log('✅ Task photos converted successfully');
+    }
+
     // Get parameters from URL
     const testMode = isTestMode();
     const conciergerieID = getConciergerieID();
@@ -63,6 +72,7 @@ export const dispatchWebhook = async (logementData: {
       logementid: urlLogementId || null, // Add logementid from URL (null if not present)
       logementData: {
         ...logementData,
+        modele: processedModele, // Use the processed modele with converted photos
         logementId,
       },
     };
@@ -110,20 +120,64 @@ export const dispatchWebhook = async (logementData: {
   }
 };
 
+/**
+ * Convert all base64 images in task photos to URLs
+ */
+async function convertTaskPhotosToUrls(modeleData: ParcoursModele): Promise<ParcoursModele> {
+  console.log('🔄 Converting task photos from base64 to URLs...');
+
+  const updatedPieces = await Promise.all(
+    modeleData.pieces.map(async (piece) => {
+      const updatedTachesDisponibles = await Promise.all(
+        piece.tachesDisponibles.map(async (tache) => {
+          // Skip if no photo or already a URL
+          if (!tache.photoUrl || !isBase64Image(tache.photoUrl)) {
+            return tache;
+          }
+
+          console.log(`   Converting photo for task: ${tache.titre}`);
+          const result = await convertBase64ToUrl(tache.photoUrl);
+
+          if (result.success && result.imgUrl) {
+            console.log(`   ✅ Converted: ${tache.titre}`);
+            return { ...tache, photoUrl: result.imgUrl };
+          } else {
+            console.warn(`   ⚠️ Failed to convert photo for task: ${tache.titre}, keeping base64`);
+            return tache;
+          }
+        })
+      );
+
+      return {
+        ...piece,
+        tachesDisponibles: updatedTachesDisponibles,
+      };
+    })
+  );
+
+  return {
+    ...modeleData,
+    pieces: updatedPieces,
+  };
+}
+
 // Function to dispatch modele webhook via backend server
 export const dispatchModeleWebhook = async (modeleData: ParcoursModele) => {
   try {
+    // Convert all base64 task photos to URLs before sending
+    const modeleDataWithUrls = await convertTaskPhotosToUrls(modeleData);
+
     // Prepare payload for backend
     const payload = {
       conciergerieID: getConciergerieID(),
       userID: getUserID(),
       isTestMode: isTestMode(),
-      modeleData,
+      modeleData: modeleDataWithUrls,
     };
 
     console.log('📤 Sending modele webhook request to backend server...');
-    console.log('   Modele:', modeleData.nom);
-    console.log('   Type:', modeleData.type);
+    console.log('   Modele:', modeleDataWithUrls.nom);
+    console.log('   Type:', modeleDataWithUrls.type);
 
     // Send to backend server
     const response = await fetch(`${BACKEND_URL}/api/send-modele-webhook`, {
@@ -198,8 +252,8 @@ export const loadLogementFromBubble = async (
 ): Promise<any> => {
   try {
     const endpoint = getBubbleEndpoint('getLogement', testMode);
-    // Essayer avec logementId (camelCase) au lieu de logementid
-    const url = `${endpoint}?logementId=${encodeURIComponent(logementId)}`;
+    // Utiliser logementid (lowercase) comme attendu par Bubble.io
+    const url = `${endpoint}?logementid=${encodeURIComponent(logementId)}`;
 
     console.log('\n' + '='.repeat(60));
     console.log('📥 CHARGEMENT DU LOGEMENT DEPUIS BUBBLE.IO');

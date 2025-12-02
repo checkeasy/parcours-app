@@ -113,7 +113,7 @@ export function AddPhotosDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={isFullScreenMode ? "w-screen h-screen max-w-none max-h-none m-0 rounded-none overflow-auto p-3 sm:p-4 md:p-6 gap-1 sm:gap-2" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
+        className={isFullScreenMode ? "!absolute !inset-0 !w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !translate-x-0 !translate-y-0 !left-0 !top-0 overflow-auto px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 gap-1 sm:gap-2" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
         hideCloseButton={isFullScreenMode}
       >
         <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
@@ -180,30 +180,40 @@ export function AddPhotosDialog({
                     onChange={(e) => handleFileUpload(piece.key, e.target.files)}
                   />
 
-                  {photosForPiece.length > 0 && (
-                    <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2">
-                      {photosForPiece.map((photo, index) => (
-                        <div
-                          key={index}
-                          className="relative group aspect-square rounded-lg overflow-hidden border border-border bg-muted"
-                        >
-                          <img
-                            src={photo}
-                            alt={`${piece.displayName} ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                          <button
-                            onClick={() => handleRemovePhoto(piece.key, index)}
-                            className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                  {photosForPiece.length > 0 ? (
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2">
+                        {photosForPiece.map((photo, index) => (
+                          <div
+                            key={index}
+                            className="relative group aspect-square rounded-lg overflow-hidden border border-border bg-muted"
                           >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </div>
-                      ))}
+                            <img
+                              src={photo}
+                              alt={`${piece.displayName} ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                            <button
+                              onClick={() => handleRemovePhoto(piece.key, index)}
+                              className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                      {/* Bouton pour ajouter plus de photos */}
+                      <label
+                        htmlFor={`upload-${piece.key}`}
+                        className="flex items-center justify-center gap-2 p-2 sm:p-3 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary/50 hover:bg-accent/5 transition-colors"
+                      >
+                        <ImagePlus className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                        <p className="text-xs sm:text-sm text-muted-foreground">
+                          {t('photos.addMore')}
+                        </p>
+                      </label>
                     </div>
-                  )}
-
-                  {photosForPiece.length === 0 && (
+                  ) : (
                     <label
                       htmlFor={`upload-${piece.key}`}
                       className="flex flex-col items-center justify-center p-4 sm:p-6 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary/50 hover:bg-accent/5 transition-colors"

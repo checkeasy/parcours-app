@@ -112,6 +112,22 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Améliorer le comportement du scroll sur mobile */
+  html {
+    overflow-x: hidden;
+  }
+
+  /* En viewmode (iframe Bubble.io), utiliser 100% au lieu de 100vh */
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    overflow: hidden;
+  }
 }
 
 /* Masquer le dropdown par défaut de Google Maps */
@@ -133,4 +149,26 @@ All colors MUST be HSL.
 
 .animate-in {
   animation: slideDown 0.2s ease-out;
+}
+
+/* Prévenir les problèmes de layout lors du passage desktop/mobile */
+@media (max-width: 640px) {
+  /* Forcer le recalcul du layout sur mobile */
+  [data-radix-dialog-content] {
+    max-width: 100vw !important;
+    max-height: 100dvh !important;
+  }
+}
+
+/* Améliorer les transitions lors du redimensionnement */
+* {
+  transition-property: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
 }

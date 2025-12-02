@@ -25,6 +25,7 @@ import { AddressAutocomplete } from "@/components/ui/address-autocomplete";
 import { AddressAutocompleteV2 } from "@/components/ui/address-autocomplete-v2";
 import { CustomAddressAutocomplete } from "@/components/ui/custom-address-autocomplete";
 import { useGoogleMaps } from "@/hooks/useGoogleMaps";
+import { useToast } from "@/hooks/use-toast";
 
 interface PieceQuantity {
   nom: string;
@@ -250,9 +251,33 @@ export function AddLogementDialog({
     onComplete(logementData);
 
     // Dispatch webhook after successful completion
-    await dispatchWebhook(logementData);
+    try {
+      const result = await dispatchWebhook(logementData);
 
-    handleClose();
+      if (!result.success) {
+        toast({
+          title: "❌ Erreur lors de l'envoi",
+          description: "Impossible de créer le logement. Veuillez réessayer.",
+          variant: "destructive",
+        });
+        return; // Ne pas fermer le dialog en cas d'erreur
+      }
+
+      // Succès - fermer le dialog
+      toast({
+        title: "✅ Logement créé",
+        description: `Le logement "${nom}" a été créé avec succès.`,
+      });
+      handleClose();
+    } catch (error) {
+      console.error("Erreur lors de l'envoi du webhook:", error);
+      toast({
+        title: "❌ Erreur lors de l'envoi",
+        description: "Une erreur s'est produite. Veuillez réessayer.",
+        variant: "destructive",
+      });
+      // Ne pas fermer le dialog en cas d'erreur
+    }
   };
 
   const handleSavePieces = (pieces: PieceQuantity[]) => {
@@ -273,9 +298,33 @@ export function AddLogementDialog({
     onComplete(logementData);
 
     // Dispatch webhook after successful completion
-    await dispatchWebhook(logementData);
+    try {
+      const result = await dispatchWebhook(logementData);
 
-    handleClose();
+      if (!result.success) {
+        toast({
+          title: "❌ Erreur lors de l'envoi",
+          description: "Impossible de créer le logement. Veuillez réessayer.",
+          variant: "destructive",
+        });
+        return; // Ne pas fermer le dialog en cas d'erreur
+      }
+
+      // Succès - fermer le dialog
+      toast({
+        title: "✅ Logement créé",
+        description: `Le logement "${nom}" a été créé avec succès.`,
+      });
+      handleClose();
+    } catch (error) {
+      console.error("Erreur lors de l'envoi du webhook:", error);
+      toast({
+        title: "❌ Erreur lors de l'envoi",
+        description: "Une erreur s'est produite. Veuillez réessayer.",
+        variant: "destructive",
+      });
+      // Ne pas fermer le dialog en cas d'erreur
+    }
   };
 
   return (
@@ -286,7 +335,7 @@ export function AddLogementDialog({
         }
       }}>
         <DialogContent
-          className={isFullScreenMode ? "w-screen h-screen max-w-none max-h-none m-0 rounded-none p-3 sm:p-4 md:p-6 gap-1 sm:gap-2" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
+          className={isFullScreenMode ? "!absolute !inset-0 !w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !translate-x-0 !translate-y-0 !left-0 !top-0 px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 gap-1 sm:gap-2" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
           hideCloseButton={isFullScreenMode}
         >
           {/* DialogHeader commun pour toutes les étapes (pour accessibilité) */}
@@ -319,7 +368,7 @@ export function AddLogementDialog({
           {step === 1 && !hasExistingLogement && (
             <>
 
-              <div className={isFullScreenMode ? "space-y-2 sm:space-y-3 overflow-y-auto max-h-[calc(100vh-180px)] sm:max-h-[calc(100vh-200px)] px-1" : "space-y-3 sm:space-y-4 overflow-y-auto max-h-[55vh] sm:max-h-[50vh] px-1"}>
+              <div className={isFullScreenMode ? "space-y-2 sm:space-y-3 overflow-y-auto max-h-[calc(100vh-240px)] sm:max-h-[calc(100vh-260px)] px-1 pb-4" : "space-y-3 sm:space-y-4 overflow-y-auto max-h-[calc(90vh-280px)] sm:max-h-[calc(85vh-250px)] px-1 pb-4"}>
                 <div className="space-y-2">
                   <Label htmlFor="nom">
                     {t('logement.name')} <span className="text-destructive">*</span>
@@ -377,7 +426,7 @@ export function AddLogementDialog({
                 </div>
               </div>
 
-              <div className="flex justify-end pt-3 sm:pt-4 border-t">
+              <div className="sticky bottom-0 left-0 right-0 flex justify-end pt-3 sm:pt-4 border-t bg-background z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 pb-2 sm:pb-0">
                 <Button
                   onClick={handleStep1Next}
                   disabled={!nom.trim()}

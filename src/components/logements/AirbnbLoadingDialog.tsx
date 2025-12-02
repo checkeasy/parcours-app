@@ -236,7 +236,7 @@ export function AirbnbLoadingDialog({
   return (
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent
-        className={isFullScreenMode ? "w-screen h-screen max-w-none max-h-none m-0 rounded-none overflow-auto" : "max-w-md mx-4 overflow-hidden"}
+        className={isFullScreenMode ? "!absolute !inset-0 !w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !translate-x-0 !translate-y-0 !left-0 !top-0 overflow-auto px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 gap-1 sm:gap-2" : "max-w-md mx-4 overflow-hidden"}
         hideCloseButton={isFullScreenMode}
       >
         <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>

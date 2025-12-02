@@ -11,7 +11,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { X, Upload } from "lucide-react";
+import { X, Upload, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { convertBase64ToUrl, isBase64Image } from "@/utils/imageUpload";
 
 interface Tache {
   id: string;
@@ -44,7 +46,9 @@ export function TacheDialog({
     photoObligatoire: false
   });
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (tache) {
@@ -70,13 +74,46 @@ export function TacheDialog({
     fileInputRef.current?.click();
   };
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setIsUploadingPhoto(true);
+
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result as string);
+      reader.onloadend = async () => {
+        const base64Image = reader.result as string;
+
+        // Convert base64 to URL via Bubble.io API
+        const result = await convertBase64ToUrl(base64Image);
+
+        if (result.success && result.imgUrl) {
+          setPhotoPreview(result.imgUrl);
+          toast({
+            title: "✅ Photo uploadée",
+            description: "La photo de référence a été uploadée avec succès.",
+          });
+        } else {
+          // Fallback to base64 if upload fails
+          setPhotoPreview(base64Image);
+          toast({
+            title: "⚠️ Upload partiel",
+            description: "La photo est enregistrée localement. Elle sera uploadée lors de la sauvegarde du modèle.",
+            variant: "destructive",
+          });
+        }
+
+        setIsUploadingPhoto(false);
       };
+
+      reader.onerror = () => {
+        toast({
+          title: "❌ Erreur",
+          description: "Impossible de lire le fichier image.",
+          variant: "destructive",
+        });
+        setIsUploadingPhoto(false);
+      };
+
       reader.readAsDataURL(file);
     }
   };
@@ -171,6 +208,13 @@ export function TacheDialog({
                       <X className="h-3 w-3" />
                     </Button>
                   </>
+                ) : isUploadingPhoto ? (
+                  <div className="text-center p-2">
+                    <Loader2 className="mx-auto h-6 w-6 text-muted-foreground/50 animate-spin" />
+                    <p className="mt-1 text-[10px] text-muted-foreground">
+                      Upload en cours...
+                    </p>
+                  </div>
                 ) : (
                   <div className="text-center p-2">
                     <Upload className="mx-auto h-6 w-6 text-muted-foreground/50" />
@@ -211,8 +255,19 @@ export function TacheDialog({
         </div>
 
         <div className="flex justify-end border-t pt-4">
-          <Button onClick={handleSave} className="px-8">
-            {tache ? "Enregistrer" : "Ajouter To Do"}
+          <Button
+            onClick={handleSave}
+            className="px-8"
+            disabled={isUploadingPhoto}
+          >
+            {isUploadingPhoto ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Upload en cours...
+              </>
+            ) : (
+              tache ? "Enregistrer" : "Ajouter To Do"
+            )}
           </Button>
         </div>
       </DialogContent>

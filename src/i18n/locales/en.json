@@ -44,7 +44,8 @@
     "added": "added",
     "added_plural": "added",
     "add": "Add",
-    "clickToAdd": "Click to add photos"
+    "clickToAdd": "Click to add photos",
+    "addMore": "Add more photos"
   },
   "airbnb": {
     "analyzing": "Analyzing...",

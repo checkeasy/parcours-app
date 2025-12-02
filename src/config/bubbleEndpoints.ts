@@ -44,6 +44,20 @@ export const BUBBLE_ENDPOINTS = {
     test: 'https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/getlogement',
     production: 'https://checkeasy-57905.bubbleapps.io/version-live/api/1.1/wf/getlogement',
   },
+
+  /**
+   * Endpoint pour convertir une image base64 en URL permanente
+   *
+   * Méthode: POST
+   * Body: { base64: string }
+   * Response: { imgUrl: string }
+   *
+   * Exemple: POST /createfileap avec body { "base64": "iVBORw0KG..." }
+   */
+  createFile: {
+    test: 'https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/createfileap',
+    production: 'https://checkeasy-57905.bubbleapps.io/version-live/api/1.1/wf/createfileap',
+  },
 };
 
 /**

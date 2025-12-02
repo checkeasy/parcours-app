@@ -30,18 +30,47 @@ function App() {
 
   // Détecter le mode plein écran depuis l'URL
   const [isFullScreenMode, setIsFullScreenMode] = useState(false);
+  const [viewModeFromURL, setViewModeFromURL] = useState(false);
 
   // Stocker les données du logement chargé depuis l'URL
   const [initialLogementData, setInitialLogementData] = useState<any>(null);
 
+  // Détecter le viewmode depuis l'URL au chargement
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const viewMode = params.get('viewmode');
     if (viewMode === 'full') {
+      setViewModeFromURL(true);
       setIsFullScreenMode(true);
       setDialogOpen(true); // Ouvrir automatiquement la modal
     }
   }, []);
+
+  // Détecter les changements de taille d'écran pour adapter le mode fullscreen
+  useEffect(() => {
+    // Ne s'applique que si viewmode=full est dans l'URL
+    if (!viewModeFromURL) return;
+
+    const handleResize = () => {
+      // Détecter si on est en mode mobile/responsive (< 640px = breakpoint sm de Tailwind)
+      const isMobile = window.innerWidth < 640;
+
+      // En mode viewmode=full, on reste toujours en fullscreen
+      // mais on peut ajuster certains comportements si nécessaire
+      setIsFullScreenMode(true);
+
+      console.log(`📱 Resize détecté: ${window.innerWidth}px (${isMobile ? 'Mobile' : 'Desktop'})`);
+    };
+
+    // Écouter les changements de taille
+    window.addEventListener('resize', handleResize);
+
+    // Appeler une fois au montage
+    handleResize();
+
+    // Nettoyer l'écouteur
+    return () => window.removeEventListener('resize', handleResize);
+  }, [viewModeFromURL]);
 
   // Charger le logement depuis l'URL si le paramètre logementid est présent
   useEffect(() => {
@@ -295,7 +324,7 @@ function App() {
   };
 
   return (
-    <div className={isFullScreenMode ? "min-h-screen bg-gradient-to-br from-slate-50 to-slate-100" : "min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 sm:p-6 md:p-8"}>
+    <div className={isFullScreenMode ? "relative h-full w-full overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100" : "min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 sm:p-6 md:p-8"}>
       {!isFullScreenMode && (
         <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6 md:space-y-8">
           <div className="text-center space-y-2 sm:space-y-4">
@@ -408,7 +437,8 @@ function App() {
         isFullScreenMode={isFullScreenMode}
       />
 
-      <Toaster />
+      {/* Ne pas afficher les toasts en mode viewmode=full */}
+      {!viewModeFromURL && <Toaster />}
     </div>
   );
 }

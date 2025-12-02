@@ -757,6 +757,13 @@ export function CustomModeleBuilder({
   // Determine the active parcours type: use initialParcoursType if defined (from parent), otherwise use modeleType
   const activeParcoursType = initialParcoursType || modeleType;
 
+  // Wrapper pour les toasts : ne rien afficher en mode fullscreen (viewmode)
+  const showToast = (options: Parameters<typeof toast>[0]) => {
+    if (!isFullScreenMode) {
+      toast(options);
+    }
+  };
+
   // Questions checklist state
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
   const [customQuestions, setCustomQuestions] = useState<QuestionModele[]>([]);
@@ -860,7 +867,7 @@ export function CustomModeleBuilder({
 
   const handleAddCustomPiece = () => {
     if (!newPieceName.trim()) {
-      toast({
+      showToast({
         title: t('customModeleBuilder.errorTitle'),
         description: t('customModeleBuilder.roomNameRequired'),
         variant: "destructive",
@@ -871,7 +878,7 @@ export function CustomModeleBuilder({
     // Vérifier si la pièce existe déjà
     const allPieces = getAllPieces();
     if (allPieces.includes(newPieceName.trim())) {
-      toast({
+      showToast({
         title: t('customModeleBuilder.errorTitle'),
         description: t('customModeleBuilder.roomAlreadyExists'),
         variant: "destructive",
@@ -886,7 +893,7 @@ export function CustomModeleBuilder({
     newSelectedPieces.set(newPieceName.trim(), []);
     setSelectedPieces(newSelectedPieces);
 
-    toast({
+    showToast({
       title: t('customModeleBuilder.roomAdded'),
       description: t('customModeleBuilder.roomAddedDesc', { roomName: newPieceName.trim() }),
     });
@@ -956,7 +963,7 @@ export function CustomModeleBuilder({
     setNewTask({ emoji: "", titre: "", description: "", photoObligatoire: false });
     setNewTaskDialogOpen(false);
 
-    toast({
+    showToast({
       title: t('customModeleBuilder.taskCreated'),
       description: t('customModeleBuilder.taskCreatedDesc', { taskTitle: task.titre, roomName: currentPiece }),
     });
@@ -974,7 +981,7 @@ export function CustomModeleBuilder({
     newSelectedPieces.set(piece, selectedTasks.filter(t => t !== taskId));
     setSelectedPieces(newSelectedPieces);
 
-    toast({
+    showToast({
       title: t('customModeleBuilder.taskDeleted'),
       description: t('customModeleBuilder.taskDeletedDesc'),
     });
@@ -1016,18 +1023,64 @@ export function CustomModeleBuilder({
       newCustomTasks.set(piece, pieceTasks);
       setCustomTasks(newCustomTasks);
     } else {
-      // It's a default task - store the edited version - KEEP ORIGINAL ID
-      const newEditedTasks = new Map(editedDefaultTasks);
-      const pieceEdited = newEditedTasks.get(piece) || new Map();
-      pieceEdited.set(originalTask.id, { ...updatedTask, id: originalTask.id });
-      newEditedTasks.set(piece, pieceEdited);
-      setEditedDefaultTasks(newEditedTasks);
+      // It's a default task being edited
+      // Check if we're adding a photo or making significant changes
+      const hasPhotoChange = updatedTask.photoUrl !== originalTask.photoUrl;
+      const hasContentChange =
+        updatedTask.titre !== originalTask.titre ||
+        updatedTask.description !== originalTask.description ||
+        updatedTask.emoji !== originalTask.emoji ||
+        updatedTask.photoObligatoire !== originalTask.photoObligatoire;
+
+      if (hasPhotoChange || hasContentChange) {
+        // Create a NEW custom task with a unique ID to avoid sharing between models
+        const newTaskId = `custom-edited-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+        const newTask: TacheModele = {
+          ...updatedTask,
+          id: newTaskId,
+        };
+
+        // Add to custom tasks
+        const newCustomTasks = new Map(customTasks);
+        const existingPieceTasks = newCustomTasks.get(piece) || [];
+        newCustomTasks.set(piece, [...existingPieceTasks, newTask]);
+        setCustomTasks(newCustomTasks);
+
+        // Update selection: replace old task ID with new task ID
+        const newSelectedPieces = new Map(selectedPieces);
+        const selectedTasks = newSelectedPieces.get(piece) || [];
+        const updatedSelection = selectedTasks.map(taskId =>
+          taskId === originalTask.id ? newTaskId : taskId
+        );
+        newSelectedPieces.set(piece, updatedSelection);
+        setSelectedPieces(newSelectedPieces);
+
+        // Remove from edited default tasks if it was there
+        const newEditedTasks = new Map(editedDefaultTasks);
+        const pieceEdited = newEditedTasks.get(piece);
+        if (pieceEdited) {
+          pieceEdited.delete(originalTask.id);
+          if (pieceEdited.size === 0) {
+            newEditedTasks.delete(piece);
+          } else {
+            newEditedTasks.set(piece, pieceEdited);
+          }
+          setEditedDefaultTasks(newEditedTasks);
+        }
+      } else {
+        // No significant changes, just update in place
+        const newEditedTasks = new Map(editedDefaultTasks);
+        const pieceEdited = newEditedTasks.get(piece) || new Map();
+        pieceEdited.set(originalTask.id, { ...updatedTask, id: originalTask.id });
+        newEditedTasks.set(piece, pieceEdited);
+        setEditedDefaultTasks(newEditedTasks);
+      }
     }
 
     setEditTaskDialogOpen(false);
     setEditingTask(null);
 
-    toast({
+    showToast({
       title: t('customModeleBuilder.taskModified'),
       description: t('customModeleBuilder.taskModifiedDesc', { taskTitle: updatedTask.titre }),
     });
@@ -1056,7 +1109,7 @@ export function CustomModeleBuilder({
 
   const handleSupprimerQuestion = (questionId: string) => {
     setCustomQuestions(customQuestions.filter(q => q.id !== questionId));
-    toast({
+    showToast({
       title: t('customModeleBuilder.questionDeleted'),
       description: t('customModeleBuilder.questionDeletedDesc'),
     });
@@ -1069,7 +1122,7 @@ export function CustomModeleBuilder({
       intitule: `${question.intitule} (copie)`
     };
     setCustomQuestions([...customQuestions, newQuestion]);
-    toast({
+    showToast({
       title: t('customModeleBuilder.questionDuplicated'),
       description: t('customModeleBuilder.questionDuplicatedDesc'),
     });
@@ -1106,7 +1159,7 @@ export function CustomModeleBuilder({
 
   const handleSave = () => {
     if (!modeleName.trim()) {
-      toast({
+      showToast({
         title: t('customModeleBuilder.nameRequired'),
         description: t('customModeleBuilder.nameRequiredDesc'),
         variant: "destructive",
@@ -1136,7 +1189,7 @@ export function CustomModeleBuilder({
     onSave(modele);
     onOpenChange(false);
 
-    toast({
+    showToast({
       title: editingModele ? t('customModeleBuilder.modelModified') : t('customModeleBuilder.modelCreated'),
       description: editingModele
         ? t('customModeleBuilder.modelModifiedDesc', { modelName: modeleName })
@@ -1152,7 +1205,7 @@ export function CustomModeleBuilder({
 
   const handleNextStep = () => {
     if (currentStep === 1 && !modeleName.trim()) {
-      toast({
+      showToast({
         title: t('customModeleBuilder.nameRequired'),
         description: t('customModeleBuilder.nameRequiredDesc'),
         variant: "destructive",
@@ -1420,6 +1473,18 @@ export function CustomModeleBuilder({
                                 <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                                   {tache.description}
                                 </p>
+                                {tache.photoUrl && (
+                                  <div className="mt-2">
+                                    <img
+                                      src={tache.photoUrl}
+                                      alt={`Photo de référence - ${tache.titre}`}
+                                      className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md border border-border"
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                      📷 Photo de référence
+                                    </p>
+                                  </div>
+                                )}
                               </Label>
                               <div className="flex gap-1 shrink-0">
                                 <Button
