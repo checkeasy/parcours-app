@@ -491,8 +491,7 @@ export function AddLogementDialog({
                   {airbnbLink.trim() && (
                     <Button
                       onClick={() => setStep(1.5 as any)}
-                      variant="outline"
-                      className="w-full"
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
                     >
                       🔍 Analyser le lien Airbnb
                     </Button>
@@ -504,6 +503,7 @@ export function AddLogementDialog({
                 <Button
                   onClick={handleStep1Next}
                   disabled={!nom.trim()}
+                  variant="outline"
                   className="w-full sm:w-auto"
                 >
                   {t('logement.next')}
