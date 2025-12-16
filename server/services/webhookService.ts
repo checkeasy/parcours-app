@@ -683,23 +683,23 @@ export async function sendWebhookToBubble(payload: WebhookPayload): Promise<void
           const tasks = getTasksForPiece(piece.nom, logementData.modele);
 
           // CORRECTION: Récupérer les photos en utilisant la bonne clé
-          // 3 cas possibles:
-          // 1. Flux Airbnb: piece.id existe et piecesPhotos[piece.id] contient les photos
-          // 2. Flux manuel avec quantité > 1: piecesPhotos["Nom_1"], piecesPhotos["Nom_2"], etc.
-          // 3. Flux manuel avec quantité = 1: piecesPhotos["Nom"]
+          // Priorité des clés à essayer:
+          // 1. Si quantité > 1: piecesPhotos["Nom_1"], piecesPhotos["Nom_2"], etc.
+          // 2. Si piece.id existe: piecesPhotos[piece.id]
+          // 3. Sinon: piecesPhotos["Nom"]
           let photosRaw: any[] = [];
           let usedKey = '';
 
-          if (piece.id) {
-            // Cas 1: Flux Airbnb avec ID unique
-            usedKey = piece.id;
-            photosRaw = logementData.piecesPhotos[piece.id] || [];
-          } else if (piece.quantite > 1) {
-            // Cas 2: Flux manuel avec plusieurs instances
+          if (piece.quantite > 1) {
+            // Cas 1: Plusieurs instances - utiliser Nom_N
             usedKey = `${piece.nom}_${j + 1}`;
             photosRaw = logementData.piecesPhotos[usedKey] || [];
+          } else if (piece.id && logementData.piecesPhotos[piece.id]) {
+            // Cas 2: ID unique et photos trouvées avec cet ID
+            usedKey = piece.id;
+            photosRaw = logementData.piecesPhotos[piece.id] || [];
           } else {
-            // Cas 3: Flux manuel avec une seule instance
+            // Cas 3: Utiliser le nom de la pièce
             usedKey = piece.nom;
             photosRaw = logementData.piecesPhotos[piece.nom] || [];
           }
@@ -736,6 +736,21 @@ export async function sendWebhookToBubble(payload: WebhookPayload): Promise<void
             tasks: tasks,
             photos: photos,
           };
+
+          // DEBUG: Afficher le payload complet envoyé à createPiece
+          console.log(`\n      📤 PAYLOAD createPiece pour "${instanceLabel}":`);
+          console.log(`         logementID: ${piecePayload.logementID}`);
+          console.log(`         parcourID: ${piecePayload.parcourID}`);
+          console.log(`         nom: ${piecePayload.nom}`);
+          console.log(`         tasks: ${piecePayload.tasks.length} tâches`);
+          console.log(`         photos: ${piecePayload.photos.length} photos`);
+          piecePayload.photos.forEach((photo: any, idx: number) => {
+            if (photo.type === 'base64') {
+              console.log(`           [${idx}] type: base64, data: ${photo.data?.substring(0, 50)}...`);
+            } else {
+              console.log(`           [${idx}] type: url, url: ${photo.url}`);
+            }
+          });
 
           const pieceResponse = await fetch(createPieceEndpoint, {
             method: 'POST',

@@ -13,6 +13,7 @@ import { Card } from "@/components/ui/card";
 interface PieceQuantity {
   nom: string;
   quantite: number;
+  id?: string; // ID unique pour éviter la duplication des photos
 }
 
 interface AddPhotosDialogProps {
@@ -59,13 +60,17 @@ export function AddPhotosDialog({
 
   // Créer une liste de pièces individuelles basée sur les quantités
   // Par exemple: si "Chambre" a quantite=2, on crée ["Chambre 1", "Chambre 2"]
+  // IMPORTANT: Utiliser piece.id comme clé si disponible (pour matcher avec le backend)
   const individualPieces = pieces.flatMap((piece) => {
     if (piece.quantite === 1) {
-      return [{ nom: piece.nom, displayName: piece.nom, key: piece.nom }];
+      // Utiliser piece.id si disponible, sinon piece.nom
+      const key = piece.id || piece.nom;
+      return [{ nom: piece.nom, displayName: piece.nom, key }];
     }
     return Array.from({ length: piece.quantite }, (_, index) => ({
       nom: piece.nom,
       displayName: `${piece.nom} ${index + 1}`,
+      // Pour les pièces multiples, on utilise le nom_N car le backend attend ça
       key: `${piece.nom}_${index + 1}`,
     }));
   });
@@ -78,11 +83,12 @@ export function AddPhotosDialog({
 
       // Pour chaque pièce avec quantité
       pieces.forEach((piece) => {
-        const photosForThisPiece = initialPhotos[piece.nom] || [];
+        const photosForThisPiece = initialPhotos[piece.nom] || initialPhotos[piece.id || ''] || [];
 
         if (piece.quantite === 1) {
-          // Une seule pièce : toutes les photos vont à cette pièce
-          distributedPhotos[piece.nom] = photosForThisPiece;
+          // Une seule pièce : utiliser piece.id si disponible, sinon piece.nom
+          const key = piece.id || piece.nom;
+          distributedPhotos[key] = photosForThisPiece;
         } else {
           // Plusieurs pièces : distribuer les photos équitablement
           const photosPerRoom = Math.ceil(photosForThisPiece.length / piece.quantite);
@@ -96,10 +102,10 @@ export function AddPhotosDialog({
         }
       });
 
-      console.log("📷 Distribution des photos Airbnb:", {
+      console.log("📷 Distribution des photos:", {
         initialPhotos,
         distributedPhotos,
-        pieces: pieces.map(p => ({ nom: p.nom, quantite: p.quantite }))
+        pieces: pieces.map(p => ({ nom: p.nom, quantite: p.quantite, id: p.id }))
       });
 
       setPiecesPhotos(distributedPhotos);
