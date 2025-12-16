@@ -11,7 +11,7 @@
     "nameRequired": "مطلوب",
     "namePlaceholder": "مثال: شقة وسط باريس",
     "address": "العنوان البريدي (اختياري)",
-    "addressPlaceholder": "مثال: 15 Rue de la Paix, 75002 Paris",
+    "addressPlaceholder": "مثال: شارع الملك فهد، الرياض 12271",
     "airbnbLink": "رابط Airbnb (اختياري)",
     "airbnbLinkDescription": "سنستخدم هذا الرابط لاستخراج الغرف والصور تلقائيًا من إعلانك",
     "airbnbLinkPlaceholder": "https://www.airbnb.com/rooms/...",

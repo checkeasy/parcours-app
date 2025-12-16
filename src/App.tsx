@@ -129,12 +129,14 @@ function App() {
       try {
         console.log("🚀 Chargement des modèles au démarrage de l'application...");
 
-        // Charger les modèles locaux
-        const localModeles = loadModelesFromLocalStorage();
+        const conciergerieID = getConciergerieID();
+
+        // Charger les modèles locaux pour cette conciergerie
+        const localModeles = loadModelesFromLocalStorage(conciergerieID);
 
         // Charger et fusionner avec les modèles Bubble
         const mergedModeles = await loadAndMergeModeles(
-          getConciergerieID(),
+          conciergerieID,
           localModeles,
           isTestMode()
         );
@@ -143,7 +145,7 @@ function App() {
         setCustomModeles(mergedModeles);
 
         // Sauvegarder dans le localStorage
-        saveModelesToLocalStorage(mergedModeles);
+        saveModelesToLocalStorage(mergedModeles, conciergerieID);
 
         console.log("✅ Modèles chargés avec succès");
       } catch (error) {
@@ -219,7 +221,7 @@ function App() {
     }
 
     // Sauvegarder dans le localStorage
-    saveModelesToLocalStorage(updatedModeles);
+    saveModelesToLocalStorage(updatedModeles, getConciergerieID());
 
     setCustomModeleBuilderOpen(false);
     setEditingModele(undefined);
@@ -233,10 +235,11 @@ function App() {
     try {
       console.log("🔄 Rechargement manuel des modèles...");
 
-      const bubbleModeles = await loadModelesFromBubble(getConciergerieID(), isTestMode());
+      const conciergerieID = getConciergerieID();
+      const bubbleModeles = await loadModelesFromBubble(conciergerieID, isTestMode());
 
       setCustomModeles(bubbleModeles);
-      saveModelesToLocalStorage(bubbleModeles);
+      saveModelesToLocalStorage(bubbleModeles, conciergerieID);
 
       toast({
         title: "Modèles rechargés !",
@@ -262,7 +265,7 @@ function App() {
     setCustomModeles(updatedModeles);
 
     // Save to localStorage
-    saveModelesToLocalStorage(updatedModeles);
+    saveModelesToLocalStorage(updatedModeles, getConciergerieID());
 
     // Show success toast
     toast({

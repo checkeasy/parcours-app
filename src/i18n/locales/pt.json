@@ -11,7 +11,7 @@
     "nameRequired": "Obrigatório",
     "namePlaceholder": "Ex: Apartamento Centro de Paris",
     "address": "Endereço postal (opcional)",
-    "addressPlaceholder": "Ex: 15 Rue de la Paix, 75002 Paris",
+    "addressPlaceholder": "Ex: Avenida Paulista 1578, São Paulo, SP 01310-200",
     "airbnbLink": "Link do Airbnb (opcional)",
     "airbnbLinkDescription": "Usaremos este link para extrair automaticamente os quartos e fotos do seu anúncio",
     "airbnbLinkPlaceholder": "https://www.airbnb.com.br/rooms/...",

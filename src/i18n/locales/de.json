@@ -11,7 +11,7 @@
     "nameRequired": "Erforderlich",
     "namePlaceholder": "Z.B.: Apartment Paris Zentrum",
     "address": "Postanschrift (optional)",
-    "addressPlaceholder": "Z.B.: 15 Rue de la Paix, 75002 Paris",
+    "addressPlaceholder": "Z.B.: Unter den Linden 77, 10117 Berlin",
     "airbnbLink": "Airbnb-Link (optional)",
     "airbnbLinkDescription": "Wir verwenden diesen Link, um automatisch die Zimmer und Fotos aus Ihrer Anzeige zu extrahieren",
     "airbnbLinkPlaceholder": "https://www.airbnb.de/rooms/...",

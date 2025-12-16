@@ -64,7 +64,7 @@ export const CustomAddressAutocomplete = React.forwardRef<HTMLInputElement, Cust
         {
           input,
           types: ["address"],
-          componentRestrictions: { country: ["fr", "be", "ch", "lu", "mc"] },
+          // No country restrictions - support worldwide addresses
         },
         (predictions, status) => {
           setIsLoading(false);

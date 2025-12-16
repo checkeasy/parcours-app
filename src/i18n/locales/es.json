@@ -11,7 +11,7 @@
     "nameRequired": "Obligatorio",
     "namePlaceholder": "Ej: Apartamento Centro París",
     "address": "Dirección postal (opcional)",
-    "addressPlaceholder": "Ej: 15 Rue de la Paix, 75002 París",
+    "addressPlaceholder": "Ej: Calle Gran Vía 28, 28013 Madrid",
     "airbnbLink": "Enlace de Airbnb (opcional)",
     "airbnbLinkDescription": "Usaremos este enlace para extraer automáticamente las habitaciones y fotos de su anuncio",
     "airbnbLinkPlaceholder": "https://www.airbnb.es/rooms/...",

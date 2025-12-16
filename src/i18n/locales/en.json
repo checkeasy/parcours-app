@@ -11,7 +11,7 @@
     "nameRequired": "Required",
     "namePlaceholder": "E.g.: Paris Center Apartment",
     "address": "Postal address (optional)",
-    "addressPlaceholder": "E.g.: 15 Rue de la Paix, 75002 Paris",
+    "addressPlaceholder": "E.g.: 123 Main Street, New York, NY 10001",
     "airbnbLink": "Airbnb link (optional)",
     "airbnbLinkDescription": "We will use this link to automatically extract the rooms and photos from your listing",
     "airbnbLinkPlaceholder": "https://www.airbnb.com/rooms/...",

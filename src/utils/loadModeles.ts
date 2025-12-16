@@ -91,6 +91,14 @@ export const loadModelesFromBubble = async (
 
         const parsed: ParsedBodyRawText = JSON.parse(bodyRawText);
 
+        // 🔒 SÉCURITÉ: Vérifier que le modèle appartient bien à la conciergerie demandée
+        if (parsed.conciergerieID !== conciergerieID) {
+          console.warn(`   ⚠️ Modèle "${item.nom}" ignoré (appartient à une autre conciergerie)`);
+          console.warn(`      - Conciergerie du modèle: ${parsed.conciergerieID}`);
+          console.warn(`      - Conciergerie demandée: ${conciergerieID}`);
+          continue;
+        }
+
         // Extraire le modèle
         const modele = parsed.modele;
 
@@ -180,33 +188,85 @@ export const loadAndMergeModeles = async (
 };
 
 /**
- * Sauvegarde les modèles dans le localStorage
- * 
+ * Sauvegarde les modèles dans le localStorage avec leur conciergerieID
+ *
  * @param modeles - Tableau des modèles à sauvegarder
+ * @param conciergerieID - ID de la conciergerie
  */
-export const saveModelesToLocalStorage = (modeles: ParcoursModele[]): void => {
+export const saveModelesToLocalStorage = (modeles: ParcoursModele[], conciergerieID: string): void => {
   try {
-    localStorage.setItem('custom-modeles', JSON.stringify(modeles));
-    console.log(`💾 ${modeles.length} modèle(s) sauvegardé(s) dans le localStorage`);
+    // Charger tous les modèles existants
+    const allStoredModeles = getAllModelesFromLocalStorage();
+
+    // Filtrer pour retirer les modèles de cette conciergerie
+    const otherConciergeriesModeles = allStoredModeles.filter(
+      (item) => item.conciergerieID !== conciergerieID
+    );
+
+    // Ajouter les nouveaux modèles avec leur conciergerieID
+    const modelesWithConciergerieID = modeles.map(modele => ({
+      conciergerieID,
+      modele
+    }));
+
+    // Fusionner et sauvegarder
+    const updatedStorage = [...otherConciergeriesModeles, ...modelesWithConciergerieID];
+    localStorage.setItem('custom-modeles', JSON.stringify(updatedStorage));
+
+    console.log(`💾 ${modeles.length} modèle(s) sauvegardé(s) pour la conciergerie ${conciergerieID}`);
   } catch (error) {
     console.error('❌ Erreur lors de la sauvegarde des modèles:', error);
   }
 };
 
 /**
- * Charge les modèles depuis le localStorage
- * 
- * @returns ParcoursModele[] - Tableau des modèles chargés
+ * Charge tous les modèles depuis le localStorage (toutes conciergeries)
+ *
+ * @returns Array<{conciergerieID: string, modele: ParcoursModele}>
  */
-export const loadModelesFromLocalStorage = (): ParcoursModele[] => {
+const getAllModelesFromLocalStorage = (): Array<{conciergerieID: string, modele: ParcoursModele}> => {
   try {
     const stored = localStorage.getItem('custom-modeles');
     if (!stored) {
       return [];
     }
-    const modeles = JSON.parse(stored);
-    console.log(`💾 ${modeles.length} modèle(s) chargé(s) depuis le localStorage`);
-    return modeles;
+    const data = JSON.parse(stored);
+
+    // Support de l'ancien format (sans conciergerieID)
+    if (Array.isArray(data) && data.length > 0) {
+      // Si le premier élément a une propriété 'conciergerieID', c'est le nouveau format
+      if (data[0] && 'conciergerieID' in data[0]) {
+        return data;
+      }
+      // Sinon, c'est l'ancien format - on le retourne vide pour forcer un rechargement
+      console.warn('⚠️ Ancien format de localStorage détecté - migration nécessaire');
+      return [];
+    }
+
+    return [];
+  } catch (error) {
+    console.error('❌ Erreur lors du chargement de tous les modèles depuis localStorage:', error);
+    return [];
+  }
+};
+
+/**
+ * Charge les modèles depuis le localStorage pour une conciergerie spécifique
+ *
+ * @param conciergerieID - ID de la conciergerie
+ * @returns ParcoursModele[] - Tableau des modèles chargés
+ */
+export const loadModelesFromLocalStorage = (conciergerieID: string): ParcoursModele[] => {
+  try {
+    const allModeles = getAllModelesFromLocalStorage();
+
+    // Filtrer les modèles pour cette conciergerie uniquement
+    const conciergerieModeles = allModeles
+      .filter(item => item.conciergerieID === conciergerieID)
+      .map(item => item.modele);
+
+    console.log(`💾 ${conciergerieModeles.length} modèle(s) chargé(s) depuis le localStorage pour la conciergerie ${conciergerieID}`);
+    return conciergerieModeles;
   } catch (error) {
     console.error('❌ Erreur lors du chargement des modèles depuis localStorage:', error);
     return [];
