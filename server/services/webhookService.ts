@@ -656,6 +656,13 @@ export async function sendWebhookToBubble(payload: WebhookPayload): Promise<void
     console.log(`\n📤 ÉTAPE 2/2 : Création des pièces (${totalPieceInstances} instances de pièces)...`);
     console.log(`   Endpoint: ${createPieceEndpoint}`);
 
+    // DEBUG: Log toutes les clés disponibles dans piecesPhotos
+    console.log(`\n🔍 DEBUG piecesPhotos:`);
+    console.log(`   Clés disponibles: ${Object.keys(logementData.piecesPhotos || {}).join(', ') || 'AUCUNE'}`);
+    Object.entries(logementData.piecesPhotos || {}).forEach(([key, photos]) => {
+      console.log(`   - "${key}": ${(photos as any[]).length} photos`);
+    });
+
     let successCount = 0;
     let errorCount = 0;
     let instanceNumber = 0;
@@ -681,18 +688,23 @@ export async function sendWebhookToBubble(payload: WebhookPayload): Promise<void
           // 2. Flux manuel avec quantité > 1: piecesPhotos["Nom_1"], piecesPhotos["Nom_2"], etc.
           // 3. Flux manuel avec quantité = 1: piecesPhotos["Nom"]
           let photosRaw: any[] = [];
+          let usedKey = '';
 
           if (piece.id) {
             // Cas 1: Flux Airbnb avec ID unique
+            usedKey = piece.id;
             photosRaw = logementData.piecesPhotos[piece.id] || [];
           } else if (piece.quantite > 1) {
             // Cas 2: Flux manuel avec plusieurs instances
-            const manualKey = `${piece.nom}_${j + 1}`;
-            photosRaw = logementData.piecesPhotos[manualKey] || [];
+            usedKey = `${piece.nom}_${j + 1}`;
+            photosRaw = logementData.piecesPhotos[usedKey] || [];
           } else {
             // Cas 3: Flux manuel avec une seule instance
+            usedKey = piece.nom;
             photosRaw = logementData.piecesPhotos[piece.nom] || [];
           }
+
+          console.log(`      🔑 Clé utilisée: "${usedKey}" -> ${photosRaw.length} photos trouvées`);
 
           // Transform photos into objects with type
           const photos = photosRaw.map((photo: string) => {
