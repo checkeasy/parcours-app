@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Minus, ArrowLeft, X } from "lucide-react";
 import { PIECES_STANDARDS } from "@/types/modele";
+import { cn } from "@/lib/utils";
 
 export interface PieceQuantity {
   nom: string;
