@@ -103,9 +103,12 @@ export const CustomAddressAutocomplete = React.forwardRef<HTMLInputElement, Cust
     const selectSuggestion = React.useCallback((suggestion: AddressSuggestion) => {
       if (!placesServiceRef.current) return;
 
-      onChange(suggestion.fullText);
+      console.log("📍 Sélection de l'adresse:", suggestion.fullText);
+
+      // Fermer le dropdown immédiatement
       setIsOpen(false);
       setSuggestions([]);
+      setIsFocused(false);
 
       // Récupérer les détails complets du lieu
       placesServiceRef.current.getDetails(
@@ -116,7 +119,14 @@ export const CustomAddressAutocomplete = React.forwardRef<HTMLInputElement, Cust
         (place, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK && place) {
             console.log("✅ Détails du lieu récupérés:", place);
+            console.log("📍 Mise à jour de l'adresse avec:", place.formatted_address);
+
+            // Utiliser formatted_address au lieu de fullText pour plus de précision
+            onChange(place.formatted_address || suggestion.fullText);
             onPlaceSelected?.(place);
+          } else {
+            console.warn("⚠️ Impossible de récupérer les détails, utilisation de fullText");
+            onChange(suggestion.fullText);
           }
         }
       );

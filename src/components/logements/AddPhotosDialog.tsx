@@ -24,6 +24,7 @@ interface AddPhotosDialogProps {
   onSave: (photos: Record<string, string[]>) => void;
   onBack: () => void;
   isFullScreenMode?: boolean;
+  initialPhotos?: Record<string, string[]>; // Photos pré-remplies (ex: depuis Airbnb)
 }
 
 const PIECE_EMOJIS: Record<string, string> = {
@@ -50,6 +51,7 @@ export function AddPhotosDialog({
   onSave,
   onBack,
   isFullScreenMode = false,
+  initialPhotos = {},
 }: AddPhotosDialogProps) {
   const { t } = useTranslation();
   const [piecesPhotos, setPiecesPhotos] = useState<Record<string, string[]>>({});
@@ -67,12 +69,41 @@ export function AddPhotosDialog({
     }));
   });
 
-  // Réinitialiser l'état quand le dialog s'ouvre
+  // Initialiser avec les photos pré-remplies (ex: depuis Airbnb) quand le dialog s'ouvre
   useEffect(() => {
     if (open) {
-      setPiecesPhotos({});
+      // Distribuer intelligemment les photos Airbnb aux pièces individuelles
+      const distributedPhotos: Record<string, string[]> = {};
+
+      // Pour chaque pièce avec quantité
+      pieces.forEach((piece) => {
+        const photosForThisPiece = initialPhotos[piece.nom] || [];
+
+        if (piece.quantite === 1) {
+          // Une seule pièce : toutes les photos vont à cette pièce
+          distributedPhotos[piece.nom] = photosForThisPiece;
+        } else {
+          // Plusieurs pièces : distribuer les photos équitablement
+          const photosPerRoom = Math.ceil(photosForThisPiece.length / piece.quantite);
+
+          for (let i = 0; i < piece.quantite; i++) {
+            const key = `${piece.nom}_${i + 1}`;
+            const startIndex = i * photosPerRoom;
+            const endIndex = Math.min(startIndex + photosPerRoom, photosForThisPiece.length);
+            distributedPhotos[key] = photosForThisPiece.slice(startIndex, endIndex);
+          }
+        }
+      });
+
+      console.log("📷 Distribution des photos Airbnb:", {
+        initialPhotos,
+        distributedPhotos,
+        pieces: pieces.map(p => ({ nom: p.nom, quantite: p.quantite }))
+      });
+
+      setPiecesPhotos(distributedPhotos);
     }
-  }, [open]);
+  }, [open, initialPhotos, pieces]);
 
   const handleFileUpload = (pieceKey: string, files: FileList | null) => {
     if (!files) return;
@@ -102,7 +133,13 @@ export function AddPhotosDialog({
   };
 
   const handleSave = () => {
-    onSave(piecesPhotos);
+    // NE PAS regrouper les photos - le backend s'attend à recevoir les clés individuelles
+    // Par exemple: "Chambre_1", "Chambre_2" (pas "Chambre")
+    console.log("💾 Sauvegarde des photos:", {
+      piecesPhotos, // Photos avec clés individuelles (ex: "Chambre_1", "Chambre_2")
+    });
+
+    onSave(piecesPhotos); // Envoyer directement les photos avec les clés individuelles
   };
 
   const totalPhotos = Object.values(piecesPhotos).reduce(
@@ -114,7 +151,7 @@ export function AddPhotosDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className={isFullScreenMode ? "!absolute !inset-0 !w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !translate-x-0 !translate-y-0 !left-0 !top-0 overflow-auto px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 gap-1 sm:gap-2" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
-        hideCloseButton={isFullScreenMode}
+        hideCloseButton={true}
       >
         <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
           <Button
@@ -135,7 +172,7 @@ export function AddPhotosDialog({
           </Button>
           <div className="pl-8 sm:pl-10 pr-8">
             <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
-              {t('logement.step', { current: 5, total: 5 })} - {t('photos.addPhotosFor', { logementNom })}
+              Étape 6/6 - {t('photos.addPhotosFor', { logementNom })}
             </DialogTitle>
             <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
               <div className="flex items-start gap-2">

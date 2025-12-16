@@ -14,18 +14,22 @@ import { Card } from "@/components/ui/card";
 import { Sparkles, Plane, X, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import airbnbLogo from "@/assets/airbnb-logo.png";
-import { SelectModeleDialog } from "@/components/parcours/dialogs/SelectModeleDialog";
-import SelectPiecesDialog from "@/components/parcours/dialogs/SelectPiecesDialog";
+import SelectRoomsWithQuantityDialog from "./SelectRoomsWithQuantityDialog";
+import SelectTasksPerRoomDialog from "./SelectTasksPerRoomDialog";
+import SelectExitQuestionsDialog from "./SelectExitQuestionsDialog";
 import { AddPhotosDialog } from "./AddPhotosDialog";
 import { AirbnbLoadingDialog } from "./AirbnbLoadingDialog";
 import { AirbnbResultDialog } from "./AirbnbResultDialog";
-import { ParcoursModele } from "@/types/modele";
-import { dispatchWebhook } from "@/utils/webhook";
+import { ParcoursModele, PieceModele, QuestionModele } from "@/types/modele";
+import { dispatchWebhook, getConciergerieID, isTestMode as getIsTestMode } from "@/utils/webhook";
+import { loadConciergerieModele, updateConciergerieModele, updateModelePieces, updateModeleTasks, updateModeleQuestions } from "@/utils/conciergerieModele";
+import { TACHES_MENAGE, TACHES_VOYAGEUR } from "@/components/parcours/modele/CustomModeleBuilder";
 import { AddressAutocomplete } from "@/components/ui/address-autocomplete";
 import { AddressAutocompleteV2 } from "@/components/ui/address-autocomplete-v2";
 import { CustomAddressAutocomplete } from "@/components/ui/custom-address-autocomplete";
 import { useGoogleMaps } from "@/hooks/useGoogleMaps";
 import { useToast } from "@/hooks/use-toast";
+import { mapAirbnbRoomsToStandard } from "@/utils/airbnbRoomMapping";
 
 interface PieceQuantity {
   nom: string;
@@ -90,6 +94,13 @@ export function AddLogementDialog({
   const [airbnbPieces, setAirbnbPieces] = useState<any[]>([]);
   const [airbnbTotalPhotos, setAirbnbTotalPhotos] = useState(0);
 
+  // Nouveau flux : États pour le modèle de conciergerie
+  const [conciergerieModele, setConciergerieModele] = useState<ParcoursModele | null>(null);
+  const [selectedRooms, setSelectedRooms] = useState<PieceQuantity[]>([]);
+  const [selectedTasksPerRoom, setSelectedTasksPerRoom] = useState<Map<string, string[]>>(new Map());
+  const [selectedQuestions, setSelectedQuestions] = useState<QuestionModele[]>([]);
+  const [customPieces, setCustomPieces] = useState<string[]>([]); // Pièces personnalisées de la conciergerie
+
   // Charger l'API Google Maps
   const { isLoaded: isGoogleMapsLoaded, loadError } = useGoogleMaps();
 
@@ -104,8 +115,8 @@ export function AddLogementDialog({
   };
 
   const getTotalSteps = (): number => {
-    // Si on a un logement existant, on a 4 étapes au lieu de 5
-    return hasExistingLogement ? 4 : 5;
+    // Si on a un logement existant, on a 5 étapes au lieu de 6
+    return hasExistingLogement ? 5 : 6;
   };
 
   // Pré-remplir le formulaire avec les données initiales si présentes
@@ -169,116 +180,69 @@ export function AddLogementDialog({
     }
   };
 
-  const handleStep2Next = (type: "menage" | "voyageur") => {
-    setParcoursType(type);
-    setStep(3);
-    setModeleDialogOpen(true);
-  };
-
-  const handleSelectMenageModele = () => {
+  const handleSelectMenageModele = async () => {
     setSelectedModele("menage");
+    setParcoursType("menage");
     onModeleDialogReopened?.();
-    // Si un lien Airbnb est rempli, aller à l'étape de chargement Airbnb
-    if (airbnbLink.trim()) {
-      setStep(4);
-    } else {
-      setStep(5);
-    }
     setModeleDialogOpen(false);
-  };
 
-  const handleSelectVoyageurModele = () => {
-    setSelectedModele("voyageur");
-    onModeleDialogReopened?.();
-    // Si un lien Airbnb est rempli, aller à l'étape de chargement Airbnb
-    if (airbnbLink.trim()) {
-      setStep(4);
-    } else {
-      setStep(5);
-    }
-    setModeleDialogOpen(false);
-  };
-
-  const handleSelectCustomModele = (modele: ParcoursModele) => {
-    setSelectedModele(modele);
-    onModeleDialogReopened?.();
-    // Si un lien Airbnb est rempli, aller à l'étape de chargement Airbnb
-    if (airbnbLink.trim()) {
-      setStep(4);
-    } else {
-      setStep(5);
-    }
-    setModeleDialogOpen(false);
-  };
-
-  const handleAirbnbLoadingComplete = (data: { pieces: any[]; totalPhotos: number; airbnbLink: string }) => {
-    setAirbnbPieces(data.pieces);
-    setAirbnbTotalPhotos(data.totalPhotos);
-    setAirbnbLink(data.airbnbLink); // Sauvegarder le lien Airbnb
-    setStep(5);
-  };
-
-  const handleAirbnbResultConfirm = async (pieces: any[]) => {
-    // Convertir les pièces Airbnb en PieceQuantity et piecesPhotos
-    // IMPORTANT: Ajouter un ID unique à chaque pièce pour éviter la duplication des photos
-    // quand plusieurs pièces ont le même nom (ex: "Chambre 1", "Chambre 2")
-    const timestamp = Date.now();
-    const convertedPieces: PieceQuantity[] = pieces.map((piece, index) => ({
-      nom: piece.nom,
-      quantite: piece.quantite,
-      id: `piece_${index}_${timestamp}_${Math.random().toString(36).substring(2, 9)}`, // ID unique pour chaque pièce
-    }));
-
-    // Utiliser l'ID unique comme clé au lieu du nom pour éviter l'écrasement des photos
-    const convertedPhotos: Record<string, string[]> = {};
-    convertedPieces.forEach((piece, index) => {
-      convertedPhotos[piece.id!] = pieces[index].photos;
-    });
-
-    setSelectedPieces(convertedPieces);
-    setPiecesPhotos(convertedPhotos);
-
-    const logementData = {
-      nom,
-      adresse: adresse || undefined,
-      parcoursType: parcoursType!,
-      modele: selectedModele!,
-      pieces: convertedPieces,
-      piecesPhotos: convertedPhotos,
-    };
-
-    // Terminer directement sans passer par l'étape photos manuelle
-    onComplete(logementData);
-
-    // Dispatch webhook after successful completion
+    // Charger le modèle de conciergerie
     try {
-      const result = await dispatchWebhook(logementData);
+      const modele = await loadConciergerieModele("menage", conciergerieID, isTestMode);
+      setConciergerieModele(modele);
 
-      if (!result.success) {
-        toast({
-          title: "❌ Erreur lors de l'envoi",
-          description: "Impossible de créer le logement. Veuillez réessayer.",
-          variant: "destructive",
-        });
-        return; // Ne pas fermer le dialog en cas d'erreur
-      }
-
-      // Succès - fermer le dialog
-      toast({
-        title: "✅ Logement créé",
-        description: `Le logement "${nom}" a été créé avec succès.`,
-      });
-      handleClose();
+      // Aller directement à l'étape 3 (sélection des pièces)
+      // Le scraping Airbnb a déjà été fait à l'étape 1.5 si un lien était fourni
+      setStep(3);
     } catch (error) {
-      console.error("Erreur lors de l'envoi du webhook:", error);
+      console.error("Erreur lors du chargement du modèle de conciergerie:", error);
       toast({
-        title: "❌ Erreur lors de l'envoi",
-        description: "Une erreur s'est produite. Veuillez réessayer.",
+        title: "❌ Erreur",
+        description: "Impossible de charger le modèle de conciergerie.",
         variant: "destructive",
       });
-      // Ne pas fermer le dialog en cas d'erreur
     }
   };
+
+  const handleSelectVoyageurModele = async () => {
+    setSelectedModele("voyageur");
+    setParcoursType("voyageur");
+    onModeleDialogReopened?.();
+    setModeleDialogOpen(false);
+
+    // Charger le modèle de conciergerie
+    try {
+      const modele = await loadConciergerieModele("voyageur", conciergerieID, isTestMode);
+      setConciergerieModele(modele);
+
+      // Aller directement à l'étape 3 (sélection des pièces)
+      // Le scraping Airbnb a déjà été fait à l'étape 1.5 si un lien était fourni
+      setStep(3);
+    } catch (error) {
+      console.error("Erreur lors du chargement du modèle de conciergerie:", error);
+      toast({
+        title: "❌ Erreur",
+        description: "Impossible de charger le modèle de conciergerie.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSelectCustomModele = async (modele: ParcoursModele) => {
+    setSelectedModele(modele);
+    setParcoursType(modele.type);
+    onModeleDialogReopened?.();
+    setModeleDialogOpen(false);
+
+    // Utiliser le modèle personnalisé directement
+    setConciergerieModele(modele);
+
+    // Aller directement à l'étape 3 (sélection des pièces)
+    // Le scraping Airbnb a déjà été fait à l'étape 1.5 si un lien était fourni
+    setStep(3);
+  };
+
+
 
   const handleSavePieces = (pieces: PieceQuantity[]) => {
     setSelectedPieces(pieces);
@@ -287,12 +251,17 @@ export function AddLogementDialog({
 
   const handleSavePhotos = async (photos: Record<string, string[]>) => {
     setPiecesPhotos(photos);
+
+    // Utiliser les données du nouveau flux si disponibles, sinon utiliser l'ancien flux
+    const finalPieces = selectedRooms.length > 0 ? selectedRooms : selectedPieces;
+    const finalModele = conciergerieModele || selectedModele!;
+
     const logementData = {
       nom,
       adresse: adresse || undefined,
       parcoursType: parcoursType!,
-      modele: selectedModele!,
-      pieces: selectedPieces,
+      modele: finalModele,
+      pieces: finalPieces,
       piecesPhotos: photos,
     };
     onComplete(logementData);
@@ -327,6 +296,109 @@ export function AddLogementDialog({
     }
   };
 
+  // ========== NOUVEAU FLUX ==========
+
+  // Handler pour l'étape 2 : Sélection du type de parcours
+  const handleStep2Next = async (type: "menage" | "voyageur") => {
+    setParcoursType(type);
+
+    try {
+      // Charger le modèle de conciergerie
+      const modele = await loadConciergerieModele(type, getConciergerieID(), getIsTestMode());
+      setConciergerieModele(modele);
+
+      // Extraire les pièces personnalisées du modèle
+      const customPiecesFromModele = modele.pieces
+        .map(p => p.nom)
+        .filter(nom => !["Cuisine", "Salle de bain (sans toilettes)", "Salle de bain avec toilettes", "Toilettes séparés", "Chambre", "Salon / Séjour", "Salle à manger", "Entrée / Couloir / Escaliers", "Buanderie / Laverie", "Espaces extérieurs", "Garage / Parking", "Bureau / Pièce de travail"].includes(nom));
+      setCustomPieces(customPiecesFromModele);
+
+      console.log(`✅ Modèle de conciergerie chargé pour ${type}:`, modele);
+    } catch (error) {
+      console.error("❌ Erreur lors du chargement du modèle:", error);
+      toast({
+        title: "⚠️ Avertissement",
+        description: "Impossible de charger le modèle. Un modèle vide sera utilisé.",
+        variant: "default",
+      });
+    }
+
+    // Passer à l'étape 3 (sélection des pièces)
+    setStep(3);
+  };
+
+  // Handler pour l'étape 3 : Sélection des pièces
+  const handleStep3Next = async (rooms: PieceQuantity[]) => {
+    setSelectedRooms(rooms);
+
+    if (!conciergerieModele) return;
+
+    try {
+      // Mettre à jour le modèle avec les pièces sélectionnées
+      const updatedModele = updateModelePieces(conciergerieModele, rooms);
+      await updateConciergerieModele(updatedModele, getConciergerieID(), getIsTestMode());
+      setConciergerieModele(updatedModele);
+
+      // Mettre à jour les pièces personnalisées
+      const newCustomPieces = rooms
+        .filter(r => r.isCustom)
+        .map(r => r.nom);
+      setCustomPieces(prev => Array.from(new Set([...prev, ...newCustomPieces])));
+
+      console.log(`✅ Modèle mis à jour avec les pièces sélectionnées`);
+    } catch (error) {
+      console.error("❌ Erreur lors de la mise à jour du modèle:", error);
+    }
+
+    // Passer à l'étape 4 (sélection des tâches)
+    setStep(4);
+  };
+
+  // Handler pour l'étape 4 : Sélection des tâches
+  const handleStep4Next = async (tasksPerRoom: Map<string, string[]>) => {
+    setSelectedTasksPerRoom(tasksPerRoom);
+
+    if (!conciergerieModele || !parcoursType) return;
+
+    try {
+      // Obtenir la source des tâches selon le type de parcours
+      const allTasksSource = parcoursType === "menage" ? TACHES_MENAGE : TACHES_VOYAGEUR;
+
+      // Mettre à jour le modèle avec les tâches sélectionnées
+      const updatedModele = updateModeleTasks(conciergerieModele, tasksPerRoom, allTasksSource);
+      await updateConciergerieModele(updatedModele, getConciergerieID(), getIsTestMode());
+      setConciergerieModele(updatedModele);
+
+      console.log(`✅ Modèle mis à jour avec les tâches sélectionnées`);
+    } catch (error) {
+      console.error("❌ Erreur lors de la mise à jour du modèle:", error);
+    }
+
+    // Passer à l'étape 5 (questions de sortie)
+    setStep(5);
+  };
+
+  // Handler pour l'étape 5 : Questions de sortie
+  const handleStep5Next = async (questions: QuestionModele[]) => {
+    setSelectedQuestions(questions);
+
+    if (!conciergerieModele) return;
+
+    try {
+      // Mettre à jour le modèle avec les questions
+      const updatedModele = updateModeleQuestions(conciergerieModele, questions);
+      await updateConciergerieModele(updatedModele, getConciergerieID(), getIsTestMode());
+      setConciergerieModele(updatedModele);
+
+      console.log(`✅ Modèle mis à jour avec les questions sélectionnées`);
+    } catch (error) {
+      console.error("❌ Erreur lors de la mise à jour du modèle:", error);
+    }
+
+    // Passer à l'étape 6 (photos)
+    setStep(6);
+  };
+
   return (
     <>
       <Dialog open={open && !modeleDialogOpen && step < 4} onOpenChange={(isOpen) => {
@@ -336,7 +408,7 @@ export function AddLogementDialog({
       }}>
         <DialogContent
           className={isFullScreenMode ? "!absolute !inset-0 !w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !translate-x-0 !translate-y-0 !left-0 !top-0 px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 gap-1 sm:gap-2" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
-          hideCloseButton={isFullScreenMode}
+          hideCloseButton={true}
         >
           {/* DialogHeader commun pour toutes les étapes (pour accessibilité) */}
           <DialogHeader className={step === 1 && !hasExistingLogement ? (isFullScreenMode ? "pb-0" : "") : "sr-only"}>
@@ -423,6 +495,16 @@ export function AddLogementDialog({
                     value={airbnbLink}
                     onChange={(e) => setAirbnbLink(e.target.value)}
                   />
+                  {/* Bouton pour lancer le scraping Airbnb manuellement */}
+                  {airbnbLink.trim() && (
+                    <Button
+                      onClick={() => setStep(1.5 as any)}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      🔍 Analyser le lien Airbnb
+                    </Button>
+                  )}
                 </div>
               </div>
 
@@ -516,92 +598,104 @@ export function AddLogementDialog({
         </DialogContent>
       </Dialog>
 
-      {/* Dialog de sélection de modèle (Étape 3) */}
-      {step === 3 && parcoursType && (
-        <SelectModeleDialog
-          open={modeleDialogOpen}
-          onOpenChange={(open) => {
-            setModeleDialogOpen(open);
-          }}
-          onBack={() => {
-            setModeleDialogOpen(false);
+      {/* NOUVEAU FLUX - Étape 1.5 : Scraping Airbnb manuel (depuis l'étape 1) */}
+      {step === 1.5 && airbnbLink.trim() && (
+        <AirbnbLoadingDialog
+          open={step === 1.5}
+          airbnbLink={airbnbLink}
+          onComplete={(data) => {
+            // Mapper les pièces Airbnb vers les pièces standards avec regroupement intelligent
+            const mappingResult = mapAirbnbRoomsToStandard(data.pieces);
+
+            console.log("🔍 Mapping Airbnb → Standard:", {
+              airbnbPieces: data.pieces.map(p => p.nom),
+              mappedPieces: mappingResult.pieces,
+              customPieces: mappingResult.customPieces,
+              photos: Object.keys(mappingResult.photosMapping).map(key => ({
+                piece: key,
+                count: mappingResult.photosMapping[key].length
+              }))
+            });
+
+            setSelectedRooms(mappingResult.pieces);
+            setPiecesPhotos(mappingResult.photosMapping);
+            setCustomPieces(mappingResult.customPieces); // Ajouter les pièces personnalisées
+            setAirbnbPieces(data.pieces);
+            setAirbnbTotalPhotos(data.totalPhotos);
+            setAirbnbLink(data.airbnbLink);
+
+            // Aller à l'étape 2 (sélection du type de parcours)
             setStep(2);
           }}
-          logementNom={nom}
-          filterType={parcoursType}
-          customModeles={customModeles}
-          onSelectMenage={handleSelectMenageModele}
-          onSelectVoyageur={handleSelectVoyageurModele}
-          onSelectCustom={handleSelectCustomModele}
-          onDeleteCustom={onDeleteCustom}
-          onEditCustom={onEditCustom}
-          onCreateCustom={onCreateCustom}
-          isFullScreenMode={isFullScreenMode}
-        />
-      )}
-
-      {/* Étape 4 : Chargement Airbnb */}
-      {step === 4 && (
-        <AirbnbLoadingDialog
-          open={step === 4}
-          airbnbLink={airbnbLink}
-          onComplete={handleAirbnbLoadingComplete}
           onSkipToManual={() => {
-            // Vider le lien Airbnb pour forcer le choix manuel
+            // Vider le lien Airbnb et revenir à l'étape 1
             setAirbnbLink("");
-            // Aller à la sélection manuelle
-            setStep(5);
+            setStep(1);
           }}
-          onBack={() => {
-            setStep(3);
-            setModeleDialogOpen(true);
-          }}
+          onBack={() => setStep(1)}
           onClose={handleClose}
           isFullScreenMode={isFullScreenMode}
         />
       )}
 
-      {/* Étape 5 : Résultat Airbnb OU Sélection manuelle des pièces */}
-      {step === 5 && airbnbLink.trim() ? (
-        <AirbnbResultDialog
-          open={step === 5}
-          logementNom={nom}
-          pieces={airbnbPieces}
-          totalPhotos={airbnbTotalPhotos}
-          selectedModele={selectedModele}
-          onConfirm={handleAirbnbResultConfirm}
-          onBack={() => {
-            setStep(3);
-            setModeleDialogOpen(true);
-          }}
-          onClose={handleClose}
-          isFullScreenMode={isFullScreenMode}
-        />
-      ) : step === 5 ? (
-        <SelectPiecesDialog
-          open={step === 5}
+
+
+      {/* NOUVEAU FLUX - Étape 3 : Sélection des pièces avec quantités */}
+      {step === 3 && parcoursType && conciergerieModele && (
+        <SelectRoomsWithQuantityDialog
+          open={step === 3}
           onOpenChange={(open) => {
             if (!open) {
-              setStep(3);
-              setModeleDialogOpen(true);
+              handleClose();
             }
           }}
           logementNom={nom}
-          type={parcoursType!}
-          selectedModele={selectedModele!}
-          onSave={handleSavePieces}
-          onBack={() => {
-            setStep(3);
-            setModeleDialogOpen(true);
-          }}
-          onSwitchToAirbnb={() => {
-            setStep(4);
-          }}
+          customPieces={customPieces}
+          initialRooms={selectedRooms.length > 0 ? selectedRooms : conciergerieModele.piecesQuantity} // Pièces Airbnb OU pièces du modèle
+          onSave={handleStep3Next}
+          onBack={() => setStep(2)}
           isFullScreenMode={isFullScreenMode}
         />
-      ) : null}
+      )}
 
-      {/* Dialog d'ajout des photos (Étape 6) */}
+      {/* NOUVEAU FLUX - Étape 4 : Sélection des tâches par pièce */}
+      {step === 4 && parcoursType && conciergerieModele && (
+        <SelectTasksPerRoomDialog
+          open={step === 4}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleClose();
+            }
+          }}
+          logementNom={nom}
+          parcoursType={parcoursType}
+          selectedRooms={selectedRooms}
+          modeleData={conciergerieModele.pieces}
+          onSave={handleStep4Next}
+          onBack={() => setStep(3)}
+          isFullScreenMode={isFullScreenMode}
+        />
+      )}
+
+      {/* NOUVEAU FLUX - Étape 5 : Questions de sortie */}
+      {step === 5 && parcoursType && conciergerieModele && (
+        <SelectExitQuestionsDialog
+          open={step === 5}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleClose();
+            }
+          }}
+          logementNom={nom}
+          parcoursType={parcoursType}
+          modeleQuestions={conciergerieModele.questionsChecklist}
+          onSave={handleStep5Next}
+          onBack={() => setStep(4)}
+          isFullScreenMode={isFullScreenMode}
+        />
+      )}
+
+      {/* NOUVEAU FLUX - Étape 6 : Ajout de photos (manuel ou depuis Airbnb) */}
       {step === 6 && parcoursType && (
         <AddPhotosDialog
           open={step === 6}
@@ -611,11 +705,12 @@ export function AddLogementDialog({
             }
           }}
           logementNom={nom}
-          pieces={selectedPieces}
+          pieces={selectedRooms.length > 0 ? selectedRooms : selectedPieces}
           parcoursType={parcoursType}
           onSave={handleSavePhotos}
           onBack={() => setStep(5)}
           isFullScreenMode={isFullScreenMode}
+          initialPhotos={piecesPhotos} // Passer les photos Airbnb si disponibles
         />
       )}
     </>

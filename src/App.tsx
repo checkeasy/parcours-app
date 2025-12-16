@@ -107,14 +107,21 @@ function App() {
               title: "Logement chargé",
               description: `Les données du logement "${logementData.Nom}" ont été chargées.`,
             });
+          } else {
+            console.warn("⚠️ Logement non trouvé ou réponse invalide");
           }
-        } catch (error) {
-          console.error("❌ Erreur lors du chargement du logement:", error);
-          toast({
-            title: "Erreur de chargement",
-            description: "Impossible de charger les données du logement.",
-            variant: "destructive",
-          });
+        } catch (error: any) {
+          // Si le logement n'existe pas (erreur 400), ne pas afficher de toast d'erreur
+          if (error?.message?.includes('400') || error?.message?.includes('does not exist')) {
+            console.warn(`⚠️ Le logement ${logementId} n'existe pas dans Bubble.io`);
+          } else {
+            console.error("❌ Erreur lors du chargement du logement:", error);
+            toast({
+              title: "Erreur de chargement",
+              description: "Impossible de charger les données du logement.",
+              variant: "destructive",
+            });
+          }
         }
       };
       loadLogement();

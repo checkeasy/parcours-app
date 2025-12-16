@@ -83,9 +83,34 @@ export function AirbnbLoadingDialog({
 
     // Appeler l'API de scraping réelle
     const performScraping = async () => {
+      // Animation de progression fluide
+      let currentProgress = 0;
+      let progressInterval: NodeJS.Timeout | null = null;
+
+      const startProgressAnimation = (targetProgress: number, duration: number, message: string) => {
+        if (progressInterval) clearInterval(progressInterval);
+
+        const startProgress = currentProgress;
+        const progressDiff = targetProgress - startProgress;
+        const steps = duration / 50; // Update every 50ms
+        const increment = progressDiff / steps;
+
+        setStatusMessage(message);
+
+        progressInterval = setInterval(() => {
+          currentProgress += increment;
+          if (currentProgress >= targetProgress) {
+            currentProgress = targetProgress;
+            if (progressInterval) clearInterval(progressInterval);
+          }
+          setProgress(Math.round(currentProgress));
+        }, 50);
+      };
+
       try {
-        setStatusMessage(t('airbnb.analyzing'));
-        setProgress(10);
+        // Étape 1: Connexion au service (0% → 15%)
+        startProgressAnimation(15, 800, '🔗 Connexion au service de scraping...');
+        await new Promise(resolve => setTimeout(resolve, 800));
 
         // Get real IDs from URL parameters
         const conciergerieID = getConciergerieID();
@@ -96,6 +121,9 @@ export function AirbnbLoadingDialog({
         const BACKEND_URL = import.meta.env.PROD
           ? window.location.origin  // In production, use the same origin (Railway URL)
           : 'http://localhost:3001'; // In development, use localhost
+
+        // Étape 2: Analyse de l'annonce (15% → 35%)
+        startProgressAnimation(35, 1500, '🔍 Analyse de l\'annonce Airbnb...');
 
         const response = await fetch(`${BACKEND_URL}/api/scrape-and-create-parcours`, {
           method: 'POST',
@@ -110,8 +138,8 @@ export function AirbnbLoadingDialog({
           }),
         });
 
-        setProgress(50);
-        setStatusMessage(t('airbnb.extracting'));
+        // Étape 3: Téléchargement des photos (35% → 65%)
+        startProgressAnimation(65, 2000, '📸 Téléchargement des photos...');
 
         if (!response.ok) {
           throw new Error(`Erreur HTTP ${response.status}`);
@@ -123,8 +151,9 @@ export function AirbnbLoadingDialog({
           throw new Error(result.error || 'Erreur lors du scraping');
         }
 
-        setProgress(90);
-        setStatusMessage(t('airbnb.loading'));
+        // Étape 4: Classification des pièces (65% → 85%)
+        startProgressAnimation(85, 1200, '🏠 Classification des pièces...');
+        await new Promise(resolve => setTimeout(resolve, 1200));
 
         // Transformer les données de l'API en format attendu par le frontend
         const pieces: PieceData[] = result.data.pieces.map((piece: any) => ({
@@ -137,24 +166,35 @@ export function AirbnbLoadingDialog({
 
         const totalPhotos = pieces.reduce((sum, piece) => sum + piece.photos.length, 0);
 
+        // Étape 5: Finalisation (85% → 100%)
+        startProgressAnimation(100, 800, '✅ Analyse terminée !');
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        if (progressInterval) clearInterval(progressInterval);
         setProgress(100);
-        setStatusMessage(t('common.success'));
+        setStatusMessage('✅ Analyse terminée !');
         setMockData({ pieces, totalPhotos });
         setIsComplete(true);
 
       } catch (error: any) {
+        if (progressInterval) clearInterval(progressInterval);
         console.error('Erreur lors du scraping:', error);
-        setStatusMessage(`❌ Erreur: ${error.message}`);
-        setValidationError(error.message);
+
+        // Déterminer le type d'erreur et afficher un message approprié
+        let errorMessage = error.message;
+
+        if (error.message.includes('HTTP 500')) {
+          errorMessage = "Le service de scraping a rencontré une erreur. L'annonce Airbnb ne contient peut-être pas toutes les informations nécessaires (noms de pièces manquants, etc.). Veuillez essayer avec une autre annonce ou passer en mode manuel.";
+        } else if (error.message.includes('NoneType')) {
+          errorMessage = "L'annonce Airbnb ne contient pas toutes les informations nécessaires (noms de pièces manquants). Veuillez essayer avec une autre annonce ou passer en mode manuel.";
+        } else if (error.message.includes('HTTP')) {
+          errorMessage = `Erreur de connexion au service de scraping (${error.message}). Veuillez réessayer dans quelques instants.`;
+        }
+
+        setStatusMessage(`❌ ${errorMessage}`);
+        setValidationError(errorMessage);
         setIsAnalyzing(false);
         setProgress(0);
-
-        // Fallback sur les données mockées en cas d'erreur
-        console.warn('Utilisation des données mockées en fallback');
-        const data = generateMockAirbnbData();
-        setMockData(data);
-        setIsComplete(true);
-        setStatusMessage(t('common.success'));
       }
     };
 
@@ -237,7 +277,7 @@ export function AirbnbLoadingDialog({
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent
         className={isFullScreenMode ? "!absolute !inset-0 !w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !translate-x-0 !translate-y-0 !left-0 !top-0 overflow-auto px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 gap-1 sm:gap-2" : "max-w-md mx-4 overflow-hidden"}
-        hideCloseButton={isFullScreenMode}
+        hideCloseButton={true}
       >
         <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
           {onBack && (
@@ -262,7 +302,7 @@ export function AirbnbLoadingDialog({
           )}
           <div className={onBack ? "pl-10 pr-10" : ""}>
             <DialogTitle className="text-base text-center">
-              {t('logement.step', { current: 4, total: 5 })} - {t('airbnb.analyzing')}
+              {t('airbnb.analyzing')}
             </DialogTitle>
             <DialogDescription className="text-center">
               {isAnalyzing ? t('airbnb.loading') : t('airbnb.extracting')}
@@ -324,10 +364,46 @@ export function AirbnbLoadingDialog({
 
               {/* Message de statut */}
               <div className="text-center py-1">
-                <p className="text-sm font-medium text-foreground animate-pulse">
+                <p className={`text-sm font-medium ${validationError ? 'text-destructive' : 'text-foreground animate-pulse'}`}>
                   {statusMessage}
                 </p>
               </div>
+
+              {/* Message d'erreur détaillé */}
+              {validationError && (
+                <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3 space-y-2">
+                  <p className="text-xs text-destructive font-medium">
+                    ⚠️ Erreur lors de l'analyse
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {validationError}
+                  </p>
+                  <div className="flex gap-2 mt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setValidationError("");
+                        setIsAnalyzing(false);
+                        setProgress(0);
+                      }}
+                      className="flex-1 text-xs"
+                    >
+                      Réessayer
+                    </Button>
+                    {onSkipToManual && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={onSkipToManual}
+                        className="flex-1 text-xs"
+                      >
+                        Mode manuel
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}

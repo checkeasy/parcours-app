@@ -142,7 +142,7 @@ export const TACHES_MENAGE: Record<string, any[]> = {
       photoObligatoire: false
     }
   ],
-  "Salon": [
+  "Salon / Séjour": [
     {
       id: "m-salon-1",
       emoji: "🛋️",
@@ -232,7 +232,30 @@ export const TACHES_MENAGE: Record<string, any[]> = {
       photoObligatoire: false
     }
   ],
-  "Entrée": [
+  "Salle à manger": [
+    {
+      id: "m-salle-manger-1",
+      emoji: "🧹",
+      titre: "Aspirer/balayer le sol",
+      description: "Sous la table ; coins.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-salle-manger-2",
+      emoji: "🪟",
+      titre: "Dépoussiérer surfaces",
+      description: "Table ; chaises ; buffet.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-salle-manger-3",
+      emoji: "🗑️",
+      titre: "Vider les poubelles",
+      description: "Si présentes.",
+      photoObligatoire: false
+    }
+  ],
+  "Entrée / Couloir / Escaliers": [
     {
       id: "m-entree-1",
       emoji: "🧹",
@@ -255,7 +278,83 @@ export const TACHES_MENAGE: Record<string, any[]> = {
       photoObligatoire: false
     }
   ],
-  "Bureau": [
+  "Buanderie / Laverie": [
+    {
+      id: "m-buanderie-1",
+      emoji: "🧺",
+      titre: "Vérifier lave-linge",
+      description: "Vide ; propre ; porte ouverte.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-buanderie-2",
+      emoji: "🧹",
+      titre: "Balayer le sol",
+      description: "Enlever poussière ; peluches.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-buanderie-3",
+      emoji: "🗑️",
+      titre: "Vider les poubelles",
+      description: "Si présentes.",
+      photoObligatoire: false
+    }
+  ],
+  "Espaces extérieurs": [
+    {
+      id: "m-ext-1",
+      emoji: "🧹",
+      titre: "Balayer le sol",
+      description: "Enlever feuilles ; poussière.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-ext-2",
+      emoji: "🪑",
+      titre: "Nettoyer mobilier",
+      description: "Essuyer table ; chaises.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-ext-3",
+      emoji: "🗑️",
+      titre: "Vider cendriers",
+      description: "Jeter mégots ; nettoyer.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-ext-4",
+      emoji: "🌿",
+      titre: "Ranger espaces verts",
+      description: "Ramasser déchets ; arroser plantes si besoin.",
+      photoObligatoire: false
+    }
+  ],
+  "Garage / Parking": [
+    {
+      id: "m-garage-1",
+      emoji: "🧹",
+      titre: "Balayer le sol",
+      description: "Enlever poussière ; feuilles.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-garage-2",
+      emoji: "🗑️",
+      titre: "Vider les poubelles",
+      description: "Si présentes.",
+      photoObligatoire: false
+    },
+    {
+      id: "m-garage-3",
+      emoji: "🚪",
+      titre: "Vérifier fermeture",
+      description: "Porte fermée ; verrouillée.",
+      photoObligatoire: false
+    }
+  ],
+  "Bureau / Pièce de travail": [
     {
       id: "m-bureau-1",
       emoji: "🪟",
@@ -275,22 +374,6 @@ export const TACHES_MENAGE: Record<string, any[]> = {
       emoji: "🗑️",
       titre: "Vider les poubelles",
       description: "Remplacer sac si nécessaire.",
-      photoObligatoire: false
-    }
-  ],
-  "Balcon/Terrasse": [
-    {
-      id: "m-balcon-1",
-      emoji: "🧹",
-      titre: "Balayer le sol",
-      description: "Enlever feuilles ; poussière.",
-      photoObligatoire: false
-    },
-    {
-      id: "m-balcon-2",
-      emoji: "🪑",
-      titre: "Nettoyer mobilier",
-      description: "Essuyer table ; chaises.",
       photoObligatoire: false
     }
   ]
@@ -380,7 +463,7 @@ export const TACHES_VOYAGEUR: Record<string, any[]> = {
       photoObligatoire: true
     }
   ],
-  "Salon": [
+  "Salon / Séjour": [
     {
       id: "v-salon-1",
       emoji: "📺",
@@ -442,54 +525,6 @@ export const TACHES_VOYAGEUR: Record<string, any[]> = {
       photoObligatoire: false
     }
   ],
-  "Entrée": [
-    {
-      id: "v-entree-1",
-      emoji: "🔑",
-      titre: "Vérifier accès",
-      description: "Clés ; code ; badge disponibles.",
-      photoObligatoire: false
-    },
-    {
-      id: "v-entree-2",
-      emoji: "📋",
-      titre: "Vérifier livret d'accueil",
-      description: "Présent ; à jour.",
-      photoObligatoire: false
-    }
-  ],
-  "Bureau": [
-    {
-      id: "v-bureau-1",
-      emoji: "💻",
-      titre: "Vérifier espace de travail",
-      description: "Bureau propre ; chaise confortable.",
-      photoObligatoire: false
-    },
-    {
-      id: "v-bureau-2",
-      emoji: "🔌",
-      titre: "Vérifier prises électriques",
-      description: "Fonctionnent ; accessibles.",
-      photoObligatoire: false
-    }
-  ],
-  "Balcon/Terrasse": [
-    {
-      id: "v-balcon-1",
-      emoji: "🪑",
-      titre: "Vérifier mobilier extérieur",
-      description: "Propre ; en bon état.",
-      photoObligatoire: false
-    },
-    {
-      id: "v-balcon-2",
-      emoji: "🌿",
-      titre: "Vérifier propreté",
-      description: "Sol propre ; plantes entretenues.",
-      photoObligatoire: false
-    }
-  ],
   "Salle à manger": [
     {
       id: "v-salle-manger-1",
@@ -537,6 +572,75 @@ export const TACHES_VOYAGEUR: Record<string, any[]> = {
       description: "Si vous avez apporté votre lessive ou autres produits, les reprendre.",
       photoObligatoire: false
     }
+  ],
+  "Espaces extérieurs": [
+    {
+      id: "v-ext-1",
+      emoji: "🪑",
+      titre: "Ranger mobilier",
+      description: "Chaises repoussées ; coussins rentrés ou empilés.",
+      photoObligatoire: true
+    },
+    {
+      id: "v-ext-2",
+      emoji: "🚬",
+      titre: "Vider cendriers",
+      description: "Jeter mégots ; nettoyer cendrier si besoin.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-ext-3",
+      emoji: "☂️",
+      titre: "Fermer parasol / BBQ",
+      description: "Parasol fermé ; BBQ éteint & couvercle remis.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-ext-4",
+      emoji: "🚪",
+      titre: "Vérifier portail / portillon",
+      description: "Fermé ou verrouillé selon consigne.",
+      photoObligatoire: false
+    }
+  ],
+  "Garage / Parking": [
+    {
+      id: "v-garage-1",
+      emoji: "🚗",
+      titre: "Vérifier l'espace",
+      description: "Rien oublié dans le garage ; espace propre.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-garage-2",
+      emoji: "🚪",
+      titre: "Fermer la porte",
+      description: "Porte de garage fermée ; verrouillée si nécessaire.",
+      photoObligatoire: false
+    }
+  ],
+  "Bureau / Pièce de travail": [
+    {
+      id: "v-bureau-1",
+      emoji: "💻",
+      titre: "Vérifier espace de travail",
+      description: "Bureau propre ; chaise confortable.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-bureau-2",
+      emoji: "🔌",
+      titre: "Vérifier prises électriques",
+      description: "Fonctionnent ; accessibles.",
+      photoObligatoire: false
+    },
+    {
+      id: "v-bureau-3",
+      emoji: "🎒",
+      titre: "Récupérer vos affaires",
+      description: "Ordinateur ; documents ; fournitures personnelles.",
+      photoObligatoire: false
+    }
   ]
 };
 
@@ -576,8 +680,14 @@ const loadTasksFromTranslations = (t: any, parcoursType: "menage" | "voyageur", 
       ? ["🧺", "🌪️", "🧼", "🧴"]
       : ["🧺", "🧴"],
     "Espaces extérieurs": parcoursType === "menage"
-      ? ["🪑", "☂️", "🚬", "🍖", "🛁", "🏊", "🌱"]
-      : ["🪑", "🌿"]
+      ? ["🧹", "🪑", "🗑️", "🌿"]
+      : ["🪑", "🚬", "☂️", "🚪"],
+    "Garage / Parking": parcoursType === "menage"
+      ? ["🧹", "🗑️", "🚪"]
+      : ["🚗", "🚪"],
+    "Bureau / Pièce de travail": parcoursType === "menage"
+      ? ["🪟", "🧹", "🗑️"]
+      : ["💻", "🔌", "🎒"]
   };
 
   const photoRequiredMap: Record<string, boolean[]> = {
@@ -607,8 +717,14 @@ const loadTasksFromTranslations = (t: any, parcoursType: "menage" | "voyageur", 
       ? [false, false, false, false]
       : [false, false],
     "Espaces extérieurs": parcoursType === "menage"
-      ? [false, false, false, true, false, false, false]
-      : [false, false]
+      ? [false, false, false, false]
+      : [true, false, false, false],
+    "Garage / Parking": parcoursType === "menage"
+      ? [false, false, false]
+      : [false, false],
+    "Bureau / Pièce de travail": parcoursType === "menage"
+      ? [false, false, false]
+      : [false, false, false]
   };
 
   const emojis = emojiMap[frenchKey] || [];

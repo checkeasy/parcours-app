@@ -280,16 +280,24 @@ export const loadLogementFromBubble = async (
     if (!response.ok) {
       // Essayer de lire le corps de la réponse pour plus de détails
       let errorDetails = '';
+      let isNotFound = false;
       try {
         const errorBody = await response.text();
         errorDetails = errorBody;
-        console.error('\n' + '='.repeat(60));
-        console.error('❌ ERREUR HTTP DE BUBBLE.IO');
-        console.error('='.repeat(60));
-        console.error(`   Status: ${response.status} ${response.statusText}`);
-        console.error(`   URL: ${url}`);
-        console.error('📄 Corps de la réponse d\'erreur:', errorBody);
-        console.error('='.repeat(60) + '\n');
+
+        // Vérifier si c'est une erreur "logement non trouvé"
+        isNotFound = errorBody.includes('does not exist') || response.status === 400;
+
+        // Ne logger que si ce n'est pas une simple erreur "non trouvé"
+        if (!isNotFound) {
+          console.error('\n' + '='.repeat(60));
+          console.error('❌ ERREUR HTTP DE BUBBLE.IO');
+          console.error('='.repeat(60));
+          console.error(`   Status: ${response.status} ${response.statusText}`);
+          console.error(`   URL: ${url}`);
+          console.error('📄 Corps de la réponse d\'erreur:', errorBody);
+          console.error('='.repeat(60) + '\n');
+        }
       } catch (e) {
         // Ignorer si on ne peut pas lire le corps
       }
@@ -306,12 +314,17 @@ export const loadLogementFromBubble = async (
     console.log('='.repeat(60) + '\n');
 
     return data;
-  } catch (error) {
-    console.error('\n' + '='.repeat(60));
-    console.error('❌ ERREUR LORS DU CHARGEMENT DU LOGEMENT');
-    console.error('='.repeat(60));
-    console.error(error);
-    console.error('='.repeat(60) + '\n');
+  } catch (error: any) {
+    // Ne logger que si ce n'est pas une erreur "logement non trouvé"
+    const isNotFoundError = error?.message?.includes('does not exist') || error?.message?.includes('400');
+
+    if (!isNotFoundError) {
+      console.error('\n' + '='.repeat(60));
+      console.error('❌ ERREUR LORS DU CHARGEMENT DU LOGEMENT');
+      console.error('='.repeat(60));
+      console.error(error);
+      console.error('='.repeat(60) + '\n');
+    }
     throw error;
   }
 };

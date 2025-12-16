@@ -16,7 +16,6 @@ export function useGoogleMaps(options: UseGoogleMapsOptions = {}) {
 
   useEffect(() => {
     console.log("🗺️ useGoogleMaps - Clé API:", apiKey ? "✅ Présente" : "❌ Manquante");
-    console.log("🗺️ useGoogleMaps - Clé API complète:", apiKey);
 
     // Vérifier si l'API est déjà chargée
     if (window.google && window.google.maps) {
@@ -35,12 +34,24 @@ export function useGoogleMaps(options: UseGoogleMapsOptions = {}) {
     // Vérifier si le script est déjà en cours de chargement
     const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
     if (existingScript) {
+      console.log("🔄 Script Google Maps déjà présent, attente du chargement...");
       // Attendre que le script existant se charge
-      existingScript.addEventListener("load", () => setIsLoaded(true));
-      existingScript.addEventListener("error", () => 
-        setLoadError(new Error("Erreur lors du chargement de Google Maps"))
-      );
-      return;
+      const handleLoad = () => {
+        console.log("✅ Google Maps chargé (script existant)");
+        setIsLoaded(true);
+      };
+      const handleError = () => {
+        console.error("❌ Erreur lors du chargement de Google Maps (script existant)");
+        setLoadError(new Error("Erreur lors du chargement de Google Maps"));
+      };
+
+      existingScript.addEventListener("load", handleLoad);
+      existingScript.addEventListener("error", handleError);
+
+      return () => {
+        existingScript.removeEventListener("load", handleLoad);
+        existingScript.removeEventListener("error", handleError);
+      };
     }
 
     // Créer et charger le script
@@ -52,22 +63,27 @@ export function useGoogleMaps(options: UseGoogleMapsOptions = {}) {
 
     console.log("🔄 Chargement du script Google Maps:", script.src);
 
-    script.addEventListener("load", () => {
+    const handleLoad = () => {
       console.log("✅ Google Maps chargé avec succès");
       setIsLoaded(true);
-    });
+    };
 
-    script.addEventListener("error", (e) => {
+    const handleError = (e: Event) => {
       console.error("❌ Erreur lors du chargement de Google Maps:", e);
       setLoadError(new Error("Erreur lors du chargement de Google Maps"));
-    });
+    };
+
+    script.addEventListener("load", handleLoad);
+    script.addEventListener("error", handleError);
 
     document.head.appendChild(script);
 
     return () => {
+      script.removeEventListener("load", handleLoad);
+      script.removeEventListener("error", handleError);
       // Ne pas retirer le script car il peut être utilisé ailleurs
     };
-  }, [apiKey, libraries]);
+  }, [apiKey]); // Retirer 'libraries' des dépendances pour éviter la boucle infinie
 
   return { isLoaded, loadError };
 }

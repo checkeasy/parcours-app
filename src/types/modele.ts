@@ -2,6 +2,7 @@ export interface PieceQuantity {
   nom: string;
   quantite: number;
   id?: string; // ID unique pour éviter la duplication des photos quand plusieurs pièces ont le même nom
+  isCustom?: boolean; // Indique si la pièce est personnalisée (ajoutée par l'utilisateur)
 }
 
 export interface TacheModele {
