@@ -252,6 +252,7 @@ export function AddLogementDialog({
     const logementData = {
       nom,
       adresse: adresse || undefined,
+      airbnbLink: airbnbLink || undefined, // Ajouter le lien Airbnb si disponible
       parcoursType: parcoursType!,
       modele: finalModele,
       pieces: finalPieces,

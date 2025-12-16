@@ -605,7 +605,7 @@ export async function sendWebhookToBubble(payload: WebhookPayload): Promise<void
       userID: userID || 'user_demo',
       nom: logementData.nom,
       adresse: logementData.adresse,
-      airbnbLink: logementData.airbnbLink || undefined,
+      url: logementData.airbnbLink || undefined, // Lien Airbnb
       parcoursType: logementData.parcoursType,
       nomParcours: nomParcours,
       etatLieuxMoment: etatLieuxMoment,
