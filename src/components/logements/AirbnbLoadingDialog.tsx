@@ -122,8 +122,9 @@ export function AirbnbLoadingDialog({
           ? window.location.origin  // In production, use the same origin (Railway URL)
           : 'http://localhost:3001'; // In development, use localhost
 
-        // Étape 2: Analyse de l'annonce (15% → 35%)
-        startProgressAnimation(35, 1500, '🔍 Analyse de l\'annonce Airbnb...');
+        // Étape 2: Analyse de l'annonce - progression lente pendant la requête (15% → 70%)
+        // On anime sur 30 secondes max pour couvrir le temps de scraping
+        startProgressAnimation(70, 30000, '🔍 Analyse de l\'annonce Airbnb...');
 
         const response = await fetch(`${BACKEND_URL}/api/scrape-and-create-parcours`, {
           method: 'POST',
@@ -138,8 +139,11 @@ export function AirbnbLoadingDialog({
           }),
         });
 
-        // Étape 3: Téléchargement des photos (35% → 65%)
-        startProgressAnimation(65, 2000, '📸 Téléchargement des photos...');
+        // Arrêter l'animation lente et passer à l'étape suivante
+        if (progressInterval) clearInterval(progressInterval);
+
+        // Étape 3: Traitement de la réponse (progression actuelle → 85%)
+        startProgressAnimation(85, 800, '📸 Traitement des photos...');
 
         if (!response.ok) {
           throw new Error(`Erreur HTTP ${response.status}`);
@@ -151,9 +155,8 @@ export function AirbnbLoadingDialog({
           throw new Error(result.error || 'Erreur lors du scraping');
         }
 
-        // Étape 4: Classification des pièces (65% → 85%)
-        startProgressAnimation(85, 1200, '🏠 Classification des pièces...');
-        await new Promise(resolve => setTimeout(resolve, 1200));
+        // Étape 4: Classification des pièces (85% → 95%)
+        startProgressAnimation(95, 600, '🏠 Classification des pièces...');
 
         // Transformer les données de l'API en format attendu par le frontend
         const pieces: PieceData[] = result.data.pieces.map((piece: any) => ({
@@ -166,9 +169,9 @@ export function AirbnbLoadingDialog({
 
         const totalPhotos = pieces.reduce((sum, piece) => sum + piece.photos.length, 0);
 
-        // Étape 5: Finalisation (85% → 100%)
-        startProgressAnimation(100, 800, '✅ Analyse terminée !');
-        await new Promise(resolve => setTimeout(resolve, 800));
+        // Étape 5: Finalisation (95% → 100%)
+        startProgressAnimation(100, 400, '✅ Analyse terminée !');
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         if (progressInterval) clearInterval(progressInterval);
         setProgress(100);
