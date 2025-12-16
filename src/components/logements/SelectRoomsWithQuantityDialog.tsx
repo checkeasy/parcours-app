@@ -65,10 +65,11 @@ export default function SelectRoomsWithQuantityDialog({
 
   const [showAddCustom, setShowAddCustom] = useState(false);
   const [customPieceName, setCustomPieceName] = useState("");
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Réinitialiser l'état quand le dialog s'ouvre
+  // Réinitialiser l'état UNIQUEMENT quand le dialog s'ouvre (pas à chaque re-render)
   useEffect(() => {
-    if (open) {
+    if (open && !isInitialized) {
       // Si on a des pièces pré-remplies (ex: depuis Airbnb), les utiliser
       if (initialRooms.length > 0) {
         // Créer un Map pour faciliter la recherche
@@ -98,8 +99,14 @@ export default function SelectRoomsWithQuantityDialog({
 
       setShowAddCustom(false);
       setCustomPieceName("");
+      setIsInitialized(true);
     }
-  }, [open, customPieces, initialRooms]);
+
+    // Reset isInitialized quand le dialog se ferme
+    if (!open) {
+      setIsInitialized(false);
+    }
+  }, [open, isInitialized]);
 
   const handleIncrement = (nom: string) => {
     console.log("🔼 handleIncrement appelé pour:", nom);
