@@ -24,8 +24,6 @@ import { ParcoursModele, PieceModele, QuestionModele } from "@/types/modele";
 import { dispatchWebhook, getConciergerieID, isTestMode as getIsTestMode } from "@/utils/webhook";
 import { loadConciergerieModele, updateConciergerieModele, updateModelePieces, updateModeleTasks, updateModeleQuestions } from "@/utils/conciergerieModele";
 import { TACHES_MENAGE, TACHES_VOYAGEUR } from "@/components/parcours/modele/CustomModeleBuilder";
-import { AddressAutocomplete } from "@/components/ui/address-autocomplete";
-import { AddressAutocompleteV2 } from "@/components/ui/address-autocomplete-v2";
 import { CustomAddressAutocomplete } from "@/components/ui/custom-address-autocomplete";
 import { useGoogleMaps } from "@/hooks/useGoogleMaps";
 import { useToast } from "@/hooks/use-toast";
@@ -87,7 +85,6 @@ export function AddLogementDialog({
   const [adresse, setAdresse] = useState("");
   const [airbnbLink, setAirbnbLink] = useState("");
   const [parcoursType, setParcoursType] = useState<"menage" | "voyageur" | null>(null);
-  const [modeleDialogOpen, setModeleDialogOpen] = useState(false);
   const [selectedModele, setSelectedModele] = useState<"menage" | "voyageur" | ParcoursModele | null>(null);
   const [selectedPieces, setSelectedPieces] = useState<PieceQuantity[]>([]);
   const [piecesPhotos, setPiecesPhotos] = useState<Record<string, string[]>>({});
@@ -167,7 +164,6 @@ export function AddLogementDialog({
   useEffect(() => {
     if (shouldReopenModeleDialog && open && !selectedModele) {
       setStep(3);
-      setModeleDialogOpen(true);
       onModeleDialogReopened?.();
     }
   }, [shouldReopenModeleDialog, open, selectedModele, onModeleDialogReopened]);
@@ -184,7 +180,6 @@ export function AddLogementDialog({
     setSelectedModele("menage");
     setParcoursType("menage");
     onModeleDialogReopened?.();
-    setModeleDialogOpen(false);
 
     // Charger le modèle de conciergerie
     try {
@@ -208,7 +203,6 @@ export function AddLogementDialog({
     setSelectedModele("voyageur");
     setParcoursType("voyageur");
     onModeleDialogReopened?.();
-    setModeleDialogOpen(false);
 
     // Charger le modèle de conciergerie
     try {
@@ -232,7 +226,6 @@ export function AddLogementDialog({
     setSelectedModele(modele);
     setParcoursType(modele.type);
     onModeleDialogReopened?.();
-    setModeleDialogOpen(false);
 
     // Utiliser le modèle personnalisé directement
     setConciergerieModele(modele);
@@ -401,7 +394,8 @@ export function AddLogementDialog({
 
   return (
     <>
-      <Dialog open={open && !modeleDialogOpen && step < 4} onOpenChange={(isOpen) => {
+      {/* Dialog principal pour les étapes 1 et 2 */}
+      <Dialog open={open && step <= 2} onOpenChange={(isOpen) => {
         if (!isOpen) {
           handleClose();
         }
@@ -410,7 +404,7 @@ export function AddLogementDialog({
           className={isFullScreenMode ? "!absolute !inset-0 !w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !translate-x-0 !translate-y-0 !left-0 !top-0 px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 gap-1 sm:gap-2" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
           hideCloseButton={true}
         >
-          {/* DialogHeader commun pour toutes les étapes (pour accessibilité) */}
+          {/* DialogHeader commun pour les étapes 1 et 2 (pour accessibilité) */}
           <DialogHeader className={step === 1 && !hasExistingLogement ? (isFullScreenMode ? "pb-0" : "") : "sr-only"}>
             {step === 1 && !hasExistingLogement && (
               <Button
@@ -426,12 +420,10 @@ export function AddLogementDialog({
               <DialogTitle className={step === 1 && !hasExistingLogement ? (isFullScreenMode ? "text-base sm:text-lg md:text-xl pr-8" : "text-lg sm:text-xl md:text-2xl pr-8") : ""}>
                 {step === 1 && !hasExistingLogement && `${t('logement.step', { current: getDisplayedStepNumber(1), total: getTotalSteps() })} - ${t('logement.createNew')}`}
                 {step === 2 && `${t('logement.step', { current: getDisplayedStepNumber(2), total: getTotalSteps() })} - ${t('parcours.chooseType')}`}
-                {step === 3 && `${t('logement.step', { current: getDisplayedStepNumber(3), total: getTotalSteps() })} - ${t('parcours.selectModel')}`}
               </DialogTitle>
               <DialogDescription className={step === 1 && !hasExistingLogement ? "text-xs sm:text-sm text-muted-foreground" : ""}>
                 {step === 1 && !hasExistingLogement && t('logement.basicInfo')}
                 {step === 2 && t('parcours.chooseTypeDescription')}
-                {step === 3 && t('parcours.selectModelDescription')}
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -593,8 +585,6 @@ export function AddLogementDialog({
               </div>
             </>
           )}
-
-          {/* Étape 3 gérée par SelectModeleDialog - pas de contenu ici */}
         </DialogContent>
       </Dialog>
 
@@ -672,7 +662,10 @@ export function AddLogementDialog({
           selectedRooms={selectedRooms}
           modeleData={conciergerieModele.pieces}
           onSave={handleStep4Next}
-          onBack={() => setStep(3)}
+          onBack={() => {
+            // Fermer le dialog actuel avant de changer d'étape
+            setTimeout(() => setStep(3), 100);
+          }}
           isFullScreenMode={isFullScreenMode}
         />
       )}
@@ -690,7 +683,10 @@ export function AddLogementDialog({
           parcoursType={parcoursType}
           modeleQuestions={conciergerieModele.questionsChecklist}
           onSave={handleStep5Next}
-          onBack={() => setStep(4)}
+          onBack={() => {
+            // Fermer le dialog actuel avant de changer d'étape
+            setTimeout(() => setStep(4), 100);
+          }}
           isFullScreenMode={isFullScreenMode}
         />
       )}
@@ -708,7 +704,10 @@ export function AddLogementDialog({
           pieces={selectedRooms.length > 0 ? selectedRooms : selectedPieces}
           parcoursType={parcoursType}
           onSave={handleSavePhotos}
-          onBack={() => setStep(5)}
+          onBack={() => {
+            // Fermer le dialog actuel avant de changer d'étape
+            setTimeout(() => setStep(5), 100);
+          }}
           isFullScreenMode={isFullScreenMode}
           initialPhotos={piecesPhotos} // Passer les photos Airbnb si disponibles
         />

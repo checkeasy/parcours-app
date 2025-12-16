@@ -211,23 +211,29 @@ export default function SelectTasksPerRoomDialog({
       >
         <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
           {onBack && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8 z-50"
-              onClick={onBack}
+            <div
+              className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8 z-50 inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+              onPointerDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onBack();
+              }}
+              style={{ touchAction: 'none' }}
             >
               <ArrowLeft className="h-4 w-4" />
-            </Button>
+            </div>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-3 top-3 sm:right-4 sm:top-4 h-8 w-8 z-50"
-            onClick={() => onOpenChange(false)}
+          <div
+            className="absolute right-3 top-3 sm:right-4 sm:top-4 h-8 w-8 z-50 inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+            onPointerDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onOpenChange(false);
+            }}
+            style={{ touchAction: 'none' }}
           >
             <X className="h-4 w-4" />
-          </Button>
+          </div>
           <div className="pl-8 sm:pl-10 pr-8">
             <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
               Étape 4/6 - Sélectionnez les tâches pour chaque pièce
@@ -294,32 +300,35 @@ export default function SelectTasksPerRoomDialog({
                             {task.description}
                           </p>
                         </Label>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-                          onClick={(e) => {
+                        <div
+                          className="h-7 w-7 sm:h-8 sm:w-8 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                          onPointerDown={(e) => {
                             e.preventDefault();
+                            e.stopPropagation();
                             handleEditTask(roomName, task);
                           }}
+                          style={{ touchAction: 'none' }}
                         >
                           <Pencil className="h-3 w-3 sm:h-4 sm:w-4" />
-                        </Button>
+                        </div>
                       </div>
                     ))}
                   </div>
                 )}
 
                 {/* Bouton pour ajouter une tâche */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full mt-3"
-                  onClick={() => handleAddTask(roomName)}
+                <div
+                  className="w-full mt-3 h-9 inline-flex items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer text-sm font-medium"
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleAddTask(roomName);
+                  }}
+                  style={{ touchAction: 'none' }}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Ajouter une tâche
-                </Button>
+                </div>
               </Card>
             );
           })}
@@ -334,9 +343,17 @@ export default function SelectTasksPerRoomDialog({
                 `${totalSelectedTasks} tâche${totalSelectedTasks > 1 ? 's' : ''} sélectionnée${totalSelectedTasks > 1 ? 's' : ''}`
               )}
             </p>
-            <Button onClick={handleSave} className="w-full sm:w-auto">
+            <div
+              className="h-9 px-4 inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium w-full sm:w-auto cursor-pointer"
+              onPointerDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSave();
+              }}
+              style={{ touchAction: 'none' }}
+            >
               Continuer
-            </Button>
+            </div>
           </div>
         </div>
       </DialogContent>

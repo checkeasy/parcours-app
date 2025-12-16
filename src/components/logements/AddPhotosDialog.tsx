@@ -154,22 +154,28 @@ export function AddPhotosDialog({
         hideCloseButton={true}
       >
         <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8 z-50"
-            onClick={onBack}
+          <div
+            className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8 z-50 inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+            onPointerDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onBack();
+            }}
+            style={{ touchAction: 'none' }}
           >
             <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-3 top-3 sm:right-4 sm:top-4 h-8 w-8 z-50"
-            onClick={() => onOpenChange(false)}
+          </div>
+          <div
+            className="absolute right-3 top-3 sm:right-4 sm:top-4 h-8 w-8 z-50 inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+            onPointerDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onOpenChange(false);
+            }}
+            style={{ touchAction: 'none' }}
           >
             <X className="h-4 w-4" />
-          </Button>
+          </div>
           <div className="pl-8 sm:pl-10 pr-8">
             <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
               Étape 6/6 - {t('photos.addPhotosFor', { logementNom })}
@@ -230,12 +236,17 @@ export function AddPhotosDialog({
                               alt={`${piece.displayName} ${index + 1}`}
                               className="w-full h-full object-cover"
                             />
-                            <button
-                              onClick={() => handleRemovePhoto(piece.key, index)}
-                              className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                            <div
+                              onPointerDown={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleRemovePhoto(piece.key, index);
+                              }}
+                              style={{ touchAction: 'none' }}
+                              className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground sm:opacity-0 sm:group-hover:opacity-100 transition-opacity cursor-pointer"
                             >
                               <X className="h-3 w-3" />
-                            </button>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -268,10 +279,28 @@ export function AddPhotosDialog({
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-0 pt-3 sm:pt-4 border-t">
-          <Button variant="outline" onClick={onBack} className="w-full sm:w-auto">
+          <div
+            className="h-9 px-4 inline-flex items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors text-sm font-medium w-full sm:w-auto cursor-pointer"
+            onPointerDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onBack();
+            }}
+            style={{ touchAction: 'none' }}
+          >
             {t('logement.back')}
-          </Button>
-          <Button onClick={handleSave} className="w-full sm:w-auto">{t('airbnb.finish')}</Button>
+          </div>
+          <div
+            className="h-9 px-4 inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium w-full sm:w-auto cursor-pointer"
+            onPointerDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleSave();
+            }}
+            style={{ touchAction: 'none' }}
+          >
+            {t('airbnb.finish')}
+          </div>
         </div>
       </DialogContent>
     </Dialog>

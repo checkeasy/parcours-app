@@ -101,9 +101,12 @@ export default function SelectRoomsWithQuantityDialog({
   }, [open, customPieces, initialRooms]);
 
   const handleIncrement = (nom: string) => {
-    setPiecesQuantity(prev =>
-      prev.map(p => p.nom === nom ? { ...p, quantite: Math.min(p.quantite + 1, 10) } : p)
-    );
+    console.log("🔼 handleIncrement appelé pour:", nom);
+    setPiecesQuantity(prev => {
+      const updated = prev.map(p => p.nom === nom ? { ...p, quantite: Math.min(p.quantite + 1, 10) } : p);
+      console.log("📊 Nouvelle quantité:", updated.find(p => p.nom === nom)?.quantite);
+      return updated;
+    });
   };
 
   const handleDecrement = (nom: string) => {
@@ -150,23 +153,29 @@ export default function SelectRoomsWithQuantityDialog({
       >
         <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
           {onBack && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8 z-50 pointer-events-auto"
-              onClick={onBack}
+            <div
+              className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8 z-50 inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+              onPointerDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onBack();
+              }}
+              style={{ touchAction: 'none' }}
             >
               <ArrowLeft className="h-4 w-4" />
-            </Button>
+            </div>
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-3 top-3 sm:right-4 sm:top-4 h-8 w-8 z-50 pointer-events-auto"
-            onClick={() => onOpenChange(false)}
+          <div
+            className="absolute right-3 top-3 sm:right-4 sm:top-4 h-8 w-8 z-50 inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+            onPointerDown={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onOpenChange(false);
+            }}
+            style={{ touchAction: 'none' }}
           >
             <X className="h-4 w-4" />
-          </Button>
+          </div>
           <div className="pl-8 sm:pl-10 pr-8">
             <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
               Étape 3/6 - Sélectionnez les pièces présentes dans {logementNom}
@@ -193,29 +202,41 @@ export default function SelectRoomsWithQuantityDialog({
               </div>
 
               <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-7 w-7 sm:h-8 sm:w-8 pointer-events-auto"
-                  onClick={() => handleDecrement(piece.nom)}
-                  disabled={piece.quantite === 0}
+                <div
+                  className={cn(
+                    "h-7 w-7 sm:h-8 sm:w-8 inline-flex items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors",
+                    piece.quantite === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                  )}
+                  onPointerDown={(e) => {
+                    if (piece.quantite === 0) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDecrement(piece.nom);
+                  }}
+                  style={{ touchAction: 'none' }}
                 >
                   <Minus className="h-3 w-3 sm:h-4 sm:w-4" />
-                </Button>
+                </div>
 
                 <span className="w-6 sm:w-8 text-center font-semibold text-sm sm:text-base">
                   {piece.quantite}
                 </span>
 
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-7 w-7 sm:h-8 sm:w-8 pointer-events-auto"
-                  onClick={() => handleIncrement(piece.nom)}
-                  disabled={piece.quantite >= 10}
+                <div
+                  className={cn(
+                    "h-7 w-7 sm:h-8 sm:w-8 inline-flex items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors",
+                    piece.quantite >= 10 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                  )}
+                  onPointerDown={(e) => {
+                    if (piece.quantite >= 10) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleIncrement(piece.nom);
+                  }}
+                  style={{ touchAction: 'none' }}
                 >
                   <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
-                </Button>
+                </div>
               </div>
             </div>
           ))}
@@ -233,15 +254,35 @@ export default function SelectRoomsWithQuantityDialog({
                       handleAddCustomPiece();
                     }
                   }}
-                  className="flex-1 pointer-events-auto"
+                  className="flex-1"
                   autoFocus
                 />
-                <Button onClick={handleAddCustomPiece} disabled={!customPieceName.trim()} className="pointer-events-auto">
+                <div
+                  className={cn(
+                    "h-9 px-4 inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium",
+                    !customPieceName.trim() ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                  )}
+                  onPointerDown={(e) => {
+                    if (!customPieceName.trim()) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleAddCustomPiece();
+                  }}
+                  style={{ touchAction: 'none' }}
+                >
                   Ajouter
-                </Button>
-                <Button variant="ghost" onClick={() => setShowAddCustom(false)} className="pointer-events-auto">
+                </div>
+                <div
+                  className="h-9 w-9 inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowAddCustom(false);
+                  }}
+                  style={{ touchAction: 'none' }}
+                >
                   <X className="h-4 w-4" />
-                </Button>
+                </div>
               </div>
             </div>
           )}
@@ -250,14 +291,18 @@ export default function SelectRoomsWithQuantityDialog({
         <div className="space-y-2 sm:space-y-3 pt-3 sm:pt-4 border-t">
           {/* Bouton pour ajouter une pièce personnalisée */}
           {!showAddCustom && (
-            <Button
-              variant="outline"
-              onClick={() => setShowAddCustom(true)}
-              className="w-full pointer-events-auto"
+            <div
+              className="w-full h-9 inline-flex items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer text-sm font-medium"
+              onPointerDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowAddCustom(true);
+              }}
+              style={{ touchAction: 'none' }}
             >
               <Plus className="h-4 w-4 mr-2" />
               Ajouter une pièce personnalisée
-            </Button>
+            </div>
           )}
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
@@ -268,9 +313,21 @@ export default function SelectRoomsWithQuantityDialog({
                 `${totalPieces} pièce${totalPieces > 1 ? 's' : ''} sélectionnée${totalPieces > 1 ? 's' : ''}`
               )}
             </p>
-            <Button onClick={handleSave} disabled={totalPieces === 0} className="w-full sm:w-auto pointer-events-auto">
+            <div
+              className={cn(
+                "h-9 px-4 inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium w-full sm:w-auto",
+                totalPieces === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+              )}
+              onPointerDown={(e) => {
+                if (totalPieces === 0) return;
+                e.preventDefault();
+                e.stopPropagation();
+                handleSave();
+              }}
+              style={{ touchAction: 'none' }}
+            >
               Continuer
-            </Button>
+            </div>
           </div>
         </div>
       </DialogContent>
