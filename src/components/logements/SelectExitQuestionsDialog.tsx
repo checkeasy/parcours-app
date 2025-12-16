@@ -90,9 +90,12 @@ export default function SelectExitQuestionsDialog({
   const [questionDialogOpen, setQuestionDialogOpen] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState<QuestionModele | undefined>();
 
-  // Initialiser les questions depuis le modèle
+  // Flag pour éviter la réinitialisation à chaque re-render
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Initialiser les questions depuis le modèle UNIQUEMENT à l'ouverture
   useEffect(() => {
-    if (open) {
+    if (open && !isInitialized) {
       const selectedSet = new Set<string>();
       const customQs: QuestionModele[] = [];
 
@@ -107,8 +110,14 @@ export default function SelectExitQuestionsDialog({
 
       setSelectedQuestions(selectedSet);
       setCustomQuestions(customQs);
+      setIsInitialized(true);
     }
-  }, [open, modeleQuestions, parcoursType]);
+
+    // Reset isInitialized quand le dialog se ferme
+    if (!open) {
+      setIsInitialized(false);
+    }
+  }, [open, isInitialized]);
 
   const handleToggleQuestion = (questionId: string) => {
     setSelectedQuestions(prev => {

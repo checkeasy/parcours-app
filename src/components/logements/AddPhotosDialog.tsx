@@ -55,6 +55,7 @@ export function AddPhotosDialog({
 }: AddPhotosDialogProps) {
   const { t } = useTranslation();
   const [piecesPhotos, setPiecesPhotos] = useState<Record<string, string[]>>({});
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Créer une liste de pièces individuelles basée sur les quantités
   // Par exemple: si "Chambre" a quantite=2, on crée ["Chambre 1", "Chambre 2"]
@@ -69,9 +70,9 @@ export function AddPhotosDialog({
     }));
   });
 
-  // Initialiser avec les photos pré-remplies (ex: depuis Airbnb) quand le dialog s'ouvre
+  // Initialiser avec les photos pré-remplies (ex: depuis Airbnb) UNIQUEMENT quand le dialog s'ouvre pour la première fois
   useEffect(() => {
-    if (open) {
+    if (open && !isInitialized) {
       // Distribuer intelligemment les photos Airbnb aux pièces individuelles
       const distributedPhotos: Record<string, string[]> = {};
 
@@ -102,8 +103,14 @@ export function AddPhotosDialog({
       });
 
       setPiecesPhotos(distributedPhotos);
+      setIsInitialized(true);
     }
-  }, [open, initialPhotos, pieces]);
+
+    // Reset isInitialized quand le dialog se ferme
+    if (!open) {
+      setIsInitialized(false);
+    }
+  }, [open, isInitialized]);
 
   const handleFileUpload = (pieceKey: string, files: FileList | null) => {
     if (!files) return;

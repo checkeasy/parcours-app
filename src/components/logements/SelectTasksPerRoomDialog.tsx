@@ -53,6 +53,9 @@ export default function SelectTasksPerRoomDialog({
   const [editTaskDialogOpen, setEditTaskDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<{ roomName: string; task?: TacheModele } | null>(null);
 
+  // Flag pour éviter la réinitialisation à chaque re-render
+  const [isInitialized, setIsInitialized] = useState(false);
+
   // Obtenir les tâches disponibles pour une pièce (tâches par défaut + tâches personnalisées)
   const getTasksForRoom = (roomName: string): TacheModele[] => {
     const tasksSource = parcoursType === "menage" ? TACHES_MENAGE : TACHES_VOYAGEUR;
@@ -61,14 +64,14 @@ export default function SelectTasksPerRoomDialog({
     return [...defaultTasks, ...customTasks];
   };
 
-  // Initialiser les tâches sélectionnées depuis le modèle
+  // Initialiser les tâches sélectionnées depuis le modèle UNIQUEMENT à l'ouverture
   useEffect(() => {
-    if (open) {
+    if (open && !isInitialized) {
       const initialSelection = new Map<string, string[]>();
-      
+
       // Obtenir les types de pièces uniques (sans les quantités)
       const uniqueRoomTypes = Array.from(new Set(selectedRooms.map(r => r.nom)));
-      
+
       uniqueRoomTypes.forEach(roomName => {
         // Chercher les tâches pré-sélectionnées dans le modèle
         const modeleRoom = modeleData.find(p => p.nom === roomName);
@@ -78,10 +81,16 @@ export default function SelectTasksPerRoomDialog({
           initialSelection.set(roomName, []);
         }
       });
-      
+
       setSelectedTasksPerRoom(initialSelection);
+      setIsInitialized(true);
     }
-  }, [open, selectedRooms, modeleData]);
+
+    // Reset isInitialized quand le dialog se ferme
+    if (!open) {
+      setIsInitialized(false);
+    }
+  }, [open, isInitialized]);
 
   const handleToggleTask = (roomName: string, taskId: string) => {
     setSelectedTasksPerRoom(prev => {
