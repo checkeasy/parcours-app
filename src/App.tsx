@@ -94,11 +94,16 @@ function App() {
             const logementData = response.response.logement;
 
             // Préparer les données pour le formulaire
+            // Le champ "link" contient l'URL Airbnb si présent (minuscule dans la réponse Bubble)
             setInitialLogementData({
               nom: logementData.Nom || '',
               // Note: L'adresse n'est pas dans la réponse actuelle, on la laisse vide
               adresse: '',
+              // Récupérer le lien Airbnb depuis le champ link (minuscule)
+              airbnbLink: logementData.link || '',
             });
+
+            console.log("🔗 Lien Airbnb récupéré:", logementData.link || 'Aucun');
 
             // Ouvrir automatiquement le dialog
             setDialogOpen(true);

@@ -56,6 +56,17 @@ interface RoomTourItem {
 }
 
 /**
+ * Interface pour une image dans all_images (fallback quand room_tour_images est vide)
+ */
+interface AllImage {
+  image_id: string;
+  original_url: string;
+  accessibility_label?: string;
+  filename?: string;
+  source?: string;
+}
+
+/**
  * Interface pour la réponse RÉELLE de GET /api/status/:id
  * Basée sur la vraie structure retournée par l'API port 8000
  */
@@ -74,6 +85,10 @@ interface StatusResponse {
     };
     raw_title?: string;
     room_tour_images?: RoomTourItem[];
+    // Fallback image sources when room_tour_images is empty
+    all_images?: AllImage[];
+    gallery_images?: AllImage[];
+    preview_images?: AllImage[];
     download_stats?: {
       total_images: number;
       downloaded: number;
@@ -215,6 +230,43 @@ async function pollStatusUntilComplete(extractionId: string): Promise<StatusResp
         console.error(`   Extraction ID: ${extractionId}`);
         console.error(`   Données complètes:`, JSON.stringify(statusData, null, 2));
 
+        // NOUVEAU: Essayer de récupérer les données partielles via /api/extraction/complete
+        console.log(`\n🔄 Tentative de récupération des données partielles via /api/extraction/complete...`);
+        try {
+          const completeUrl = `${SCRAPING_CONFIG.scrapingServiceUrl}${SCRAPING_CONFIG.endpoints.complete}/${extractionId}`;
+          console.log(`   📊 URL: ${completeUrl}`);
+          const completeResponse = await fetch(completeUrl);
+
+          if (completeResponse.ok) {
+            const completeData = await completeResponse.json() as StatusResponse;
+
+            // Vérifier si des données sont disponibles
+            if (completeData.data) {
+              const hasImages =
+                (completeData.data.all_images && completeData.data.all_images.length > 0) ||
+                (completeData.data.gallery_images && completeData.data.gallery_images.length > 0) ||
+                (completeData.data.preview_images && completeData.data.preview_images.length > 0) ||
+                (completeData.data.room_tour_images && completeData.data.room_tour_images.length > 0);
+
+              if (hasImages) {
+                console.log(`   ✅ Données partielles récupérées! Des images sont disponibles.`);
+                console.log(`   ℹ️  Ces images seront assignées à la pièce "À trier"`);
+                // Retourner les données partielles avec le status modifié
+                return {
+                  ...completeData,
+                  status: 'completed',
+                  message: 'Données partielles récupérées - images disponibles'
+                };
+              }
+            }
+            console.log(`   ⚠️ Aucune image trouvée dans les données partielles`);
+          } else {
+            console.log(`   ⚠️ Endpoint /api/extraction/complete non disponible (${completeResponse.status})`);
+          }
+        } catch (completeError) {
+          console.log(`   ⚠️ Impossible de récupérer les données partielles:`, completeError);
+        }
+
         // Message d'erreur plus explicite pour l'utilisateur
         if (errorMessage.includes('NoneType') && errorMessage.includes('lower')) {
           throw new Error(
@@ -240,8 +292,57 @@ async function pollStatusUntilComplete(extractionId: string): Promise<StatusResp
 }
 
 /**
+ * Collecte toutes les images disponibles depuis les sources de fallback
+ * Utilisé quand room_tour_images est vide
+ */
+function collectAllImagesFromFallback(data: NonNullable<StatusResponse['data']>): AllImage[] {
+  // Try different fallback sources in order of preference
+  if (data.all_images && data.all_images.length > 0) {
+    console.log(`   📦 Utilisation de all_images: ${data.all_images.length} images`);
+    return data.all_images;
+  }
+
+  if (data.gallery_images && data.gallery_images.length > 0) {
+    console.log(`   📦 Utilisation de gallery_images: ${data.gallery_images.length} images`);
+    return data.gallery_images;
+  }
+
+  if (data.preview_images && data.preview_images.length > 0) {
+    console.log(`   📦 Utilisation de preview_images: ${data.preview_images.length} images`);
+    return data.preview_images;
+  }
+
+  // Also try to extract from room_tour_images if they exist but are structured differently
+  if (data.room_tour_images) {
+    const allRoomImages: AllImage[] = [];
+    for (const room of data.room_tour_images) {
+      for (const image of room.images) {
+        allRoomImages.push({
+          image_id: image.image_id,
+          original_url: image.original_url,
+          accessibility_label: image.accessibility_label,
+          filename: image.filename,
+          source: image.source
+        });
+      }
+    }
+    if (allRoomImages.length > 0) {
+      console.log(`   📦 Images extraites de room_tour_images: ${allRoomImages.length} images`);
+      return allRoomImages;
+    }
+  }
+
+  return [];
+}
+
+/**
  * Transforme les données RÉELLES de /api/status en format parcours CheckEasy
  * Utilise room_tour_images qui contient les images BIEN GROUPÉES par pièce
+ *
+ * NOUVEAU COMPORTEMENT (v2.1):
+ * - Si aucune pièce n'est détectée (room_tour_images vide), les photos sont quand même extraites
+ * - Toutes les photos sont assignées à une pièce par défaut "À trier"
+ * - L'utilisateur pourra redistribuer les photos via drag & drop à l'étape 6
  */
 async function transformToParcoursFormat(
   statusData: StatusResponse
@@ -255,48 +356,97 @@ async function transformToParcoursFormat(
   console.log(`   📊 Titre: ${rawTitle}`);
   console.log(`   🏠 Pièces détectées: ${roomTourImages.length}`);
 
-  // Afficher le détail des pièces
-  roomTourImages.forEach(room => {
-    console.log(`      - ${room.room_name} (${room.room_type}): ${room.total_images} images`);
-  });
+  // Check if we have rooms with images
+  const hasRoomsWithImages = roomTourImages.length > 0 &&
+    roomTourImages.some(room => room.images && room.images.length > 0);
 
-  // Transformer chaque pièce
-  const pieces = await Promise.all(
-    roomTourImages.map(async (room) => {
-      // Mapper le nom de la pièce
-      const mappedRoomName = SCRAPING_CONFIG.roomTypeMapping[room.room_type as keyof typeof SCRAPING_CONFIG.roomTypeMapping] || room.room_name;
+  let pieces: Array<{
+    nom: string;
+    quantite: number;
+    tasks: any[];
+    photos: string[];
+  }> = [];
 
-      console.log(`\n   🏠 Traitement: ${mappedRoomName} (${room.total_images} images)`);
+  if (hasRoomsWithImages) {
+    // COMPORTEMENT NORMAL: Pièces détectées avec images
+    console.log(`\n   ✅ Mode normal: traitement des pièces détectées`);
 
-      // Télécharger et convertir les photos en base64
-      console.log(`   📸 Téléchargement de ${room.images.length} images...`);
-      const photosBase64: string[] = [];
+    // Afficher le détail des pièces
+    roomTourImages.forEach(room => {
+      console.log(`      - ${room.room_name} (${room.room_type}): ${room.total_images} images`);
+    });
 
-      for (let i = 0; i < room.images.length; i++) {
-        const image = room.images[i];
-        const base64Image = await downloadAndConvertToBase64(image.original_url, i);
-        photosBase64.push(base64Image);
-      }
+    // Transformer chaque pièce
+    pieces = await Promise.all(
+      roomTourImages.map(async (room) => {
+        // Mapper le nom de la pièce
+        const mappedRoomName = SCRAPING_CONFIG.roomTypeMapping[room.room_type as keyof typeof SCRAPING_CONFIG.roomTypeMapping] || room.room_name;
+
+        console.log(`\n   🏠 Traitement: ${mappedRoomName} (${room.total_images} images)`);
+
+        // Télécharger et convertir les photos en base64 EN PARALLÈLE
+        console.log(`   📸 Téléchargement de ${room.images.length} images (parallèle)...`);
+
+        // Télécharger toutes les images de cette pièce en parallèle
+        const photosBase64 = await Promise.all(
+          room.images.map((image, i) => downloadAndConvertToBase64(image.original_url, i))
+        );
+
+        const base64Count = photosBase64.filter(img => img.startsWith('data:image')).length;
+        console.log(`   ✅ Conversion: ${base64Count}/${room.images.length} en base64`);
+
+        // Pour l'instant, pas de tâches AI dans cette version de l'API
+        // On utilisera les tâches par défaut de CheckEasy
+        const tasks: any[] = [];
+
+        return {
+          nom: mappedRoomName,
+          quantite: 1,
+          tasks,
+          photos: photosBase64
+        };
+      })
+    );
+  } else {
+    // NOUVEAU COMPORTEMENT: Aucune pièce détectée → Extraire toutes les photos
+    console.log(`\n   ⚠️ AUCUNE PIÈCE DÉTECTÉE - Mode fallback activé`);
+    console.log(`   📸 Récupération de toutes les images disponibles...`);
+
+    // Collecter toutes les images depuis les sources de fallback
+    const allImages = collectAllImagesFromFallback(data);
+
+    if (allImages.length > 0) {
+      console.log(`\n   📷 ${allImages.length} images trouvées - Attribution à la pièce "À trier"`);
+      console.log(`   ℹ️  L'utilisateur pourra redistribuer ces photos à l'étape 6 (drag & drop)`);
+
+      // Télécharger et convertir toutes les photos en base64 EN PARALLÈLE
+      console.log(`   📸 Téléchargement de ${allImages.length} images (parallèle)...`);
+
+      const photosBase64 = await Promise.all(
+        allImages.map((image, i) => downloadAndConvertToBase64(image.original_url, i))
+      );
 
       const base64Count = photosBase64.filter(img => img.startsWith('data:image')).length;
-      console.log(`   ✅ Conversion: ${base64Count}/${room.images.length} en base64`);
+      console.log(`   ✅ Conversion: ${base64Count}/${allImages.length} images en base64`);
 
-      // Pour l'instant, pas de tâches AI dans cette version de l'API
-      // On utilisera les tâches par défaut de CheckEasy
-      const tasks: any[] = [];
-
-      return {
-        nom: mappedRoomName,
+      // Créer une pièce par défaut "À trier" avec toutes les photos
+      pieces = [{
+        nom: 'À trier',
         quantite: 1,
-        tasks,
+        tasks: [],
         photos: photosBase64
-      };
-    })
-  );
+      }];
+
+      console.log(`\n   🏠 Pièce créée: "À trier" avec ${photosBase64.length} photos`);
+    } else {
+      console.log(`   ❌ Aucune image trouvée dans les sources de fallback`);
+      console.log(`   📋 Sources vérifiées: all_images, gallery_images, preview_images, room_tour_images`);
+    }
+  }
 
   const totalImages = pieces.reduce((sum, piece) => sum + piece.photos.length, 0);
 
-  console.log(`\n✅ Transformation terminée: ${pieces.length} pièces, ${totalImages} images`);
+  console.log(`\n✅ Transformation terminée: ${pieces.length} pièce(s), ${totalImages} image(s)`);
 
   return {
     propertyInfo: {

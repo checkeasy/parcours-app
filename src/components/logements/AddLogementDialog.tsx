@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Sparkles, Plane, X, ArrowLeft } from "lucide-react";
+import { Sparkles, Plane, X, ArrowLeft, RefreshCw, CheckCircle2, Image, DoorOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import airbnbLogo from "@/assets/airbnb-logo.png";
 import SelectRoomsWithQuantityDialog from "./SelectRoomsWithQuantityDialog";
@@ -56,6 +56,7 @@ interface AddLogementDialogProps {
   initialLogementData?: {
     nom?: string;
     adresse?: string;
+    airbnbLink?: string;
   } | null;
 }
 
@@ -125,6 +126,10 @@ export function AddLogementDialog({
       }
       if (initialLogementData.adresse) {
         setAdresse(initialLogementData.adresse);
+      }
+      if (initialLogementData.airbnbLink) {
+        setAirbnbLink(initialLogementData.airbnbLink);
+        console.log("🔗 Lien Airbnb pré-rempli:", initialLogementData.airbnbLink);
       }
       // Passer directement à l'étape 2 si on a un logement existant
       setStep(2);
@@ -516,7 +521,7 @@ export function AddLogementDialog({
           {/* Étape 2 : Type de parcours */}
           {step === 2 && (
             <>
-              <div className="relative">
+              <div className="relative w-full overflow-hidden">
                 {/* Afficher le bouton Retour seulement si on n'a pas de logement existant */}
                 {!hasExistingLogement && (
                   <Button
@@ -537,7 +542,7 @@ export function AddLogementDialog({
                   <X className="h-4 w-4" />
                 </Button>
                 {/* En-tête de l'étape */}
-                <div className="px-8 sm:px-10 pb-3 sm:pb-4">
+                <div className="px-8 sm:px-10 pb-3 sm:pb-4 overflow-hidden">
                   <h2 className={cn(
                     "font-semibold",
                     isFullScreenMode
@@ -546,6 +551,69 @@ export function AddLogementDialog({
                   )}>
                     {t('logement.step', { current: getDisplayedStepNumber(2), total: getTotalSteps() })} - {t('parcours.chooseType')}
                   </h2>
+
+                  {/* Encart re-scraping Airbnb si un lien existe */}
+                  {airbnbLink.trim() && hasExistingLogement && (
+                    <Card
+                      className={cn(
+                        "mt-4 overflow-hidden border-2 transition-all",
+                        airbnbPieces.length > 0
+                          ? "border-green-500/50 bg-green-50/50 dark:bg-green-950/20"
+                          : "border-[#FF5A5F]/30 hover:border-[#FF5A5F]/50 cursor-pointer group"
+                      )}
+                      onClick={() => airbnbPieces.length === 0 && setStep(1.5 as any)}
+                    >
+                      <div className={cn(
+                        "flex items-center gap-4 p-4 overflow-hidden w-full",
+                        airbnbPieces.length > 0
+                          ? "bg-gradient-to-r from-green-500/5 to-green-500/10"
+                          : "bg-gradient-to-r from-[#FF5A5F]/5 to-[#FF5A5F]/10"
+                      )}>
+                        <div className="h-12 w-12 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 relative">
+                          <img src={airbnbLogo} alt="Airbnb" className="h-7 w-7" />
+                          {airbnbPieces.length > 0 && (
+                            <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-green-500 flex items-center justify-center">
+                              <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0 overflow-hidden">
+                          <p className={cn(
+                            "text-sm font-semibold truncate",
+                            airbnbPieces.length > 0 ? "text-green-700 dark:text-green-400" : "text-foreground"
+                          )}>
+                            {airbnbPieces.length > 0
+                              ? t('airbnb.analysisComplete', 'Analyse terminée ✓')
+                              : t('airbnb.existingLink', 'Annonce Airbnb liée')}
+                          </p>
+                          {airbnbPieces.length > 0 ? (
+                            <div className="flex items-center gap-3 mt-1">
+                              <span className="inline-flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                                <DoorOpen className="h-3.5 w-3.5" />
+                                {airbnbPieces.length} {t('airbnb.roomsFound', 'pièces')}
+                              </span>
+                              <span className="inline-flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                                <Image className="h-3.5 w-3.5" />
+                                {airbnbTotalPhotos} {t('airbnb.photosFound', 'photos')}
+                              </span>
+                            </div>
+                          ) : (
+                            <p className="text-xs text-muted-foreground truncate mt-0.5 max-w-full">
+                              {airbnbLink}
+                            </p>
+                          )}
+                        </div>
+                        {airbnbPieces.length === 0 && (
+                          <div className="shrink-0 flex items-center gap-2 text-[#FF5A5F] group-hover:translate-x-1 transition-transform">
+                            <RefreshCw className="h-4 w-4" />
+                            <span className="text-sm font-medium hidden sm:inline">
+                              {t('airbnb.rescrape', 'Re-analyser')}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </Card>
+                  )}
                 </div>
               </div>
 

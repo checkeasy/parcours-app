@@ -80,7 +80,13 @@
     "disable": "Disable room",
     "enable": "Enable room",
     "showTasks": "Show tasks",
-    "hideTasks": "Hide tasks"
+    "hideTasks": "Hide tasks",
+    "existingLink": "Linked Airbnb listing",
+    "rescrape": "Re-analyze",
+    "pleaseWait": "Retrieving rooms and photos...",
+    "analysisComplete": "Analysis complete ✓",
+    "roomsFound": "rooms",
+    "photosFound": "photos"
   },
   "modele": {
     "custom": "Custom model",

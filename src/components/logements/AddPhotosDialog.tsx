@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ArrowLeft, Upload, X, ImagePlus } from "lucide-react";
+import { ArrowLeft, Upload, X, ImagePlus, GripVertical } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface PieceQuantity {
   nom: string;
@@ -41,6 +41,7 @@ const PIECE_EMOJIS: Record<string, string> = {
   "Cave": "📦",
   "Garage": "🚗",
   "Buanderie": "🧺",
+  "À trier": "📂", // Photos non classées - à redistribuer par l'utilisateur
 };
 
 export function AddPhotosDialog({
@@ -57,6 +58,167 @@ export function AddPhotosDialog({
   const { t } = useTranslation();
   const [piecesPhotos, setPiecesPhotos] = useState<Record<string, string[]>>({});
   const [isInitialized, setIsInitialized] = useState(false);
+
+  // État pour le drag and drop
+  const [draggedPhoto, setDraggedPhoto] = useState<{ pieceKey: string; photoIndex: number; photoUrl: string } | null>(null);
+  const [dragOverPieceKey, setDragOverPieceKey] = useState<string | null>(null);
+
+  // Refs pour le touch drag and drop
+  const pieceRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const touchDragRef = useRef<{ startX: number; startY: number; isDragging: boolean }>({ startX: 0, startY: 0, isDragging: false });
+  const floatingImageRef = useRef<HTMLDivElement | null>(null);
+
+  // Fonction pour déplacer une photo (partagée entre drag et touch)
+  const movePhoto = useCallback((sourcePieceKey: string, photoIndex: number, targetPieceKey: string) => {
+    if (sourcePieceKey === targetPieceKey) return;
+
+    setPiecesPhotos((prev) => {
+      const newPhotos = { ...prev };
+      const sourcePhotos = [...(prev[sourcePieceKey] || [])];
+      const targetPhotos = [...(prev[targetPieceKey] || [])];
+
+      const [movedPhoto] = sourcePhotos.splice(photoIndex, 1);
+      targetPhotos.push(movedPhoto);
+
+      newPhotos[sourcePieceKey] = sourcePhotos;
+      newPhotos[targetPieceKey] = targetPhotos;
+
+      return newPhotos;
+    });
+  }, []);
+
+  // Trouver la pièce sous un point (pour touch)
+  const findPieceAtPoint = useCallback((x: number, y: number): string | null => {
+    for (const [pieceKey, element] of pieceRefs.current.entries()) {
+      const rect = element.getBoundingClientRect();
+      if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+        return pieceKey;
+      }
+    }
+    return null;
+  }, []);
+
+  // Handler pour le début du drag (desktop)
+  const handleDragStart = (e: React.DragEvent, pieceKey: string, photoIndex: number, photoUrl: string) => {
+    setDraggedPhoto({ pieceKey, photoIndex, photoUrl });
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  // Handler pour le drag over sur une pièce (desktop)
+  const handleDragOver = (e: React.DragEvent, pieceKey: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (draggedPhoto && draggedPhoto.pieceKey !== pieceKey) {
+      setDragOverPieceKey(pieceKey);
+    }
+  };
+
+  // Handler pour quitter la zone de drop (desktop)
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOverPieceKey(null);
+  };
+
+  // Handler pour le drop (desktop)
+  const handleDrop = (e: React.DragEvent, targetPieceKey: string) => {
+    e.preventDefault();
+    setDragOverPieceKey(null);
+
+    if (!draggedPhoto || draggedPhoto.pieceKey === targetPieceKey) {
+      setDraggedPhoto(null);
+      return;
+    }
+
+    movePhoto(draggedPhoto.pieceKey, draggedPhoto.photoIndex, targetPieceKey);
+    setDraggedPhoto(null);
+  };
+
+  // Handler pour la fin du drag (desktop)
+  const handleDragEnd = () => {
+    setDraggedPhoto(null);
+    setDragOverPieceKey(null);
+  };
+
+  // === TOUCH HANDLERS ===
+  const handleTouchStart = (e: React.TouchEvent, pieceKey: string, photoIndex: number, photoUrl: string) => {
+    const touch = e.touches[0];
+    touchDragRef.current = { startX: touch.clientX, startY: touch.clientY, isDragging: false };
+    setDraggedPhoto({ pieceKey, photoIndex, photoUrl });
+  };
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!draggedPhoto) return;
+
+    const touch = e.touches[0];
+    const deltaX = Math.abs(touch.clientX - touchDragRef.current.startX);
+    const deltaY = Math.abs(touch.clientY - touchDragRef.current.startY);
+
+    // Activer le drag après un petit mouvement
+    if (deltaX > 10 || deltaY > 10) {
+      touchDragRef.current.isDragging = true;
+      e.preventDefault(); // Empêcher le scroll
+
+      // Créer ou mettre à jour l'image flottante
+      if (!floatingImageRef.current) {
+        const floatingDiv = document.createElement('div');
+        floatingDiv.style.cssText = `
+          position: fixed;
+          width: 60px;
+          height: 60px;
+          border-radius: 8px;
+          overflow: hidden;
+          pointer-events: none;
+          z-index: 9999;
+          opacity: 0.9;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          transform: translate(-50%, -50%);
+        `;
+        const img = document.createElement('img');
+        img.src = draggedPhoto.photoUrl;
+        img.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+        floatingDiv.appendChild(img);
+        document.body.appendChild(floatingDiv);
+        floatingImageRef.current = floatingDiv;
+      }
+
+      floatingImageRef.current.style.left = `${touch.clientX}px`;
+      floatingImageRef.current.style.top = `${touch.clientY}px`;
+
+      // Trouver la pièce sous le doigt
+      const pieceUnderTouch = findPieceAtPoint(touch.clientX, touch.clientY);
+      if (pieceUnderTouch && pieceUnderTouch !== draggedPhoto.pieceKey) {
+        setDragOverPieceKey(pieceUnderTouch);
+      } else {
+        setDragOverPieceKey(null);
+      }
+    }
+  }, [draggedPhoto, findPieceAtPoint]);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    // Nettoyer l'image flottante
+    if (floatingImageRef.current) {
+      floatingImageRef.current.remove();
+      floatingImageRef.current = null;
+    }
+
+    if (!draggedPhoto || !touchDragRef.current.isDragging) {
+      setDraggedPhoto(null);
+      setDragOverPieceKey(null);
+      touchDragRef.current = { startX: 0, startY: 0, isDragging: false };
+      return;
+    }
+
+    const touch = e.changedTouches[0];
+    const targetPieceKey = findPieceAtPoint(touch.clientX, touch.clientY);
+
+    if (targetPieceKey && targetPieceKey !== draggedPhoto.pieceKey) {
+      movePhoto(draggedPhoto.pieceKey, draggedPhoto.photoIndex, targetPieceKey);
+    }
+
+    setDraggedPhoto(null);
+    setDragOverPieceKey(null);
+    touchDragRef.current = { startX: 0, startY: 0, isDragging: false };
+  }, [draggedPhoto, findPieceAtPoint, movePhoto]);
 
   // Créer une liste de pièces individuelles basée sur les quantités
   // Par exemple: si "Chambre" a quantite=2, on crée ["Chambre 1", "Chambre 2"]
@@ -213,19 +375,41 @@ export function AddPhotosDialog({
             const photosForPiece = piecesPhotos[piece.key] || [];
             const emoji = PIECE_EMOJIS[piece.nom] || "📍";
 
+            const isDragOver = dragOverPieceKey === piece.key;
+            const isBeingDraggedFrom = draggedPhoto?.pieceKey === piece.key;
+
             return (
-              <Card key={piece.key} className="p-3 sm:p-4">
-                <div className="space-y-2 sm:space-y-3">
+              <Card
+                key={piece.key}
+                ref={(el) => {
+                  if (el) pieceRefs.current.set(piece.key, el);
+                  else pieceRefs.current.delete(piece.key);
+                }}
+                className={cn(
+                  "p-2 sm:p-3 transition-all duration-200",
+                  isDragOver && "ring-2 ring-primary bg-primary/5",
+                  isBeingDraggedFrom && "opacity-75"
+                )}
+                onDragOver={(e) => handleDragOver(e, piece.key)}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, piece.key)}
+              >
+                <div className="space-y-1.5 sm:space-y-2">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-xl sm:text-2xl shrink-0">{emoji}</span>
-                    <div className="min-w-0">
-                      <h3 className="font-medium text-sm sm:text-base truncate">
+                    <span className="text-lg sm:text-xl shrink-0">{emoji}</span>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-medium text-sm truncate">
                         {piece.displayName}
                       </h3>
                       <p className="text-xs text-muted-foreground">
                         {photosForPiece.length} {t('airbnb.photo', { count: photosForPiece.length })}
                       </p>
                     </div>
+                    {isDragOver && (
+                      <span className="text-xs text-primary font-medium animate-pulse">
+                        Déposer ici
+                      </span>
+                    )}
                   </div>
                   <input
                     id={`upload-${piece.key}`}
@@ -237,39 +421,59 @@ export function AddPhotosDialog({
                   />
 
                   {photosForPiece.length > 0 ? (
-                    <div className="space-y-2">
-                      <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2">
-                        {photosForPiece.map((photo, index) => (
-                          <div
-                            key={index}
-                            className="relative group aspect-square rounded-lg overflow-hidden border border-border bg-muted"
-                          >
-                            <img
-                              src={photo}
-                              alt={`${piece.displayName} ${index + 1}`}
-                              className="w-full h-full object-cover"
-                            />
+                    <div className="space-y-1.5">
+                      <div className="grid grid-cols-4 xs:grid-cols-5 sm:grid-cols-6 md:grid-cols-8 gap-1.5">
+                        {photosForPiece.map((photo, index) => {
+                          const isBeingDragged = draggedPhoto?.pieceKey === piece.key && draggedPhoto?.photoIndex === index;
+
+                          return (
                             <div
-                              onPointerDown={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleRemovePhoto(piece.key, index);
-                              }}
-                              style={{ touchAction: 'none' }}
-                              className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground sm:opacity-0 sm:group-hover:opacity-100 transition-opacity cursor-pointer"
+                              key={index}
+                              draggable
+                              onDragStart={(e) => handleDragStart(e, piece.key, index, photo)}
+                              onDragEnd={handleDragEnd}
+                              onTouchStart={(e) => handleTouchStart(e, piece.key, index, photo)}
+                              onTouchMove={handleTouchMove}
+                              onTouchEnd={handleTouchEnd}
+                              className={cn(
+                                "relative group aspect-square rounded-lg overflow-hidden border border-border bg-muted cursor-grab active:cursor-grabbing transition-all duration-200 touch-none",
+                                isBeingDragged && "opacity-50 scale-95 ring-2 ring-primary"
+                              )}
                             >
-                              <X className="h-3 w-3" />
+                              {/* Indicateur de drag */}
+                              <div className="absolute top-1 left-1 p-1 rounded-full bg-background/80 text-muted-foreground opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity z-10">
+                                <GripVertical className="h-3 w-3" />
+                              </div>
+                              <img
+                                src={photo}
+                                alt={`${piece.displayName} ${index + 1}`}
+                                className="w-full h-full object-cover pointer-events-none"
+                              />
+                              <div
+                                onPointerDown={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleRemovePhoto(piece.key, index);
+                                }}
+                                style={{ touchAction: 'none' }}
+                                className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground sm:opacity-0 sm:group-hover:opacity-100 transition-opacity cursor-pointer z-10"
+                              >
+                                <X className="h-3 w-3" />
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                       {/* Bouton pour ajouter plus de photos */}
                       <label
                         htmlFor={`upload-${piece.key}`}
-                        className="flex items-center justify-center gap-2 p-2 sm:p-3 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary/50 hover:bg-accent/5 transition-colors"
+                        className={cn(
+                          "flex items-center justify-center gap-1.5 p-1.5 sm:p-2 border border-dashed border-border rounded-md cursor-pointer hover:border-primary/50 hover:bg-accent/5 transition-colors",
+                          isDragOver && "border-primary bg-primary/10"
+                        )}
                       >
-                        <ImagePlus className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
-                        <p className="text-xs sm:text-sm text-muted-foreground">
+                        <ImagePlus className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
+                        <p className="text-xs text-muted-foreground">
                           {t('photos.addMore')}
                         </p>
                       </label>
@@ -277,12 +481,26 @@ export function AddPhotosDialog({
                   ) : (
                     <label
                       htmlFor={`upload-${piece.key}`}
-                      className="flex flex-col items-center justify-center p-4 sm:p-6 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary/50 hover:bg-accent/5 transition-colors"
+                      className={cn(
+                        "flex flex-col items-center justify-center p-3 sm:p-4 border border-dashed border-border rounded-md cursor-pointer hover:border-primary/50 hover:bg-accent/5 transition-colors",
+                        isDragOver && "border-primary bg-primary/10"
+                      )}
                     >
-                      <Upload className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground mb-2" />
-                      <p className="text-xs sm:text-sm text-muted-foreground text-center">
-                        {t('photos.clickToAdd')}
-                      </p>
+                      {isDragOver ? (
+                        <>
+                          <span className="text-xl mb-1">📥</span>
+                          <p className="text-xs text-primary text-center font-medium">
+                            Déposer la photo ici
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground mb-1" />
+                          <p className="text-xs text-muted-foreground text-center">
+                            {t('photos.clickToAdd')}
+                          </p>
+                        </>
+                      )}
                     </label>
                   )}
                 </div>

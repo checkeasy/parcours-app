@@ -30,6 +30,7 @@ interface TacheDialogProps {
   tache?: Tache;
   pieceNom: string;
   onSave: (tache: Omit<Tache, "id">) => void;
+  isFullScreenMode?: boolean;
 }
 
 export function TacheDialog({
@@ -37,7 +38,8 @@ export function TacheDialog({
   onOpenChange,
   tache,
   pieceNom,
-  onSave
+  onSave,
+  isFullScreenMode = false,
 }: TacheDialogProps) {
   const [formData, setFormData] = useState({
     emoji: "",
@@ -140,11 +142,14 @@ export function TacheDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md" hideCloseButton>
-        <DialogHeader className="border-b pb-4">
+      <DialogContent
+        className={isFullScreenMode ? "!absolute !inset-0 !w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !translate-x-0 !translate-y-0 !left-0 !top-0 overflow-auto px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 gap-1 sm:gap-2" : "max-w-md w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
+        hideCloseButton
+      >
+        <DialogHeader className={isFullScreenMode ? "border-b pb-2 sm:pb-3" : "border-b pb-4"}>
           <div className="flex items-center justify-between">
             <div>
-              <DialogTitle className="flex items-center gap-2 text-sm text-muted-foreground">
+              <DialogTitle className={isFullScreenMode ? "flex items-center gap-2 text-xs sm:text-sm text-muted-foreground" : "flex items-center gap-2 text-sm text-muted-foreground"}>
                 <span>{tache ? "Modifier la tâche" : "Nouvelle To Do pour"}</span>
                 <span className="font-medium text-foreground">{pieceNom}</span>
               </DialogTitle>
@@ -152,18 +157,20 @@ export function TacheDialog({
                 {tache ? "Modifier une tâche existante" : `Ajouter une nouvelle tâche pour ${pieceNom}`}
               </DialogDescription>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6"
-              onClick={() => onOpenChange(false)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
+            {!isFullScreenMode && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6"
+                onClick={() => onOpenChange(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
+        <div className={isFullScreenMode ? "space-y-3 sm:space-y-4 py-2 sm:py-4 overflow-y-auto max-h-[calc(100vh-200px)] sm:max-h-[calc(100vh-220px)]" : "space-y-4 py-4"}>
           <div>
             <Label className="text-sm font-medium">Titre</Label>
             <Input

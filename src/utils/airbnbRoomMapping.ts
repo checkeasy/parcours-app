@@ -110,7 +110,8 @@ const ROOM_MAPPING_RULES: Array<[RegExp, string]> = [
 /**
  * Mappe un nom de pièce Airbnb vers un nom de pièce standard
  */
-function mapRoomName(airbnbName: string): string | null {
+function mapRoomName(airbnbName: string | null | undefined): string | null {
+  if (!airbnbName) return null;
   const cleanName = airbnbName.trim();
   
   for (const [pattern, standardName] of ROOM_MAPPING_RULES) {
@@ -143,11 +144,11 @@ export function mapAirbnbRoomsToStandard(airbnbPieces: AirbnbPiece[]): MappingRe
       roomPhotos.set(standardName, [...existingPhotos, ...airbnbPiece.photos]);
     } else {
       // Pièce non reconnue : ajouter comme pièce personnalisée
-      const customName = airbnbPiece.nom.trim();
+      const customName = (airbnbPiece.nom || 'À trier').trim();
       if (!customPieces.includes(customName)) {
         customPieces.push(customName);
         roomCounts.set(customName, 1);
-        roomPhotos.set(customName, airbnbPiece.photos);
+        roomPhotos.set(customName, airbnbPiece.photos || []);
       }
     }
   }
@@ -158,6 +159,13 @@ export function mapAirbnbRoomsToStandard(airbnbPieces: AirbnbPiece[]): MappingRe
     quantite,
     isCustom: customPieces.includes(nom),
   }));
+
+  // Trier pour que "À trier" soit en premier
+  pieces.sort((a, b) => {
+    if (a.nom === 'À trier') return -1;
+    if (b.nom === 'À trier') return 1;
+    return 0;
+  });
   
   // Convertir les photos en Record
   const photosMapping: Record<string, string[]> = {};

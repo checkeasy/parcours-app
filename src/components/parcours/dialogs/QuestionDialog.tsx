@@ -20,13 +20,15 @@ interface QuestionDialogProps {
   onOpenChange: (open: boolean) => void;
   question?: QuestionModele;
   onSave: (question: Omit<QuestionModele, "id">) => void;
+  isFullScreenMode?: boolean;
 }
 
-export function QuestionDialog({ 
-  open, 
-  onOpenChange, 
+export function QuestionDialog({
+  open,
+  onOpenChange,
   question,
-  onSave 
+  onSave,
+  isFullScreenMode = false,
 }: QuestionDialogProps) {
   const [formData, setFormData] = useState<Omit<QuestionModele, "id">>({
     intitule: "",
@@ -62,8 +64,11 @@ export function QuestionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto" hideCloseButton>
-        <DialogHeader className="border-b pb-3 sm:pb-4">
+      <DialogContent
+        className={isFullScreenMode ? "!absolute !inset-0 !w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !translate-x-0 !translate-y-0 !left-0 !top-0 overflow-auto px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 gap-1 sm:gap-2" : "max-w-md w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto"}
+        hideCloseButton={isFullScreenMode}
+      >
+        <DialogHeader className={isFullScreenMode ? "border-b pb-2 sm:pb-3" : "border-b pb-3 sm:pb-4"}>
           <div className="flex items-center justify-between">
             <div>
               <DialogTitle className="text-xs sm:text-sm font-normal">
@@ -73,27 +78,29 @@ export function QuestionDialog({
                 Configurez une question pour votre parcours personnalisé
               </DialogDescription>
             </div>
-            <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6 hidden sm:flex"
-              >
-                <Maximize2 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6"
-                onClick={() => onOpenChange(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
+            {!isFullScreenMode && (
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 hidden sm:flex"
+                >
+                  <Maximize2 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={() => onOpenChange(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
         </DialogHeader>
 
-        <div className="space-y-4 sm:space-y-5 py-4 px-4 sm:px-6">
+        <div className={isFullScreenMode ? "space-y-3 sm:space-y-4 py-2 sm:py-4 px-1 overflow-y-auto max-h-[calc(100vh-200px)] sm:max-h-[calc(100vh-220px)]" : "space-y-4 sm:space-y-5 py-4 px-4 sm:px-6"}>
           <div>
             <Label className="text-sm font-medium mb-2 block">Intitulé de la question</Label>
             <Textarea

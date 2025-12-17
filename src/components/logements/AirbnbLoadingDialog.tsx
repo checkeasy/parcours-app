@@ -220,6 +220,7 @@ export function AirbnbLoadingDialog({
       "Jardin": "🌳",
       "Extérieur": "🌲",
       "Autres": "📍",
+      "À trier": "📂", // Photos non classées - à redistribuer par l'utilisateur
     };
     return emojiMap[roomName] || "📍";
   };

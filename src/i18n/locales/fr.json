@@ -74,7 +74,13 @@
     "disable": "Désactiver la pièce",
     "enable": "Activer la pièce",
     "showTasks": "Voir les tâches",
-    "hideTasks": "Masquer les tâches"
+    "hideTasks": "Masquer les tâches",
+    "existingLink": "Annonce Airbnb liée",
+    "rescrape": "Re-analyser",
+    "pleaseWait": "Récupération des pièces et photos...",
+    "analysisComplete": "Analyse terminée ✓",
+    "roomsFound": "pièces",
+    "photosFound": "photos"
   },
   "modele": {
     "custom": "Modèle personnalisé",

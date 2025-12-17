@@ -44,7 +44,7 @@ export const TACHES_MENAGE: Record<string, any[]> = {
       emoji: "🧽",
       titre: "Nettoyer plan de travail",
       description: "Désinfecter surfaces ; ranger ustensiles.",
-      photoObligatoire: true
+      photoObligatoire: false
     },
     {
       id: "m-cuisine-3",
@@ -63,7 +63,7 @@ export const TACHES_MENAGE: Record<string, any[]> = {
     {
       id: "m-cuisine-5",
       emoji: "❄️",
-      titre: "Nettoyer extérieur frigo",
+      titre: "Nettoyer l'intérieur et l'extérieur du frigo",
       description: "Essuyer portes ; nettoyer poignées.",
       photoObligatoire: false
     },
@@ -72,7 +72,7 @@ export const TACHES_MENAGE: Record<string, any[]> = {
       emoji: "🧹",
       titre: "Balayer et laver le sol",
       description: "Aspirer miettes ; passer serpillière.",
-      photoObligatoire: true
+      photoObligatoire: false
     }
   ],
   "Chambre": [
@@ -125,7 +125,7 @@ export const TACHES_MENAGE: Record<string, any[]> = {
       emoji: "🪞",
       titre: "Nettoyer lavabo et miroir",
       description: "Désinfecter ; faire briller.",
-      photoObligatoire: true
+      photoObligatoire: false
     },
     {
       id: "m-sdb-4",
@@ -155,7 +155,7 @@ export const TACHES_MENAGE: Record<string, any[]> = {
       emoji: "🧹",
       titre: "Aspirer le sol",
       description: "Sous les meubles ; coins.",
-      photoObligatoire: true
+      photoObligatoire: false
     },
     {
       id: "m-salon-3",
@@ -185,7 +185,7 @@ export const TACHES_MENAGE: Record<string, any[]> = {
       emoji: "🪞",
       titre: "Nettoyer lavabo et miroir",
       description: "Désinfecter ; faire briller.",
-      photoObligatoire: true
+      photoObligatoire: false
     },
     {
       id: "m-sdb-nt-3",
@@ -383,129 +383,101 @@ export const TACHES_VOYAGEUR: Record<string, any[]> = {
   "Cuisine": [
     {
       id: "v-cuisine-1",
-      emoji: "🍽️",
-      titre: "Vérifier vaisselle",
-      description: "Assiettes ; verres ; couverts propres.",
+      emoji: "🗑️",
+      titre: "Vider les poubelles",
+      description: "Sortir tous les sacs, remettre un sac propre, fermer le couvercle.",
       photoObligatoire: true
     },
     {
       id: "v-cuisine-2",
-      emoji: "❄️",
-      titre: "Vérifier frigo",
-      description: "Propre ; fonctionne ; température OK.",
+      emoji: "🍽️",
+      titre: "Ranger la vaisselle",
+      description: "Laver ou lancer le lave-vaisselle puis ranger toute la vaisselle propre.",
       photoObligatoire: false
     },
     {
       id: "v-cuisine-3",
-      emoji: "🔥",
-      titre: "Vérifier plaques de cuisson",
-      description: "Propres ; fonctionnent.",
-      photoObligatoire: false
-    },
-    {
-      id: "v-cuisine-4",
-      emoji: "☕",
-      titre: "Vérifier équipements",
-      description: "Cafetière ; bouilloire ; micro-ondes.",
-      photoObligatoire: false
+      emoji: "❄️",
+      titre: "Vider le réfrigérateur",
+      description: "Retirer tous les aliments entamés, jeter ou emporter.",
+      photoObligatoire: true
     }
   ],
   "Chambre": [
     {
       id: "v-chambre-1",
       emoji: "🛏️",
-      titre: "Vérifier literie",
-      description: "Draps propres ; oreillers ; couvertures.",
+      titre: "Défaire le linge de lit",
+      description: "Retirer draps & taies, les placer où indiqué (panier, sac…).",
       photoObligatoire: true
     },
     {
       id: "v-chambre-2",
       emoji: "🚪",
-      titre: "Vérifier rangements",
-      description: "Armoire vide ; cintres disponibles.",
-      photoObligatoire: false
-    },
-    {
-      id: "v-chambre-3",
-      emoji: "💡",
-      titre: "Vérifier éclairage",
-      description: "Lampes fonctionnent ; ampoules OK.",
-      photoObligatoire: false
+      titre: "Vérifier placards/tiroirs",
+      description: "Rien d'oublié ni de déchets à l'intérieur.",
+      photoObligatoire: true
     }
   ],
   "Salle de bain avec toilettes": [
     {
       id: "v-sdb-1",
-      emoji: "🧴",
-      titre: "Vérifier produits",
-      description: "Savon ; shampoing ; papier toilette.",
+      emoji: "🚽",
+      titre: "Tirer chasse & abaisser lunette",
+      description: "Laisser la cuvette propre et fermée.",
       photoObligatoire: true
     },
     {
       id: "v-sdb-2",
-      emoji: "🚿",
-      titre: "Vérifier douche/baignoire",
-      description: "Propre ; eau chaude fonctionne.",
-      photoObligatoire: true
-    },
-    {
-      id: "v-sdb-3",
-      emoji: "🧻",
-      titre: "Vérifier serviettes",
-      description: "Propres ; en nombre suffisant.",
+      emoji: "🗑️",
+      titre: "Vider la poubelle",
+      description: "Sac retiré ou contenu jeté dans la grande poubelle.",
       photoObligatoire: false
     },
     {
-      id: "v-sdb-4",
-      emoji: "🚽",
-      titre: "Vérifier toilettes",
-      description: "Propres ; fonctionnent bien.",
-      photoObligatoire: true
+      id: "v-sdb-3",
+      emoji: "🧺",
+      titre: "Regrouper serviettes",
+      description: "Mettre linge humide au même endroit (panier ou sol prévu).",
+      photoObligatoire: false
     }
   ],
   "Salon / Séjour": [
     {
       id: "v-salon-1",
-      emoji: "📺",
-      titre: "Vérifier TV/WiFi",
-      description: "TV fonctionne ; WiFi actif.",
-      photoObligatoire: false
+      emoji: "🛋️",
+      titre: "Ranger canapé & coussins",
+      description: "Coussins tapotés, plaid plié, canapé dégagé.",
+      photoObligatoire: true
     },
     {
       id: "v-salon-2",
-      emoji: "🛋️",
-      titre: "Vérifier mobilier",
-      description: "Canapé propre ; coussins en place.",
-      photoObligatoire: false
-    },
-    {
-      id: "v-salon-3",
-      emoji: "🌡️",
-      titre: "Vérifier chauffage/clim",
-      description: "Fonctionne ; télécommande présente.",
+      emoji: "📺",
+      titre: "Éteindre TV & appareils",
+      description: "Télécommande posée à sa place, TV et console éteintes.",
       photoObligatoire: false
     }
   ],
   "Salle de bain (sans toilettes)": [
     {
       id: "v-sdb-nt-1",
-      emoji: "🧴",
-      titre: "Vérifier produits",
-      description: "Savon ; shampoing.",
+      emoji: "🧺",
+      titre: "Rassembler serviettes",
+      description: "Déposer toutes les serviettes utilisées dans le panier ou sur le sol prévu.",
       photoObligatoire: true
     },
     {
       id: "v-sdb-nt-2",
-      emoji: "🚿",
-      titre: "Vérifier douche/baignoire",
-      description: "Propre ; eau chaude fonctionne.",
-      photoObligatoire: true
+      emoji: "🗑️",
+      titre: "Vider la poubelle",
+      description: "Jeter mouchoirs ou produits usagés, remettre un sac propre si fourni.",
+      photoObligatoire: false
     },
     {
       id: "v-sdb-nt-3",
-      emoji: "🧻",
-      titre: "Vérifier serviettes",
-      description: "Propres ; en nombre suffisant.",
+      emoji: "🔍",
+      titre: "Vérifier effets personnels",
+      description: "Aucun produit ou accessoire oublié dans la douche ou sur la vasque.",
       photoObligatoire: false
     }
   ],
@@ -513,15 +485,15 @@ export const TACHES_VOYAGEUR: Record<string, any[]> = {
     {
       id: "v-wc-1",
       emoji: "🚽",
-      titre: "Vérifier toilettes",
-      description: "Propres ; fonctionnent bien.",
-      photoObligatoire: true
+      titre: "Tirer chasse & fermer abattant",
+      description: "Laisser cuvette et abattant propres.",
+      photoObligatoire: false
     },
     {
       id: "v-wc-2",
-      emoji: "🧻",
-      titre: "Vérifier papier toilette",
-      description: "Stock suffisant.",
+      emoji: "🗑️",
+      titre: "Vider la poubelle",
+      description: "Retirer le sac ou son contenu.",
       photoObligatoire: false
     }
   ],
@@ -622,20 +594,6 @@ export const TACHES_VOYAGEUR: Record<string, any[]> = {
   "Bureau / Pièce de travail": [
     {
       id: "v-bureau-1",
-      emoji: "💻",
-      titre: "Vérifier espace de travail",
-      description: "Bureau propre ; chaise confortable.",
-      photoObligatoire: false
-    },
-    {
-      id: "v-bureau-2",
-      emoji: "🔌",
-      titre: "Vérifier prises électriques",
-      description: "Fonctionnent ; accessibles.",
-      photoObligatoire: false
-    },
-    {
-      id: "v-bureau-3",
       emoji: "🎒",
       titre: "Récupérer vos affaires",
       description: "Ordinateur ; documents ; fournitures personnelles.",
@@ -1802,6 +1760,7 @@ export function CustomModeleBuilder({
         onOpenChange={setQuestionDialogOpen}
         question={currentQuestion}
         onSave={handleSauvegarderQuestion}
+        isFullScreenMode={isFullScreenMode}
       />
 
       {/* Dialog pour ajouter une tâche custom */}
@@ -1876,6 +1835,7 @@ export function CustomModeleBuilder({
         tache={editingTask?.task}
         pieceNom={editingTask?.piece || ""}
         onSave={handleSaveEditedTask}
+        isFullScreenMode={isFullScreenMode}
       />
 
       {/* Dialog pour ajouter une pièce personnalisée */}

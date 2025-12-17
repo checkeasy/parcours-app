@@ -52,7 +52,8 @@ const EMOJI_PAR_PIECE: Record<string, string> = {
   "Buanderie / Laverie": "🧺",
   "Espaces extérieurs": "🌳",
   "Garage / Parking": "🚗",
-  "Bureau / Pièce de travail": "💼"
+  "Bureau / Pièce de travail": "💼",
+  "À trier": "📂", // Photos non classées - à redistribuer par l'utilisateur
 };
 
 interface AirbnbResultDialogProps {

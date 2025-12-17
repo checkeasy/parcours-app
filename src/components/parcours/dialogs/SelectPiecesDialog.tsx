@@ -36,6 +36,7 @@ const PIECE_EMOJIS: Record<string, string> = {
   "Espaces extérieurs": "🌳",
   "Garage / Parking": "🚗",
   "Bureau / Pièce de travail": "💼",
+  "À trier": "📂", // Photos non classées - à redistribuer par l'utilisateur
 };
 
 export default function SelectPiecesDialog({
