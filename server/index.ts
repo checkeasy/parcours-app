@@ -11,8 +11,8 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
-app.use(express.json({ limit: '100mb' })); // Support large payloads with base64 images
-app.use(express.urlencoded({ extended: true, limit: '100mb' }));
+app.use(express.json({ limit: '500mb' })); // Support large payloads with base64 images
+app.use(express.urlencoded({ extended: true, limit: '500mb' }));
 
 // Serve static files from dist folder (production build)
 const __filename = fileURLToPath(import.meta.url);
@@ -45,11 +45,16 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📡 Webhook API available at http://localhost:${PORT}/api/send-webhook`);
   console.log(`🌐 Scraping API available at http://localhost:${PORT}/api/scrape-and-create-parcours`);
   console.log(`🔧 Scraping Service URL: ${process.env.SCRAPING_SERVICE_URL || 'http://localhost:8000'}`);
   console.log(`💚 Health check at http://localhost:${PORT}/health`);
 });
+
+// Increase timeout to 10 minutes for large requests
+server.timeout = 600000; // 10 minutes in milliseconds
+server.keepAliveTimeout = 610000; // Slightly longer than timeout
+server.headersTimeout = 620000; // Slightly longer than keepAliveTimeout
 
