@@ -94,21 +94,59 @@ export default function SelectTasksPerRoomDialog({
   useEffect(() => {
     if (open && !isInitialized) {
       const initialSelection = new Map<string, string[]>();
+      const initialCustomTasks = new Map<string, TacheModele[]>();
+      const initialModifiedPhotoObligatoire = new Map<string, boolean>();
+      const initialModifiedDefaultTasks = new Map<string, Partial<TacheModele>>();
 
       // Obtenir les types de pièces uniques (sans les quantités)
       const uniqueRoomTypes = Array.from(new Set(selectedRooms.map(r => r.nom)));
+
+      // Obtenir la source des tâches par défaut
+      const tasksSource = parcoursType === "menage" ? TACHES_MENAGE : TACHES_VOYAGEUR;
 
       uniqueRoomTypes.forEach(roomName => {
         // Chercher les tâches pré-sélectionnées dans le modèle
         const modeleRoom = modeleData.find(p => p.nom === roomName);
         if (modeleRoom && modeleRoom.tachesSelectionnees.length > 0) {
           initialSelection.set(roomName, modeleRoom.tachesSelectionnees);
+
+          // Charger les tâches personnalisées et les modifications des tâches par défaut
+          const defaultTaskIds = (tasksSource[roomName] || []).map(t => t.id);
+          const customTasks: TacheModele[] = [];
+
+          modeleRoom.tachesDisponibles.forEach(task => {
+            if (task.id.startsWith('custom-')) {
+              // Tâche personnalisée
+              customTasks.push(task);
+            } else if (defaultTaskIds.includes(task.id)) {
+              // Tâche par défaut - vérifier les modifications
+              const defaultTask = (tasksSource[roomName] || []).find(t => t.id === task.id);
+              if (defaultTask) {
+                // Vérifier si photoUrl a été modifié
+                if (task.photoUrl && task.photoUrl !== defaultTask.photoUrl) {
+                  const existingMods = initialModifiedDefaultTasks.get(task.id) || {};
+                  initialModifiedDefaultTasks.set(task.id, { ...existingMods, photoUrl: task.photoUrl });
+                }
+                // Vérifier si photoObligatoire a été modifié
+                if (task.photoObligatoire !== defaultTask.photoObligatoire) {
+                  initialModifiedPhotoObligatoire.set(task.id, task.photoObligatoire);
+                }
+              }
+            }
+          });
+
+          if (customTasks.length > 0) {
+            initialCustomTasks.set(roomName, customTasks);
+          }
         } else {
           initialSelection.set(roomName, []);
         }
       });
 
       setSelectedTasksPerRoom(initialSelection);
+      setCustomTasksPerRoom(initialCustomTasks);
+      setModifiedPhotoObligatoire(initialModifiedPhotoObligatoire);
+      setModifiedDefaultTasks(initialModifiedDefaultTasks);
       setIsInitialized(true);
     }
 
@@ -116,7 +154,7 @@ export default function SelectTasksPerRoomDialog({
     if (!open) {
       setIsInitialized(false);
     }
-  }, [open, isInitialized]);
+  }, [open, isInitialized, modeleData, parcoursType, selectedRooms]);
 
   const handleToggleTask = (roomName: string, taskId: string) => {
     setSelectedTasksPerRoom(prev => {
