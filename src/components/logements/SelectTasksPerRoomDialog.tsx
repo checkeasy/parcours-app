@@ -324,9 +324,16 @@ export default function SelectTasksPerRoomDialog({
             <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
               Étape 5/6 - Sélectionnez les tâches pour chaque pièce
             </DialogTitle>
-            <DialogDescription className="text-xs sm:text-sm mt-1">
-              Pour {logementNom} - {parcoursType === "menage" ? "Ménage" : "Voyageur"}
-            </DialogDescription>
+            <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <div className="flex items-start gap-2">
+                <span className="text-base sm:text-lg shrink-0">💡</span>
+                <p className="text-xs sm:text-sm text-blue-900 dark:text-blue-100">
+                  Ajoutez ici les tâches à réaliser par {parcoursType === "menage" ? "le service de ménage" : "le voyageur"}.
+                  <br /><br />
+                  Pour une tâche importante, vous pouvez demander une photo : notre IA l'analysera pour valider la tâche. Pensez à inclure les zones sensibles ou souvent oubliées.
+                </p>
+              </div>
+            </div>
           </div>
         </DialogHeader>
 

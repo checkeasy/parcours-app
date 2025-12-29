@@ -218,11 +218,20 @@ export default function SelectExitQuestionsDialog({
             </div>
             <div className="pl-8 sm:pl-10 pr-8">
               <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
-                Étape 5/6 - Les questions de sortie
+                Étape 6/6 - Les questions de sortie
               </DialogTitle>
-              <DialogDescription className="text-xs sm:text-sm mt-1">
-                Pour {logementNom} - {parcoursType === "menage" ? "Ménage" : "Voyageur"}
-              </DialogDescription>
+              <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <span className="text-base sm:text-lg shrink-0">💡</span>
+                  <p className="text-xs sm:text-sm text-blue-900 dark:text-blue-100">
+                    Ajoutez ici les points à vérifier avant de quitter le logement.
+                    <br /><br />
+                    Formulez-les sous forme de phrases affirmatives, par exemple : "J'ai éteint tous les radiateurs."
+                    <br /><br />
+                    Cela aide à s'assurer que chaque étape a bien été réalisée avant le départ.
+                  </p>
+                </div>
+              </div>
             </div>
           </DialogHeader>
 
@@ -249,7 +258,7 @@ export default function SelectExitQuestionsDialog({
                         <div className="font-medium text-xs sm:text-sm">{displayQuestion.intitule}</div>
                         <div className="flex gap-1.5 mt-1 flex-wrap">
                           {displayQuestion.photoObligatoire && (
-                            <Badge variant="default" className="text-xs bg-blue-500 hover:bg-blue-600">📷 Photo</Badge>
+                            <Badge variant="default" className="text-xs bg-primary hover:bg-primary/90">📷 Photo</Badge>
                           )}
                           <Badge variant="outline" className="text-xs">
                             {displayQuestion.type === "oui-non" ? "Oui/Non" : displayQuestion.type === "ouverte" ? "Ouverte" : displayQuestion.type}
@@ -287,7 +296,7 @@ export default function SelectExitQuestionsDialog({
                         <div className="font-medium text-xs sm:text-sm">{question.intitule}</div>
                         <div className="flex gap-1.5 mt-1 flex-wrap">
                           {question.photoObligatoire && (
-                            <Badge variant="default" className="text-xs bg-blue-500 hover:bg-blue-600">📷 Photo</Badge>
+                            <Badge variant="default" className="text-xs bg-primary hover:bg-primary/90">📷 Photo</Badge>
                           )}
                           <Badge variant="outline" className="text-xs">
                             {question.type === "oui-non" ? "Oui/Non" : question.type === "ouverte" ? "Ouverte" : question.type}
@@ -357,7 +366,7 @@ export default function SelectExitQuestionsDialog({
                 }}
                 style={{ touchAction: 'none' }}
               >
-                Continuer
+                Terminer
               </div>
             </div>
           </div>

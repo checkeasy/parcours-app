@@ -148,6 +148,42 @@ export function AddLogementDialog({
   // Charger l'API Google Maps
   const { isLoaded: isGoogleMapsLoaded, loadError } = useGoogleMaps();
 
+  // Bloquer le bouton retour du navigateur quand la modale est ouverte
+  useEffect(() => {
+    if (!open) return;
+
+    // Pousser un état dans l'historique pour pouvoir intercepter le retour
+    const handlePopState = (event: PopStateEvent) => {
+      // Empêcher la navigation arrière en repoussant un état
+      window.history.pushState({ modalOpen: true }, '');
+
+      // Gérer le retour selon l'étape actuelle
+      if (step > initialStep) {
+        // Revenir à l'étape précédente au lieu de fermer la modale
+        setStep((prev) => (prev - 1) as 1 | 2 | 3 | 4 | 5 | 6);
+      } else if (!isFullScreenMode) {
+        // À la première étape, fermer la modale proprement (sauf en mode fullscreen)
+        handleClose();
+      }
+      // En mode fullscreen à la première étape, on ne fait rien (on bloque le retour)
+    };
+
+    // Pousser un état initial dans l'historique
+    window.history.pushState({ modalOpen: true }, '');
+
+    // Écouter l'événement popstate (bouton retour)
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      // Nettoyer l'historique en revenant en arrière si la modale se ferme normalement
+      // Ne pas nettoyer en mode fullscreen car la modale reste toujours ouverte
+      if (window.history.state?.modalOpen && !isFullScreenMode) {
+        window.history.back();
+      }
+    };
+  }, [open, step, initialStep, isFullScreenMode]);
+
   // Fonctions helper pour calculer la numérotation des étapes affichées
   const getDisplayedStepNumber = (currentStep: number): number => {
     if (hasExistingLogement) {

@@ -55,8 +55,8 @@ export const BUBBLE_ENDPOINTS = {
    * Exemple: POST /createfileap avec body { "base64": "iVBORw0KG..." }
    */
   createFile: {
-    test: 'https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/createfileap',
-    production: 'https://checkeasy-57905.bubbleapps.io/version-live/api/1.1/wf/createfileap',
+    test: 'https://checkeasy-57905.bubbleapps.io/version-test/api/1.1/wf/createfileapi',
+    production: 'https://checkeasy-57905.bubbleapps.io/version-live/api/1.1/wf/createfileapi',
   },
 };
 

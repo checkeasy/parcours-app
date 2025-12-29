@@ -844,6 +844,45 @@ export function CustomModeleBuilder({
   const [questionDialogOpen, setQuestionDialogOpen] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState<QuestionModele | undefined>();
 
+  // Bloquer le bouton retour du navigateur quand la modale est ouverte
+  useEffect(() => {
+    if (!open) return;
+
+    const handlePopState = (event: PopStateEvent) => {
+      // Empêcher la navigation arrière en repoussant un état
+      window.history.pushState({ modeleBuilderOpen: true }, '');
+
+      // Gérer le retour selon l'étape actuelle
+      if (currentStep > 1) {
+        // Revenir à l'étape précédente
+        setCurrentStep(prev => prev - 1);
+      } else if (!isFullScreenMode) {
+        // À la première étape, utiliser le callback onBack ou fermer (sauf en mode fullscreen)
+        if (onBack) {
+          onBack();
+        } else {
+          onOpenChange(false);
+        }
+      }
+      // En mode fullscreen à la première étape, on ne fait rien (on bloque le retour)
+    };
+
+    // Pousser un état initial dans l'historique
+    window.history.pushState({ modeleBuilderOpen: true }, '');
+
+    // Écouter l'événement popstate (bouton retour)
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      // Nettoyer l'historique si la modale se ferme normalement
+      // Ne pas nettoyer en mode fullscreen car la modale reste toujours ouverte
+      if (window.history.state?.modeleBuilderOpen && !isFullScreenMode) {
+        window.history.back();
+      }
+    };
+  }, [open, currentStep, onBack, onOpenChange, isFullScreenMode]);
+
   // Pré-remplir les données si on édite un modèle existant
   useEffect(() => {
     if (editingModele && open) {

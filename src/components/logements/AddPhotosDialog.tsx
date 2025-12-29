@@ -325,10 +325,10 @@ export function AddPhotosDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={isFullScreenMode ? "!absolute !inset-0 !w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !translate-x-0 !translate-y-0 !left-0 !top-0 overflow-auto px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 gap-1 sm:gap-2" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
+        className={isFullScreenMode ? "!absolute !inset-0 !w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !translate-x-0 !translate-y-0 !left-0 !top-0 overflow-hidden px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 gap-1 sm:gap-2 flex flex-col" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh] flex flex-col overflow-hidden"}
         hideCloseButton={true}
       >
-        <DialogHeader className={isFullScreenMode ? "pb-0" : ""}>
+        <DialogHeader className={isFullScreenMode ? "pb-0 shrink-0" : "shrink-0"}>
           <div
             className="absolute left-3 top-3 sm:left-4 sm:top-4 h-8 w-8 z-50 inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
             onPointerDown={(e) => {
@@ -353,24 +353,22 @@ export function AddPhotosDialog({
           </div>
           <div className="pl-8 sm:pl-10 pr-8">
             <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
-              Étape 6/6 - {t('photos.addPhotosFor', { logementNom })}
+              Étape 4/6 - {t('photos.addPhotosFor', { logementNom })}
             </DialogTitle>
             <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
               <div className="flex items-start gap-2">
                 <span className="text-base sm:text-lg shrink-0">💡</span>
                 <p className="text-xs sm:text-sm text-blue-900 dark:text-blue-100">
-                  Photos générales de la pièce.
+                  Ajoutez une ou plusieurs photos, prises depuis différents angles, de chaque pièce.
                   <br /><br />
-                  → Photos de référence utilisées par l'IA pour détecter la propreté, les dégradations, les objets manquants ou déplacés.
-                  <br /><br />
-                  → Photos que les {parcoursType === "menage" ? "agents de ménage" : "voyageurs"} prendront lors du check-out.
+                  Elles servent de référence pour l'analyse IA (propreté, objets manquants/déplacés, dégradations) et seront aussi les photos demandées {parcoursType === "menage" ? "à l'agent de ménage" : "au voyageur"} lors du check-out.
                 </p>
               </div>
             </div>
           </div>
         </DialogHeader>
 
-        <div className={isFullScreenMode ? "space-y-2 sm:space-y-3 overflow-y-auto max-h-[calc(100vh-180px)] sm:max-h-[calc(100vh-200px)] px-1" : "space-y-3 sm:space-y-4 overflow-y-auto max-h-[55vh] sm:max-h-[50vh] px-1"}>
+        <div className={isFullScreenMode ? "space-y-2 sm:space-y-3 overflow-y-auto flex-1 px-1 min-h-0" : "space-y-3 sm:space-y-4 overflow-y-auto flex-1 px-1 min-h-0"}>
           {individualPieces.map((piece) => {
             const photosForPiece = piecesPhotos[piece.key] || [];
             const emoji = PIECE_EMOJIS[piece.nom] || "📍";
@@ -509,9 +507,9 @@ export function AddPhotosDialog({
           })}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-0 pt-3 sm:pt-4 border-t">
+        <div className="flex flex-col items-stretch gap-2 pt-3 border-t shrink-0 mt-3">
           <div
-            className="h-9 px-4 inline-flex items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors text-sm font-medium w-full sm:w-auto cursor-pointer"
+            className="h-9 px-4 inline-flex items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors text-sm font-medium w-full cursor-pointer"
             onPointerDown={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -522,7 +520,7 @@ export function AddPhotosDialog({
             {t('logement.back')}
           </div>
           <div
-            className="h-9 px-4 inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium w-full sm:w-auto cursor-pointer"
+            className="h-9 px-4 inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium w-full cursor-pointer"
             onPointerDown={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -530,7 +528,7 @@ export function AddPhotosDialog({
             }}
             style={{ touchAction: 'none' }}
           >
-            {t('airbnb.finish')}
+            Continuer
           </div>
         </div>
       </DialogContent>
