@@ -20,7 +20,7 @@ import SelectExitQuestionsDialog from "./SelectExitQuestionsDialog";
 import { AddPhotosDialog } from "./AddPhotosDialog";
 import { AirbnbLoadingDialog } from "./AirbnbLoadingDialog";
 import { AirbnbResultDialog } from "./AirbnbResultDialog";
-import { ParcoursModele, PieceModele, QuestionModele } from "@/types/modele";
+import { ParcoursModele, PieceModele, QuestionModele, TacheModele } from "@/types/modele";
 import { dispatchWebhook, getConciergerieID, isTestMode as getIsTestMode } from "@/utils/webhook";
 import { loadConciergerieModele, updateConciergerieModele, updateModelePieces, updateModeleTasks, updateModeleQuestions } from "@/utils/conciergerieModele";
 import { TACHES_MENAGE, TACHES_VOYAGEUR } from "@/components/parcours/modele/CustomModeleBuilder";
@@ -60,6 +60,41 @@ interface AddLogementDialogProps {
   } | null;
 }
 
+/**
+ * Fusionne les tâches par défaut avec les tâches personnalisées et les modifications
+ */
+function mergeTasksWithCustoms(
+  defaultTasks: Record<string, TacheModele[]>,
+  customTasksPerRoom: Map<string, TacheModele[]>,
+  modifiedPhotoObligatoire: Map<string, boolean>
+): Record<string, TacheModele[]> {
+  const merged: Record<string, TacheModele[]> = {};
+
+  // Copier toutes les tâches par défaut
+  Object.keys(defaultTasks).forEach(roomName => {
+    merged[roomName] = [...defaultTasks[roomName]];
+  });
+
+  // Appliquer les modifications de photoObligatoire aux tâches par défaut
+  modifiedPhotoObligatoire.forEach((photoObligatoire, taskId) => {
+    Object.keys(merged).forEach(roomName => {
+      merged[roomName] = merged[roomName].map(task =>
+        task.id === taskId ? { ...task, photoObligatoire } : task
+      );
+    });
+  });
+
+  // Ajouter les tâches personnalisées
+  customTasksPerRoom.forEach((tasks, roomName) => {
+    if (!merged[roomName]) {
+      merged[roomName] = [];
+    }
+    merged[roomName] = [...merged[roomName], ...tasks];
+  });
+
+  return merged;
+}
+
 export function AddLogementDialog({
   open,
   onOpenChange,
@@ -74,6 +109,7 @@ export function AddLogementDialog({
   initialLogementData = null,
 }: AddLogementDialogProps) {
   const { t } = useTranslation();
+  const { toast } = useToast();
 
   // Détecter si on a un logement existant (logementid dans l'URL)
   const hasExistingLogement = !!initialLogementData;
@@ -244,55 +280,7 @@ export function AddLogementDialog({
 
   const handleSavePieces = (pieces: PieceQuantity[]) => {
     setSelectedPieces(pieces);
-    setStep(6);
-  };
-
-  const handleSavePhotos = async (photos: Record<string, string[]>) => {
-    setPiecesPhotos(photos);
-
-    // Utiliser les données du nouveau flux si disponibles, sinon utiliser l'ancien flux
-    const finalPieces = selectedRooms.length > 0 ? selectedRooms : selectedPieces;
-    const finalModele = conciergerieModele || selectedModele!;
-
-    const logementData = {
-      nom,
-      adresse: adresse || undefined,
-      airbnbLink: airbnbLink || undefined, // Ajouter le lien Airbnb si disponible
-      parcoursType: parcoursType!,
-      modele: finalModele,
-      pieces: finalPieces,
-      piecesPhotos: photos,
-    };
-    onComplete(logementData);
-
-    // Dispatch webhook after successful completion
-    try {
-      const result = await dispatchWebhook(logementData);
-
-      if (!result.success) {
-        toast({
-          title: "❌ Erreur lors de l'envoi",
-          description: "Impossible de créer le logement. Veuillez réessayer.",
-          variant: "destructive",
-        });
-        return; // Ne pas fermer le dialog en cas d'erreur
-      }
-
-      // Succès - fermer le dialog
-      toast({
-        title: "✅ Logement créé",
-        description: `Le logement "${nom}" a été créé avec succès.`,
-      });
-      handleClose();
-    } catch (error) {
-      console.error("Erreur lors de l'envoi du webhook:", error);
-      toast({
-        title: "❌ Erreur lors de l'envoi",
-        description: "Une erreur s'est produite. Veuillez réessayer.",
-        variant: "destructive",
-      });
-      // Ne pas fermer le dialog en cas d'erreur
-    }
+    setStep(4); // Aller directement aux photos après la sélection des pièces (ancien flux)
   };
 
   // ========== NOUVEAU FLUX ==========
@@ -349,12 +337,24 @@ export function AddLogementDialog({
       console.error("❌ Erreur lors de la mise à jour du modèle:", error);
     }
 
-    // Passer à l'étape 4 (sélection des tâches)
+    // Passer à l'étape 4 (ajout de photos)
     setStep(4);
   };
 
-  // Handler pour l'étape 4 : Sélection des tâches
-  const handleStep4Next = async (tasksPerRoom: Map<string, string[]>) => {
+  // Handler pour l'étape 4 : Ajout de photos
+  const handleStep4Next = async (photos: Record<string, string[]>) => {
+    setPiecesPhotos(photos);
+
+    // Passer à l'étape 5 (sélection des tâches)
+    setStep(5);
+  };
+
+  // Handler pour l'étape 5 : Sélection des tâches
+  const handleStep5Next = async (
+    tasksPerRoom: Map<string, string[]>,
+    customTasksPerRoom: Map<string, TacheModele[]>,
+    modifiedPhotoObligatoire: Map<string, boolean>
+  ) => {
     setSelectedTasksPerRoom(tasksPerRoom);
 
     if (!conciergerieModele || !parcoursType) return;
@@ -363,8 +363,15 @@ export function AddLogementDialog({
       // Obtenir la source des tâches selon le type de parcours
       const allTasksSource = parcoursType === "menage" ? TACHES_MENAGE : TACHES_VOYAGEUR;
 
+      // Fusionner les tâches par défaut avec les customs et les modifications
+      const mergedTasksSource = mergeTasksWithCustoms(
+        allTasksSource,
+        customTasksPerRoom,
+        modifiedPhotoObligatoire
+      );
+
       // Mettre à jour le modèle avec les tâches sélectionnées
-      const updatedModele = updateModeleTasks(conciergerieModele, tasksPerRoom, allTasksSource);
+      const updatedModele = updateModeleTasks(conciergerieModele, tasksPerRoom, mergedTasksSource);
       await updateConciergerieModele(updatedModele, getConciergerieID(), getIsTestMode());
       setConciergerieModele(updatedModele);
 
@@ -373,12 +380,12 @@ export function AddLogementDialog({
       console.error("❌ Erreur lors de la mise à jour du modèle:", error);
     }
 
-    // Passer à l'étape 5 (questions de sortie)
-    setStep(5);
+    // Passer à l'étape 6 (questions de sortie)
+    setStep(6);
   };
 
-  // Handler pour l'étape 5 : Questions de sortie
-  const handleStep5Next = async (questions: QuestionModele[]) => {
+  // Handler pour l'étape 6 : Questions de sortie
+  const handleStep6Next = async (questions: QuestionModele[]) => {
     setSelectedQuestions(questions);
 
     if (!conciergerieModele) return;
@@ -394,8 +401,49 @@ export function AddLogementDialog({
       console.error("❌ Erreur lors de la mise à jour du modèle:", error);
     }
 
-    // Passer à l'étape 6 (photos)
-    setStep(6);
+    // Finaliser la création du logement
+    const finalPieces = selectedRooms.length > 0 ? selectedRooms : selectedPieces;
+    const finalModele = conciergerieModele || selectedModele!;
+
+    const logementData = {
+      nom,
+      adresse: adresse || undefined,
+      airbnbLink: airbnbLink || undefined,
+      parcoursType: parcoursType!,
+      modele: finalModele,
+      pieces: finalPieces,
+      piecesPhotos: piecesPhotos,
+    };
+    onComplete(logementData);
+
+    // Dispatch webhook after successful completion
+    try {
+      const result = await dispatchWebhook(logementData);
+
+      if (!result.success) {
+        toast({
+          title: "❌ Erreur lors de l'envoi",
+          description: "Impossible de créer le logement. Veuillez réessayer.",
+          variant: "destructive",
+        });
+        return; // Ne pas fermer le dialog en cas d'erreur
+      }
+
+      // Succès - fermer le dialog
+      toast({
+        title: "✅ Logement créé",
+        description: `Le logement "${nom}" a été créé avec succès.`,
+      });
+      handleClose();
+    } catch (error) {
+      console.error("Erreur lors de l'envoi du webhook:", error);
+      toast({
+        title: "❌ Erreur lors de l'envoi",
+        description: "Une erreur s'est produite. Veuillez réessayer.",
+        variant: "destructive",
+      });
+      // Ne pas fermer le dialog en cas d'erreur
+    }
   };
 
   return (
@@ -717,10 +765,32 @@ export function AddLogementDialog({
         />
       )}
 
-      {/* NOUVEAU FLUX - Étape 4 : Sélection des tâches par pièce */}
-      {step === 4 && parcoursType && conciergerieModele && (
-        <SelectTasksPerRoomDialog
+      {/* NOUVEAU FLUX - Étape 4 : Ajout de photos (manuel ou depuis Airbnb) */}
+      {step === 4 && parcoursType && (
+        <AddPhotosDialog
           open={step === 4}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleClose();
+            }
+          }}
+          logementNom={nom}
+          pieces={selectedRooms.length > 0 ? selectedRooms : selectedPieces}
+          parcoursType={parcoursType}
+          onSave={handleStep4Next}
+          onBack={() => {
+            // Fermer le dialog actuel avant de changer d'étape
+            setTimeout(() => setStep(3), 100);
+          }}
+          isFullScreenMode={isFullScreenMode}
+          initialPhotos={piecesPhotos} // Passer les photos Airbnb si disponibles
+        />
+      )}
+
+      {/* NOUVEAU FLUX - Étape 5 : Sélection des tâches par pièce */}
+      {step === 5 && parcoursType && conciergerieModele && (
+        <SelectTasksPerRoomDialog
+          open={step === 5}
           onOpenChange={(open) => {
             if (!open) {
               handleClose();
@@ -730,27 +800,6 @@ export function AddLogementDialog({
           parcoursType={parcoursType}
           selectedRooms={selectedRooms}
           modeleData={conciergerieModele.pieces}
-          onSave={handleStep4Next}
-          onBack={() => {
-            // Fermer le dialog actuel avant de changer d'étape
-            setTimeout(() => setStep(3), 100);
-          }}
-          isFullScreenMode={isFullScreenMode}
-        />
-      )}
-
-      {/* NOUVEAU FLUX - Étape 5 : Questions de sortie */}
-      {step === 5 && parcoursType && conciergerieModele && (
-        <SelectExitQuestionsDialog
-          open={step === 5}
-          onOpenChange={(open) => {
-            if (!open) {
-              handleClose();
-            }
-          }}
-          logementNom={nom}
-          parcoursType={parcoursType}
-          modeleQuestions={conciergerieModele.questionsChecklist}
           onSave={handleStep5Next}
           onBack={() => {
             // Fermer le dialog actuel avant de changer d'étape
@@ -760,9 +809,9 @@ export function AddLogementDialog({
         />
       )}
 
-      {/* NOUVEAU FLUX - Étape 6 : Ajout de photos (manuel ou depuis Airbnb) */}
-      {step === 6 && parcoursType && (
-        <AddPhotosDialog
+      {/* NOUVEAU FLUX - Étape 6 : Questions de sortie */}
+      {step === 6 && parcoursType && conciergerieModele && (
+        <SelectExitQuestionsDialog
           open={step === 6}
           onOpenChange={(open) => {
             if (!open) {
@@ -770,15 +819,14 @@ export function AddLogementDialog({
             }
           }}
           logementNom={nom}
-          pieces={selectedRooms.length > 0 ? selectedRooms : selectedPieces}
           parcoursType={parcoursType}
-          onSave={handleSavePhotos}
+          modeleQuestions={conciergerieModele.questionsChecklist}
+          onSave={handleStep6Next}
           onBack={() => {
             // Fermer le dialog actuel avant de changer d'étape
             setTimeout(() => setStep(5), 100);
           }}
           isFullScreenMode={isFullScreenMode}
-          initialPhotos={piecesPhotos} // Passer les photos Airbnb si disponibles
         />
       )}
     </>

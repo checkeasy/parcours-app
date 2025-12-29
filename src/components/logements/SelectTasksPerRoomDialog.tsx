@@ -25,7 +25,11 @@ interface SelectTasksPerRoomDialogProps {
   parcoursType: "menage" | "voyageur";
   selectedRooms: PieceQuantity[]; // Pièces sélectionnées à l'étape précédente
   modeleData?: PieceModele[]; // Données du modèle de conciergerie pour pré-sélection
-  onSave: (tasksPerRoom: Map<string, string[]>) => void; // Map<nomPiece, tacheIds[]>
+  onSave: (
+    tasksPerRoom: Map<string, string[]>,
+    customTasksPerRoom: Map<string, TacheModele[]>,
+    modifiedPhotoObligatoire: Map<string, boolean>
+  ) => void; // Map<nomPiece, tacheIds[]> + tâches custom + modifications
   onBack?: () => void;
   isFullScreenMode?: boolean;
 }
@@ -49,6 +53,9 @@ export default function SelectTasksPerRoomDialog({
   // Map pour stocker les tâches personnalisées par pièce
   const [customTasksPerRoom, setCustomTasksPerRoom] = useState<Map<string, TacheModele[]>>(new Map());
 
+  // Map pour stocker les modifications de photoObligatoire des tâches par défaut
+  const [modifiedPhotoObligatoire, setModifiedPhotoObligatoire] = useState<Map<string, boolean>>(new Map());
+
   // État pour le dialog d'édition/ajout de tâche
   const [editTaskDialogOpen, setEditTaskDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<{ roomName: string; task?: TacheModele } | null>(null);
@@ -61,7 +68,17 @@ export default function SelectTasksPerRoomDialog({
     const tasksSource = parcoursType === "menage" ? TACHES_MENAGE : TACHES_VOYAGEUR;
     const defaultTasks = tasksSource[roomName] || [];
     const customTasks = customTasksPerRoom.get(roomName) || [];
-    return [...defaultTasks, ...customTasks];
+
+    // Appliquer les modifications de photoObligatoire aux tâches par défaut
+    const modifiedDefaultTasks = defaultTasks.map(task => {
+      const modifiedValue = modifiedPhotoObligatoire.get(task.id);
+      if (modifiedValue !== undefined) {
+        return { ...task, photoObligatoire: modifiedValue };
+      }
+      return task;
+    });
+
+    return [...modifiedDefaultTasks, ...customTasks];
   };
 
   // Initialiser les tâches sélectionnées depuis le modèle UNIQUEMENT à l'ouverture
@@ -110,7 +127,7 @@ export default function SelectTasksPerRoomDialog({
   };
 
   const handleSave = () => {
-    onSave(selectedTasksPerRoom);
+    onSave(selectedTasksPerRoom, customTasksPerRoom, modifiedPhotoObligatoire);
   };
 
   // Handler pour éditer une tâche
@@ -203,6 +220,29 @@ export default function SelectTasksPerRoomDialog({
     setEditingTask(null);
   };
 
+  // Handler pour basculer l'état photoObligatoire d'une tâche
+  const handleTogglePhotoObligatoire = (roomName: string, task: TacheModele) => {
+    const customTasks = customTasksPerRoom.get(roomName) || [];
+    const customTaskIndex = customTasks.findIndex(t => t.id === task.id);
+
+    if (customTaskIndex !== -1) {
+      // C'est une tâche personnalisée - la mettre à jour directement
+      const newCustomTasks = new Map(customTasksPerRoom);
+      const updatedCustomTasks = [...customTasks];
+      updatedCustomTasks[customTaskIndex] = {
+        ...task,
+        photoObligatoire: !task.photoObligatoire
+      };
+      newCustomTasks.set(roomName, updatedCustomTasks);
+      setCustomTasksPerRoom(newCustomTasks);
+    } else {
+      // C'est une tâche par défaut - enregistrer la modification
+      const newModifiedPhotoObligatoire = new Map(modifiedPhotoObligatoire);
+      newModifiedPhotoObligatoire.set(task.id, !task.photoObligatoire);
+      setModifiedPhotoObligatoire(newModifiedPhotoObligatoire);
+    }
+  };
+
   // Obtenir les types de pièces uniques
   const uniqueRoomTypes = Array.from(new Set(selectedRooms.map(r => r.nom)));
 
@@ -245,7 +285,7 @@ export default function SelectTasksPerRoomDialog({
           </div>
           <div className="pl-8 sm:pl-10 pr-8">
             <DialogTitle className={isFullScreenMode ? "text-base sm:text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"}>
-              Étape 4/6 - Sélectionnez les tâches pour chaque pièce
+              Étape 5/6 - Sélectionnez les tâches pour chaque pièce
             </DialogTitle>
             <DialogDescription className="text-xs sm:text-sm mt-1">
               Pour {logementNom} - {parcoursType === "menage" ? "Ménage" : "Voyageur"}
@@ -299,9 +339,38 @@ export default function SelectTasksPerRoomDialog({
                           <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
                             <span className="text-sm sm:text-base">{task.emoji}</span>
                             <span className="font-medium text-xs sm:text-sm">{task.titre}</span>
+                            {task.photoUrl && (
+                              <Badge
+                                variant="secondary"
+                                className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-100"
+                              >
+                                🖼️ Photo de référence
+                              </Badge>
+                            )}
                             {task.photoObligatoire && (
-                              <Badge variant="default" className="text-xs bg-blue-500 hover:bg-blue-600">
-                                📷 Photo requise
+                              <Badge
+                                variant="default"
+                                className="text-xs bg-primary hover:bg-primary/90 cursor-pointer transition-colors"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleTogglePhotoObligatoire(roomName, task);
+                                }}
+                              >
+                                📷 Photo obligatoire
+                              </Badge>
+                            )}
+                            {!task.photoObligatoire && (
+                              <Badge
+                                variant="outline"
+                                className="text-xs cursor-pointer transition-colors hover:bg-accent"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleTogglePhotoObligatoire(roomName, task);
+                                }}
+                              >
+                                📷 Ajouter photo
                               </Badge>
                             )}
                           </div>

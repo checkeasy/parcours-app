@@ -49,6 +49,8 @@ export function TacheDialog({
   });
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [isLoadingImage, setIsLoadingImage] = useState(false);
+  const [imageLoadError, setImageLoadError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -61,6 +63,8 @@ export function TacheDialog({
         photoObligatoire: tache.photoObligatoire
       });
       setPhotoPreview(tache.photoUrl || null);
+      setIsLoadingImage(!!tache.photoUrl);
+      setImageLoadError(false);
     } else {
       setFormData({
         emoji: "",
@@ -69,6 +73,8 @@ export function TacheDialog({
         photoObligatoire: false
       });
       setPhotoPreview(null);
+      setIsLoadingImage(false);
+      setImageLoadError(false);
     }
   }, [tache, open]);
 
@@ -122,6 +128,8 @@ export function TacheDialog({
 
   const handleRemovePhoto = () => {
     setPhotoPreview(null);
+    setIsLoadingImage(false);
+    setImageLoadError(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -198,15 +206,44 @@ export function TacheDialog({
               >
                 {photoPreview ? (
                   <>
+                    {/* Placeholder pendant le chargement */}
+                    {isLoadingImage && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-muted/80 z-10">
+                        <div className="text-center">
+                          <Loader2 className="mx-auto h-6 w-6 text-muted-foreground animate-spin" />
+                          <p className="mt-1 text-[10px] text-muted-foreground">
+                            Chargement...
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Message d'erreur si l'image ne charge pas */}
+                    {imageLoadError && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-muted z-10">
+                        <div className="text-center p-2">
+                          <p className="text-xs text-destructive">
+                            ⚠️ Image non disponible
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
                     <img
                       src={photoPreview}
                       alt="Preview"
                       className="w-full h-full object-cover"
+                      onLoad={() => setIsLoadingImage(false)}
+                      onError={() => {
+                        setIsLoadingImage(false);
+                        setImageLoadError(true);
+                      }}
                     />
+
                     <Button
                       variant="destructive"
                       size="icon"
-                      className="absolute top-1 right-1 h-6 w-6"
+                      className="absolute top-1 right-1 h-6 w-6 z-20"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleRemovePhoto();
