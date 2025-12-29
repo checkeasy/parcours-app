@@ -28,7 +28,8 @@ interface SelectTasksPerRoomDialogProps {
   onSave: (
     tasksPerRoom: Map<string, string[]>,
     customTasksPerRoom: Map<string, TacheModele[]>,
-    modifiedPhotoObligatoire: Map<string, boolean>
+    modifiedPhotoObligatoire: Map<string, boolean>,
+    modifiedDefaultTasks: Map<string, Partial<TacheModele>>
   ) => void; // Map<nomPiece, tacheIds[]> + tâches custom + modifications
   onBack?: () => void;
   isFullScreenMode?: boolean;
@@ -50,11 +51,14 @@ export default function SelectTasksPerRoomDialog({
   // Map pour stocker les tâches sélectionnées par type de pièce
   const [selectedTasksPerRoom, setSelectedTasksPerRoom] = useState<Map<string, string[]>>(new Map());
 
-  // Map pour stocker les tâches personnalisées par pièce
+  // Map pour stocker les tâches personnalisées par pièce (nouvelles tâches créées par l'utilisateur)
   const [customTasksPerRoom, setCustomTasksPerRoom] = useState<Map<string, TacheModele[]>>(new Map());
 
   // Map pour stocker les modifications de photoObligatoire des tâches par défaut
   const [modifiedPhotoObligatoire, setModifiedPhotoObligatoire] = useState<Map<string, boolean>>(new Map());
+
+  // Map pour stocker les modifications des tâches par défaut (photoUrl, etc.) - clé: taskId, valeur: modifications partielles
+  const [modifiedDefaultTasks, setModifiedDefaultTasks] = useState<Map<string, Partial<TacheModele>>>(new Map());
 
   // État pour le dialog d'édition/ajout de tâche
   const [editTaskDialogOpen, setEditTaskDialogOpen] = useState(false);
@@ -69,16 +73,21 @@ export default function SelectTasksPerRoomDialog({
     const defaultTasks = tasksSource[roomName] || [];
     const customTasks = customTasksPerRoom.get(roomName) || [];
 
-    // Appliquer les modifications de photoObligatoire aux tâches par défaut
-    const modifiedDefaultTasks = defaultTasks.map(task => {
-      const modifiedValue = modifiedPhotoObligatoire.get(task.id);
-      if (modifiedValue !== undefined) {
-        return { ...task, photoObligatoire: modifiedValue };
-      }
-      return task;
+    // Appliquer les modifications aux tâches par défaut (photoObligatoire, photoUrl, etc.)
+    const tasksWithModifications = defaultTasks.map(task => {
+      // Appliquer les modifications complètes (photoUrl, etc.)
+      const modifications = modifiedDefaultTasks.get(task.id);
+      // Appliquer les modifications de photoObligatoire
+      const modifiedPhotoValue = modifiedPhotoObligatoire.get(task.id);
+
+      return {
+        ...task,
+        ...(modifications || {}),
+        ...(modifiedPhotoValue !== undefined ? { photoObligatoire: modifiedPhotoValue } : {}),
+      };
     });
 
-    return [...modifiedDefaultTasks, ...customTasks];
+    return [...tasksWithModifications, ...customTasks];
   };
 
   // Initialiser les tâches sélectionnées depuis le modèle UNIQUEMENT à l'ouverture
@@ -127,7 +136,7 @@ export default function SelectTasksPerRoomDialog({
   };
 
   const handleSave = () => {
-    onSave(selectedTasksPerRoom, customTasksPerRoom, modifiedPhotoObligatoire);
+    onSave(selectedTasksPerRoom, customTasksPerRoom, modifiedPhotoObligatoire, modifiedDefaultTasks);
   };
 
   // Handler pour éditer une tâche
@@ -161,33 +170,23 @@ export default function SelectTasksPerRoomDialog({
         newCustomTasks.set(roomName, updatedCustomTasks);
         setCustomTasksPerRoom(newCustomTasks);
       } else {
-        // C'est une tâche par défaut - créer une version personnalisée
-        const newTaskId = `custom-edited-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-        const newTask: TacheModele = {
-          id: newTaskId,
-          emoji: updatedTask.emoji || originalTask.emoji,
-          titre: updatedTask.titre || originalTask.titre,
-          description: updatedTask.description || originalTask.description,
-          photoObligatoire: updatedTask.photoObligatoire ?? originalTask.photoObligatoire,
-          photoUrl: updatedTask.photoUrl,
-        };
-
-        // Ajouter aux tâches personnalisées
-        const newCustomTasks = new Map(customTasksPerRoom);
-        const existingCustomTasks = newCustomTasks.get(roomName) || [];
-        newCustomTasks.set(roomName, [...existingCustomTasks, newTask]);
-        setCustomTasksPerRoom(newCustomTasks);
-
-        // Remplacer l'ancienne tâche par la nouvelle dans la sélection
-        setSelectedTasksPerRoom(prev => {
-          const newMap = new Map(prev);
-          const selectedTasks = newMap.get(roomName) || [];
-          const updatedSelection = selectedTasks.map(taskId =>
-            taskId === originalTask.id ? newTaskId : taskId
-          );
-          newMap.set(roomName, updatedSelection);
-          return newMap;
+        // C'est une tâche par défaut - stocker les modifications sans créer de nouvelle tâche
+        const newModifiedTasks = new Map(modifiedDefaultTasks);
+        const existingModifications = newModifiedTasks.get(originalTask.id) || {};
+        newModifiedTasks.set(originalTask.id, {
+          ...existingModifications,
+          ...updatedTask,
         });
+        setModifiedDefaultTasks(newModifiedTasks);
+
+        // Mettre à jour photoObligatoire séparément si modifié
+        if (updatedTask.photoObligatoire !== undefined) {
+          setModifiedPhotoObligatoire(prev => {
+            const newMap = new Map(prev);
+            newMap.set(originalTask.id, updatedTask.photoObligatoire!);
+            return newMap;
+          });
+        }
       }
     } else {
       // Ajout d'une nouvelle tâche
@@ -340,12 +339,13 @@ export default function SelectTasksPerRoomDialog({
                             <span className="text-sm sm:text-base">{task.emoji}</span>
                             <span className="font-medium text-xs sm:text-sm">{task.titre}</span>
                             {task.photoUrl && (
-                              <Badge
-                                variant="secondary"
-                                className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-100"
-                              >
-                                🖼️ Photo de référence
-                              </Badge>
+                              <div className="h-6 w-6 rounded overflow-hidden border border-border shrink-0">
+                                <img
+                                  src={task.photoUrl}
+                                  alt="Photo de référence"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                             )}
                             {task.photoObligatoire && (
                               <Badge

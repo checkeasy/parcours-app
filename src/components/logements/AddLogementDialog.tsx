@@ -66,13 +66,23 @@ interface AddLogementDialogProps {
 function mergeTasksWithCustoms(
   defaultTasks: Record<string, TacheModele[]>,
   customTasksPerRoom: Map<string, TacheModele[]>,
-  modifiedPhotoObligatoire: Map<string, boolean>
+  modifiedPhotoObligatoire: Map<string, boolean>,
+  modifiedDefaultTasks: Map<string, Partial<TacheModele>>
 ): Record<string, TacheModele[]> {
   const merged: Record<string, TacheModele[]> = {};
 
   // Copier toutes les tâches par défaut
   Object.keys(defaultTasks).forEach(roomName => {
     merged[roomName] = [...defaultTasks[roomName]];
+  });
+
+  // Appliquer les modifications complètes (photoUrl, etc.) aux tâches par défaut
+  modifiedDefaultTasks.forEach((modifications, taskId) => {
+    Object.keys(merged).forEach(roomName => {
+      merged[roomName] = merged[roomName].map(task =>
+        task.id === taskId ? { ...task, ...modifications } : task
+      );
+    });
   });
 
   // Appliquer les modifications de photoObligatoire aux tâches par défaut
@@ -353,7 +363,8 @@ export function AddLogementDialog({
   const handleStep5Next = async (
     tasksPerRoom: Map<string, string[]>,
     customTasksPerRoom: Map<string, TacheModele[]>,
-    modifiedPhotoObligatoire: Map<string, boolean>
+    modifiedPhotoObligatoire: Map<string, boolean>,
+    modifiedDefaultTasks: Map<string, Partial<TacheModele>>
   ) => {
     setSelectedTasksPerRoom(tasksPerRoom);
 
@@ -367,7 +378,8 @@ export function AddLogementDialog({
       const mergedTasksSource = mergeTasksWithCustoms(
         allTasksSource,
         customTasksPerRoom,
-        modifiedPhotoObligatoire
+        modifiedPhotoObligatoire,
+        modifiedDefaultTasks
       );
 
       // Mettre à jour le modèle avec les tâches sélectionnées
