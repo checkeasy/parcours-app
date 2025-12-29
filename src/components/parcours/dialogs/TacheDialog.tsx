@@ -91,26 +91,40 @@ export function TacheDialog({
       reader.onloadend = async () => {
         const base64Image = reader.result as string;
 
-        // Convert base64 to URL via Bubble.io API
-        const result = await convertBase64ToUrl(base64Image);
+        try {
+          // Convert base64 to URL via Bubble.io API
+          console.log("📤 Starting photo upload to Bubble.io...");
+          const result = await convertBase64ToUrl(base64Image);
+          console.log("📥 Upload result:", result);
 
-        if (result.success && result.imgUrl) {
-          setPhotoPreview(result.imgUrl);
-          toast({
-            title: "✅ Photo uploadée",
-            description: "La photo de référence a été uploadée avec succès.",
-          });
-        } else {
-          // Fallback to base64 if upload fails
+          if (result.success && result.imgUrl) {
+            setPhotoPreview(result.imgUrl);
+            toast({
+              title: "✅ Photo uploadée",
+              description: "La photo de référence a été uploadée avec succès.",
+            });
+          } else {
+            // Fallback to base64 if upload fails
+            console.warn("⚠️ Upload failed, using base64 fallback. Error:", result.error);
+            setPhotoPreview(base64Image);
+            toast({
+              title: "⚠️ Upload partiel",
+              description: "La photo est enregistrée localement. Elle sera uploadée lors de la sauvegarde du modèle.",
+              variant: "destructive",
+            });
+          }
+        } catch (error) {
+          console.error("❌ Exception during photo upload:", error);
+          // Fallback to base64 on exception
           setPhotoPreview(base64Image);
           toast({
-            title: "⚠️ Upload partiel",
-            description: "La photo est enregistrée localement. Elle sera uploadée lors de la sauvegarde du modèle.",
+            title: "⚠️ Erreur d'upload",
+            description: "La photo est enregistrée localement.",
             variant: "destructive",
           });
+        } finally {
+          setIsUploadingPhoto(false);
         }
-
-        setIsUploadingPhoto(false);
       };
 
       reader.onerror = () => {
