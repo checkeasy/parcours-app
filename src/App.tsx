@@ -181,17 +181,8 @@ function App() {
     // Generate a logementId if not present
     const logementId = `logement_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     setLogements([...logements, { ...data, id: Date.now(), logementId }]);
-    toast({
-      title: t('toast.logementCreated'),
-      description: `${t('logement.createNew')} "${data.nom}" ${t('toast.logementCreated').toLowerCase()}.`,
-    });
-
-    // En mode plein écran, rafraîchir la page après l'envoi du webhook
-    if (isFullScreenMode) {
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000); // Attendre 2 secondes pour que l'utilisateur voie le toast
-    }
+    // Note: Le toast et le reload sont maintenant gérés dans AddLogementDialog
+    // après que le webhook soit terminé avec succès
   };
 
   const handleCreateCustom = (parcoursType: "menage" | "voyageur") => {

@@ -438,20 +438,26 @@ export function AddLogementDialog({
 
     if (!conciergerieModele) return;
 
+    let finalModeleWithQuestions: ParcoursModele;
+
     try {
       // Mettre à jour le modèle avec les questions
       const updatedModele = updateModeleQuestions(conciergerieModele, questions);
       await updateConciergerieModele(updatedModele, getConciergerieID(), getIsTestMode());
       setConciergerieModele(updatedModele);
+      // Utiliser le modèle mis à jour pour la suite (setConciergerieModele est asynchrone)
+      finalModeleWithQuestions = updatedModele;
 
       console.log(`✅ Modèle mis à jour avec les questions sélectionnées`);
     } catch (error) {
       console.error("❌ Erreur lors de la mise à jour du modèle:", error);
+      // En cas d'erreur, utiliser le modèle existant avec les questions ajoutées manuellement
+      finalModeleWithQuestions = { ...conciergerieModele, questionsChecklist: questions };
     }
 
     // Finaliser la création du logement
     const finalPieces = selectedRooms.length > 0 ? selectedRooms : selectedPieces;
-    const finalModele = conciergerieModele || selectedModele!;
+    const finalModele = finalModeleWithQuestions;
 
     const logementData = {
       nom,
@@ -477,12 +483,19 @@ export function AddLogementDialog({
         return; // Ne pas fermer le dialog en cas d'erreur
       }
 
-      // Succès - fermer le dialog
+      // Succès - fermer le dialog et afficher le toast
       toast({
         title: "✅ Logement créé",
         description: `Le logement "${nom}" a été créé avec succès.`,
       });
       handleClose();
+
+      // En mode plein écran, rafraîchir la page APRÈS que le webhook soit terminé
+      if (isFullScreenMode) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000); // Attendre 2 secondes pour que l'utilisateur voie le toast
+      }
     } catch (error) {
       console.error("Erreur lors de l'envoi du webhook:", error);
       toast({
