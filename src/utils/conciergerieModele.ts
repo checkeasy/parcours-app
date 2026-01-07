@@ -36,7 +36,7 @@ export const loadConciergerieModele = async (
     console.log(`📝 Création d'un nouveau modèle de conciergerie pour ${type}`);
     const newModele: ParcoursModele = {
       id: modeleId,
-      nom: `Modèle Conciergerie ${type === "menage" ? "Ménage" : "Voyageur"}`,
+      nom: `Parcours ${type === "menage" ? "Ménage" : "Voyageur"}`,
       type,
       pieces: [],
       piecesQuantity: [],
@@ -54,7 +54,7 @@ export const loadConciergerieModele = async (
     const modeleId = getConciergerieModeleId(type, conciergerieID);
     return {
       id: modeleId,
-      nom: `Modèle Conciergerie ${type === "menage" ? "Ménage" : "Voyageur"}`,
+      nom: `Parcours ${type === "menage" ? "Ménage" : "Voyageur"}`,
       type,
       pieces: [],
       piecesQuantity: [],

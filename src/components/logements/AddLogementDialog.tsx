@@ -518,6 +518,7 @@ export function AddLogementDialog({
         <DialogContent
           className={isFullScreenMode ? "!absolute !inset-0 !w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !translate-x-0 !translate-y-0 !left-0 !top-0 px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 gap-1 sm:gap-2" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh]"}
           hideCloseButton={true}
+          disableAnimations={isFullScreenMode}
         >
           {/* DialogHeader commun pour les étapes 1 et 2 (pour accessibilité) */}
           <DialogHeader className={step === 1 && !hasExistingLogement ? (isFullScreenMode ? "pb-0" : "") : "sr-only"}>
@@ -602,15 +603,15 @@ export function AddLogementDialog({
                     value={airbnbLink}
                     onChange={(e) => setAirbnbLink(e.target.value)}
                   />
-                  {/* Bouton pour lancer le scraping Airbnb manuellement */}
-                  {airbnbLink.trim() && (
-                    <Button
-                      onClick={() => setStep(1.5 as any)}
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                    >
-                      🔍 Analyser le lien Airbnb
-                    </Button>
-                  )}
+                  {/* Bouton pour lancer le scraping Airbnb manuellement - toujours visible */}
+                  <Button
+                    onClick={() => setStep(1.5 as any)}
+                    variant={airbnbLink.trim() ? "default" : "outline"}
+                    disabled={!airbnbLink.trim()}
+                    className="w-full"
+                  >
+                    🔍 Analyser le lien Airbnb
+                  </Button>
                 </div>
               </div>
 
@@ -618,7 +619,6 @@ export function AddLogementDialog({
                 <Button
                   onClick={handleStep1Next}
                   disabled={!nom.trim()}
-                  variant="outline"
                   className="w-full sm:w-auto"
                 >
                   {t('logement.next')}

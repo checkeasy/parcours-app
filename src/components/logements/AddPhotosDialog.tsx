@@ -327,6 +327,7 @@ export function AddPhotosDialog({
       <DialogContent
         className={isFullScreenMode ? "!absolute !inset-0 !w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !translate-x-0 !translate-y-0 !left-0 !top-0 overflow-hidden px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 gap-1 sm:gap-2 flex flex-col" : "sm:max-w-[600px] w-[calc(100vw-2rem)] max-w-[95vw] max-h-[90vh] sm:max-h-[85vh] flex flex-col overflow-hidden"}
         hideCloseButton={true}
+        disableAnimations={isFullScreenMode}
       >
         <DialogHeader className={isFullScreenMode ? "pb-0 shrink-0" : "shrink-0"}>
           <div

@@ -236,6 +236,7 @@ export function AirbnbResultDialog({
       <DialogContent
         className={isFullScreenMode ? "!absolute !inset-0 !w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !translate-x-0 !translate-y-0 !left-0 !top-0 overflow-auto flex flex-col px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 gap-1 sm:gap-2" : "w-[calc(100vw-2rem)] sm:w-full sm:max-w-[900px] max-h-[90vh] overflow-hidden flex flex-col p-0"}
         hideCloseButton={isFullScreenMode}
+        disableAnimations={isFullScreenMode}
       >
         {/* Input caché pour l'upload de fichiers */}
         <input

@@ -32,6 +32,9 @@ function App() {
   const [isFullScreenMode, setIsFullScreenMode] = useState(false);
   const [viewModeFromURL, setViewModeFromURL] = useState(false);
 
+  // Loader initial pour éviter le "saut" au chargement dans l'iframe Bubble
+  const [isInitialLoading, setIsInitialLoading] = useState(false);
+
   // Stocker les données du logement chargé depuis l'URL
   const [initialLogementData, setInitialLogementData] = useState<any>(null);
 
@@ -42,7 +45,15 @@ function App() {
     if (viewMode === 'full') {
       setViewModeFromURL(true);
       setIsFullScreenMode(true);
-      setDialogOpen(true); // Ouvrir automatiquement la modal
+      setIsInitialLoading(true); // Activer le loader initial
+
+      // Attendre 1.5 secondes avant d'afficher le contenu
+      const timer = setTimeout(() => {
+        setIsInitialLoading(false);
+        setDialogOpen(true); // Ouvrir la modal après le loader
+      }, 1500);
+
+      return () => clearTimeout(timer);
     }
   }, []);
 
@@ -336,6 +347,25 @@ function App() {
       });
     }
   };
+
+  // Afficher le loader initial en mode fullscreen (iframe Bubble)
+  if (isInitialLoading && isFullScreenMode) {
+    return (
+      <div className="relative h-full w-full overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          {/* Spinner animé */}
+          <div className="relative">
+            <div className="w-12 h-12 rounded-full border-4 border-slate-200"></div>
+            <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-transparent border-t-primary animate-spin"></div>
+          </div>
+          {/* Texte de chargement */}
+          <p className="text-sm text-slate-500 animate-pulse">
+            {t('common.loading')}...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={isFullScreenMode ? "relative h-full w-full overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100" : "min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4 sm:p-6 md:p-8"}>
